@@ -17,7 +17,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.service.JwtService;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,7 +74,7 @@ public class JWTServiceTest {
       .senha("$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6")
       .cargo(registerRequest.getCargo())
       .funcao(Papel.USER)
-      .dataCriacao(LocalDate.now())
+      .dataCriacao(LocalDateTime.now())
       .build();
     when(usuarioRepositorio.findByEmail(registerRequest.getEmail()))
       .thenReturn(java.util.Optional.empty());
@@ -116,7 +116,7 @@ public class JWTServiceTest {
       .senha("$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6")
       .cargo(registerRequest.getCargo())
       .funcao(Papel.USER)
-      .dataCriacao(LocalDate.now())
+      .dataCriacao(LocalDateTime.now())
       .build();
     when(usuarioRepositorio.findByEmail(registerRequest.getEmail()))
       .thenReturn(java.util.Optional.of(usuarioEncontrado));
@@ -143,7 +143,7 @@ public class JWTServiceTest {
       .senha("$2a$10$TzZ2hgNnjdUW13juIwr/Xu/vKc.PoONxvSI.ljWJYBuKX7UVfd4Yy")
       .cargo("Analista de Regulação")
       .funcao(Papel.USER)
-      .dataCriacao(LocalDate.now())
+      .dataCriacao(LocalDateTime.now())
       .build();
 
     when(authenticationManager.authenticate(any())).thenReturn(null);

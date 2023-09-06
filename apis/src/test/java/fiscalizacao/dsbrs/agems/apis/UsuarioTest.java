@@ -4,6 +4,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Token;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
@@ -91,7 +92,7 @@ public class UsuarioTest {
 
     usuario.setDate();
     Assertions.assertEquals(LocalDate.now(), usuario.getDataCriacao());
-    usuario.setDataCriacao(LocalDate.now());
+    usuario.setDataCriacao(LocalDateTime.now());
     Assertions.assertEquals(LocalDate.now(), usuario.getDataCriacao());
   }
 
