@@ -21,8 +21,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class FormularioResponse extends Response {
+
   @Schema(
-	title = "Data de criação",
+    title = "Data de criação",
     description = "Data de criação do formulário",
     required = true,
     type = "string",

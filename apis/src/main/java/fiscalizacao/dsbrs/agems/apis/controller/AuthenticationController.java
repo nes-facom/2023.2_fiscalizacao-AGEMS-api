@@ -107,8 +107,9 @@ public class AuthenticationController {
     produces = "application/json"
   )
   @SecurityRequirements
-  public ResponseEntity<Response> cadastrar(@RequestBody RegisterRequest request)
-  {
+  public ResponseEntity<Response> cadastrar(
+    @RequestBody RegisterRequest request
+  ) {
     Response response = SERVICO_AUTH.cadastrar(request);
     if (response instanceof ErroResponse) {
       return ResponseEntity
@@ -170,11 +171,6 @@ public class AuthenticationController {
         );
     }
   }
-
-
-
-
-
 
   @ApiResponses(
     value = {

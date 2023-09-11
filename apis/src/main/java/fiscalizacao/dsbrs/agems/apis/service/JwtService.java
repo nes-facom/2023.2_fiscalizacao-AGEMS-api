@@ -125,7 +125,7 @@ public class JwtService {
       request.getCargo() == null ||
       request.getEmail() == null ||
       request.getNome() == null ||
-      request.getSenha() == null||
+      request.getSenha() == null ||
       request.getDataCriacao() == null
     ) {
       return ErroResponse.builder().status(400).erro("Faltam dados.").build();
