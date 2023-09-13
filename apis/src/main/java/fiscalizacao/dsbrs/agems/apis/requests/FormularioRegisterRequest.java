@@ -1,7 +1,13 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeDeserializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +20,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FormularioRegisterRequest {
 
+  @Schema(
+    title = "Data de criação",
+    description = "Data de criação do formulário",
+    required = true,
+    type = "string",
+    example = "1692840670072"
+    )
+  @JsonProperty("data_criacao")
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  private LocalDateTime dataCriacao;
 
   @Schema(
     title = "Modelo",

@@ -22,7 +22,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Key;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +125,8 @@ public class JwtService {
       request.getCargo() == null ||
       request.getEmail() == null ||
       request.getNome() == null ||
-      request.getSenha() == null
+      request.getSenha() == null ||
+      request.getDataCriacao() == null
     ) {
       return ErroResponse.builder().status(400).erro("Faltam dados.").build();
     }
@@ -147,7 +148,7 @@ public class JwtService {
       .senha(CODIFICADOR_SENHA.encode(request.getSenha()))
       .cargo(request.getCARGOS(request.getCargo()))
       .funcao(Papel.USER)
-      .dataCriacao(LocalDate.now())
+      .dataCriacao(request.getDataCriacao())
       .build();
 
     Usuario usuarioSalvo = REPOSITORIO_USUARIO.save(usuario);
