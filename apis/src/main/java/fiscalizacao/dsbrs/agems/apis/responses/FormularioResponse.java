@@ -1,8 +1,13 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +22,17 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class FormularioResponse extends Response {
 
+  @Schema(
+    title = "Data de criação",
+    description = "Data de criação do formulário",
+    required = true,
+    type = "string",
+    example = "1692840670072"
+  )
+  @JsonProperty("data_criacao")
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  private LocalDateTime dataCriacao;
+	
   @Schema(
     title = "Id",
     description = "Código do Formulário",
