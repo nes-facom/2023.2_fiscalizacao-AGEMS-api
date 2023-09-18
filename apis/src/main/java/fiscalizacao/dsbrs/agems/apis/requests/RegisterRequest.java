@@ -1,11 +1,5 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
-import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeDeserializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -22,19 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
-  
-  @Schema(
-    title = "Data de criação",
-    description = "Data de criação do usuário",
-    required = true,
-    type = "string",
-    example = "1692840670079"
-    
-  )
-  @JsonProperty("data_criacao")
-  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-  private LocalDateTime dataCriacao;
-  
+
   @Schema(
     title = "Nome",
     description = "Nome de Usuário",

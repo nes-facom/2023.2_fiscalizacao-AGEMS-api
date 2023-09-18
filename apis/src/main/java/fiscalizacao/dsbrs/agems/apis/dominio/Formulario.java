@@ -1,7 +1,5 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
-import java.time.LocalDateTime;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -71,10 +70,10 @@ public class Formulario {
     title = "Data de Criação",
     description = "Data de Criação do Formulário",
     required = true,
-    implementation = LocalDateTime.class
+    implementation = LocalDate.class
   )
   @Column
-  private LocalDateTime dataCriacao;
+  private LocalDate dataCriacao;
 
   @Schema(
     title = "Observação",
@@ -84,6 +83,10 @@ public class Formulario {
   )
   @Column
   private String observacao;
+
+  public void setDate() {
+    this.dataCriacao = LocalDate.now();
+  }
 
   public Integer getId() {
     return id;
@@ -101,12 +104,8 @@ public class Formulario {
     return unidade;
   }
 
-  public LocalDateTime getDataCriacao() {
+  public LocalDate getDataCriacao() {
     return dataCriacao;
-  }
-  
-  public void setDataCriacao(LocalDateTime dataCriacao) {
-	  this.dataCriacao = dataCriacao;
   }
 
   public void setUsuario(Usuario usuario) {

@@ -10,16 +10,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -79,10 +76,10 @@ public class Usuario implements UserDetails {
     description = "Data de cadastro do Usuário no sistema",
     required = true,
     type = "string",
-    implementation = Date.class
+    implementation = LocalDate.class
   )
   @Column(nullable = false)
-  private LocalDateTime dataCriacao;
+  private LocalDate dataCriacao;
 
   @Schema(
     title = "Cargo do Usuário",
@@ -165,7 +162,7 @@ public class Usuario implements UserDetails {
   }
 
   public void setDate() {
-    this.dataCriacao = LocalDateTime.now();
+    this.dataCriacao = LocalDate.now();
   }
 
   @Override

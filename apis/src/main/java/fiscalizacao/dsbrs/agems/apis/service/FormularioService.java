@@ -122,7 +122,7 @@ public class FormularioService {
     formulario.setUsuario(usuario);
     formulario.setModelo(modelo);
     formulario.setUnidade(unidade);
-    formulario.setDataCriacao(novoFormulario.getDataCriacao());
+    formulario.setDate();
     if (
       novoFormulario.getObservacao().isEmpty() ||
       (novoFormulario.getObservacao()).isBlank() ||
@@ -280,7 +280,6 @@ public class FormularioService {
         .respostas(responsesResposta)
         .imagens(imagensResponses)
         .observacao(newForm.getObservacao())
-        .dataCriacao(formulario.getDataCriacao())
         .build();
 
     return formularioResponse;
@@ -424,8 +423,7 @@ public class FormularioService {
       FormularioResponse
         .builder()
         .id(formulario.getId())
-        .dataCriacao(formulario.getDataCriacao())
-    	.usuario(usuarioResponse)
+        .usuario(usuarioResponse)
         .unidade(unidadeResponse)
         .modelo(modeloResponse)
         .respostas(responsesResposta)
