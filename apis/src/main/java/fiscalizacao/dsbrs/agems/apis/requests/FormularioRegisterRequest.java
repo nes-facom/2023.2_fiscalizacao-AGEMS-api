@@ -24,7 +24,7 @@ public class FormularioRegisterRequest {
     title = "Data de criação",
     description = "Data de criação do formulário",
     required = true,
-    type = "string",
+    type = "number",
     example = "1692840670072"
     )
   @JsonProperty("data_criacao")
