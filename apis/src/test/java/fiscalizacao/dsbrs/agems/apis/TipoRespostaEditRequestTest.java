@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
 
 
 public class TipoRespostaEditRequestTest {
@@ -15,7 +15,7 @@ public class TipoRespostaEditRequestTest {
     public void testGetSetAcao() {
        
         String expectedAcao = "edit";
-        TipoRespostaEditRequest request = new TipoRespostaEditRequest();
+        AlternativaRespostaEditRequest request = new AlternativaRespostaEditRequest();
 
         
         request.setAcao(expectedAcao);
@@ -29,7 +29,7 @@ public class TipoRespostaEditRequestTest {
     public void testGetSetId() {
        
         int expectedId = 1;
-        TipoRespostaEditRequest request = new TipoRespostaEditRequest();
+        AlternativaRespostaEditRequest request = new AlternativaRespostaEditRequest();
 
        
         request.setId(expectedId);
@@ -43,7 +43,7 @@ public class TipoRespostaEditRequestTest {
     public void testGetSetResposta() {
      
         String expectedResposta = "Sim";
-        TipoRespostaEditRequest request = new TipoRespostaEditRequest();
+        AlternativaRespostaEditRequest request = new AlternativaRespostaEditRequest();
 
         
         request.setResposta(expectedResposta);
@@ -56,7 +56,7 @@ public class TipoRespostaEditRequestTest {
     @Test
     public void testBuilder() {
         String resposta = "Talvez";
-        TipoRespostaEditRequest request = TipoRespostaEditRequest.builder()
+        AlternativaRespostaEditRequest request = AlternativaRespostaEditRequest.builder()
                 .acao("edit")
                 .id(1)
                 .resposta(resposta)
@@ -69,7 +69,7 @@ public class TipoRespostaEditRequestTest {
 
     @Test
   public void testBuilderToString() {
-    TipoRespostaEditRequest.TipoRespostaEditRequestBuilder builder = TipoRespostaEditRequest
+    AlternativaRespostaEditRequest.TipoRespostaEditRequestBuilder builder = AlternativaRespostaEditRequest
       .builder();
 
     String expectedToString =
@@ -81,7 +81,7 @@ public class TipoRespostaEditRequestTest {
 
   @Test
   public void testToString(){
-    TipoRespostaEditRequest tipoRespostaEditRequest = TipoRespostaEditRequest
+    AlternativaRespostaEditRequest tipoRespostaEditRequest = AlternativaRespostaEditRequest
      .builder().build();
       String expectedToString =
       "TipoRespostaEditRequest(acao=null, id=0, resposta=null)";

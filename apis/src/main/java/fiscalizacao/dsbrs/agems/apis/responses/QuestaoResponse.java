@@ -75,5 +75,5 @@ public class QuestaoResponse extends Response {
     type = "array"
   )
   @JsonProperty("respostas")
-  private List<TipoRespostaResponse> respostas;
+  private List<AlternativaRespostaResponse> respostas;
 }

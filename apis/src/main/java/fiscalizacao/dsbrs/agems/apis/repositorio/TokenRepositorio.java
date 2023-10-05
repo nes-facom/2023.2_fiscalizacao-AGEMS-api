@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Tag(name = "Interface Repositório de Token")
 public interface TokenRepositorio extends JpaRepository<Token, Integer> {
-  @Operation(summary = "Encontra Tokens válidos por Usuário")
+  @Operation(summary = "Encontra tokens válidos por usuário")
   @Query(
     value = """
       select t from Token t inner join usuario u\s

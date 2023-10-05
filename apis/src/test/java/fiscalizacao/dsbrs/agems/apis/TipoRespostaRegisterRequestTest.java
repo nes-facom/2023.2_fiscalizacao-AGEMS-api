@@ -2,7 +2,7 @@ package fiscalizacao.dsbrs.agems.apis;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,7 @@ public class TipoRespostaRegisterRequestTest {
   @Test
   public void testConstructorAndGetters() {
     String resposta = "Sim";
-    TipoRespostaRegisterRequest request = new TipoRespostaRegisterRequest(
+    AlternativaRespostaRegisterRequest request = new AlternativaRespostaRegisterRequest(
       resposta
     );
 
@@ -21,7 +21,7 @@ public class TipoRespostaRegisterRequestTest {
   @Test
   public void testSetters() {
     String resposta = "Não";
-    TipoRespostaRegisterRequest request = new TipoRespostaRegisterRequest();
+    AlternativaRespostaRegisterRequest request = new AlternativaRespostaRegisterRequest();
     request.setResposta(resposta);
 
     Assertions.assertEquals(resposta, request.getResposta());
@@ -30,7 +30,7 @@ public class TipoRespostaRegisterRequestTest {
   @Test
   public void testBuilder() {
     String resposta = "Talvez";
-    TipoRespostaRegisterRequest request = TipoRespostaRegisterRequest
+    AlternativaRespostaRegisterRequest request = AlternativaRespostaRegisterRequest
       .builder()
       .resposta(resposta)
       .build();
@@ -40,7 +40,7 @@ public class TipoRespostaRegisterRequestTest {
 
   @Test
   public void testBuilderToString() {
-    TipoRespostaRegisterRequest.TipoRespostaRegisterRequestBuilder builder = TipoRespostaRegisterRequest.builder();
+    AlternativaRespostaRegisterRequest.TipoRespostaRegisterRequestBuilder builder = AlternativaRespostaRegisterRequest.builder();
 
     String expectedToString =
       "TipoRespostaRegisterRequest.TipoRespostaRegisterRequestBuilder(resposta=null)";
@@ -51,7 +51,7 @@ public class TipoRespostaRegisterRequestTest {
 
   @Test
   public void testToString() {
-    TipoRespostaRegisterRequest tipoRespostaEditRequest = TipoRespostaRegisterRequest
+    AlternativaRespostaRegisterRequest tipoRespostaEditRequest = AlternativaRespostaRegisterRequest
       .builder()
       .build();
     String expectedToString = "TipoRespostaRegisterRequest(resposta=null)";

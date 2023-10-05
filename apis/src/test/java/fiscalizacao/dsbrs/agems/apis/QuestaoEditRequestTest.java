@@ -3,7 +3,7 @@ package fiscalizacao.dsbrs.agems.apis;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -35,13 +35,13 @@ public class QuestaoEditRequestTest {
 
   @Test
   public void testSetters() {
-    TipoRespostaEditRequest resposta1 = TipoRespostaEditRequest
+    AlternativaRespostaEditRequest resposta1 = AlternativaRespostaEditRequest
       .builder()
       .build();
-    TipoRespostaEditRequest resposta2 = TipoRespostaEditRequest
+    AlternativaRespostaEditRequest resposta2 = AlternativaRespostaEditRequest
       .builder()
       .build();
-    List<TipoRespostaEditRequest> tipoRespostas = new ArrayList<>();
+    List<AlternativaRespostaEditRequest> tipoRespostas = new ArrayList<>();
     tipoRespostas.add(resposta1);
     tipoRespostas.add(resposta2);
     QuestaoEditRequest request = QuestaoEditRequest
@@ -114,13 +114,13 @@ public class QuestaoEditRequestTest {
 
   @Test
   public void testGetTipoRespostas() {
-    TipoRespostaEditRequest resposta1 = TipoRespostaEditRequest
+    AlternativaRespostaEditRequest resposta1 = AlternativaRespostaEditRequest
       .builder()
       .build();
-    TipoRespostaEditRequest resposta2 = TipoRespostaEditRequest
+    AlternativaRespostaEditRequest resposta2 = AlternativaRespostaEditRequest
       .builder()
       .build();
-    List<TipoRespostaEditRequest> tipoRespostas = new ArrayList<>();
+    List<AlternativaRespostaEditRequest> tipoRespostas = new ArrayList<>();
     tipoRespostas.add(resposta1);
     tipoRespostas.add(resposta2);
 

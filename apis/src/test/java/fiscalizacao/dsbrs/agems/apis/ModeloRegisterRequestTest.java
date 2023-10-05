@@ -2,7 +2,7 @@ package fiscalizacao.dsbrs.agems.apis;
 
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -13,21 +13,21 @@ public class ModeloRegisterRequestTest {
   @Test
   public void testModeloRegisterRequest() {
     String modelo = "Modelo 01";
-    List<TipoRespostaRegisterRequest> tipoRespostas = Arrays.asList(
-      new TipoRespostaRegisterRequest("Resposta 1"),
-      new TipoRespostaRegisterRequest("Resposta 2"),
-      new TipoRespostaRegisterRequest("Resposta 3")
+    List<AlternativaRespostaRegisterRequest> tipoRespostas = Arrays.asList(
+      new AlternativaRespostaRegisterRequest("Resposta 1"),
+      new AlternativaRespostaRegisterRequest("Resposta 2"),
+      new AlternativaRespostaRegisterRequest("Resposta 3")
     );
 
-    List<TipoRespostaRegisterRequest> tipoRespostas2 = Arrays.asList(
-      new TipoRespostaRegisterRequest("Resposta 1"),
-      new TipoRespostaRegisterRequest("Resposta 2"),
-      new TipoRespostaRegisterRequest("Resposta 3")
+    List<AlternativaRespostaRegisterRequest> tipoRespostas2 = Arrays.asList(
+      new AlternativaRespostaRegisterRequest("Resposta 1"),
+      new AlternativaRespostaRegisterRequest("Resposta 2"),
+      new AlternativaRespostaRegisterRequest("Resposta 3")
     );
-    List<TipoRespostaRegisterRequest> tipoRespostas3 = Arrays.asList(
-      new TipoRespostaRegisterRequest("Resposta 1"),
-      new TipoRespostaRegisterRequest("Resposta 2"),
-      new TipoRespostaRegisterRequest("Resposta 3")
+    List<AlternativaRespostaRegisterRequest> tipoRespostas3 = Arrays.asList(
+      new AlternativaRespostaRegisterRequest("Resposta 1"),
+      new AlternativaRespostaRegisterRequest("Resposta 2"),
+      new AlternativaRespostaRegisterRequest("Resposta 3")
     );
 
     List<QuestaoRegisterRequest> questoes = Arrays.asList(
@@ -91,21 +91,21 @@ public class ModeloRegisterRequestTest {
   @Test
   public void testBuilder() {
     String modelo = "Modelo 01";
-    List<TipoRespostaRegisterRequest> tipoRespostas = Arrays.asList(
-      new TipoRespostaRegisterRequest("Resposta 1"),
-      new TipoRespostaRegisterRequest("Resposta 2"),
-      new TipoRespostaRegisterRequest("Resposta 3")
+    List<AlternativaRespostaRegisterRequest> tipoRespostas = Arrays.asList(
+      new AlternativaRespostaRegisterRequest("Resposta 1"),
+      new AlternativaRespostaRegisterRequest("Resposta 2"),
+      new AlternativaRespostaRegisterRequest("Resposta 3")
     );
 
-    List<TipoRespostaRegisterRequest> tipoRespostas2 = Arrays.asList(
-      new TipoRespostaRegisterRequest("Resposta 1"),
-      new TipoRespostaRegisterRequest("Resposta 2"),
-      new TipoRespostaRegisterRequest("Resposta 3")
+    List<AlternativaRespostaRegisterRequest> tipoRespostas2 = Arrays.asList(
+      new AlternativaRespostaRegisterRequest("Resposta 1"),
+      new AlternativaRespostaRegisterRequest("Resposta 2"),
+      new AlternativaRespostaRegisterRequest("Resposta 3")
     );
-    List<TipoRespostaRegisterRequest> tipoRespostas3 = Arrays.asList(
-      new TipoRespostaRegisterRequest("Resposta 1"),
-      new TipoRespostaRegisterRequest("Resposta 2"),
-      new TipoRespostaRegisterRequest("Resposta 3")
+    List<AlternativaRespostaRegisterRequest> tipoRespostas3 = Arrays.asList(
+      new AlternativaRespostaRegisterRequest("Resposta 1"),
+      new AlternativaRespostaRegisterRequest("Resposta 2"),
+      new AlternativaRespostaRegisterRequest("Resposta 3")
     );
 
     List<QuestaoRegisterRequest> questoes = Arrays.asList(

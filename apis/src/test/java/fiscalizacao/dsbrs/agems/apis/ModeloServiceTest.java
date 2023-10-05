@@ -30,18 +30,18 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.TipoRespostaRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaEditRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.TipoRespostaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
 
 @RunWith(SpringRunner.class)
@@ -53,7 +53,7 @@ public class ModeloServiceTest {
     @Mock
     private ModeloRepositorio modeloRepositorio;
     @Mock
-    private TipoRespostaRepositorio tipoRespostaRepositorio;
+    private AlternativaRespostaRepositorio tipoRespostaRepositorio;
     @Mock
     private QuestaoRepositorio questaoRepositorio;
 
@@ -70,14 +70,14 @@ public class ModeloServiceTest {
         questaoRequest1.setObjetiva(true);
         questaoRequest1.setPortaria("Portaria1");
 
-        TipoRespostaRegisterRequest Tiporequest1 = new TipoRespostaRegisterRequest();
+        AlternativaRespostaRegisterRequest Tiporequest1 = new AlternativaRespostaRegisterRequest();
         Tiporequest1.setResposta("SIM");
-        TipoRespostaRegisterRequest Tiporequest2 = new TipoRespostaRegisterRequest();
+        AlternativaRespostaRegisterRequest Tiporequest2 = new AlternativaRespostaRegisterRequest();
         Tiporequest2.setResposta("NÃO");
-        TipoRespostaRegisterRequest Tiporequest3 = new TipoRespostaRegisterRequest();
+        AlternativaRespostaRegisterRequest Tiporequest3 = new AlternativaRespostaRegisterRequest();
         Tiporequest3.setResposta("NAO SE APLICA");
 
-        List<TipoRespostaRegisterRequest> respostas1 = new ArrayList<>();
+        List<AlternativaRespostaRegisterRequest> respostas1 = new ArrayList<>();
         respostas1.add(Tiporequest1);
         respostas1.add(Tiporequest2);
         respostas1.add(Tiporequest3);
@@ -282,8 +282,8 @@ public class ModeloServiceTest {
         questaoEditRequest.setPergunta(novaPergunta);
         questaoEditRequest.setObjetiva(true);
 
-        List<TipoRespostaEditRequest> tipoRespostaEditRequests = new ArrayList<>();
-        TipoRespostaEditRequest tipoRespostaEditRequest = new TipoRespostaEditRequest();
+        List<AlternativaRespostaEditRequest> tipoRespostaEditRequests = new ArrayList<>();
+        AlternativaRespostaEditRequest tipoRespostaEditRequest = new AlternativaRespostaEditRequest();
         tipoRespostaEditRequest.setId(tipoRespostaId);
         tipoRespostaEditRequest.setAcao("edit");
         tipoRespostaEditRequest.setResposta(novaResposta);
@@ -322,7 +322,7 @@ public class ModeloServiceTest {
         assertEquals(questaoId, questaoResponse.getId());
         assertEquals(novaPergunta, questaoResponse.getPergunta());
 
-        TipoRespostaResponse tipoRespostaResponse = questaoResponse.getRespostas().get(0);
+        AlternativaRespostaResponse tipoRespostaResponse = questaoResponse.getRespostas().get(0);
         assertEquals(tipoRespostaId, tipoRespostaResponse.getId());
         assertEquals(novaResposta, tipoRespostaResponse.getResposta());
     }
@@ -432,8 +432,8 @@ public class ModeloServiceTest {
         questaoEditRequest.setObjetiva(false);
         questaoEditRequests.add(questaoEditRequest);
 
-        List<TipoRespostaEditRequest> tipoRespostaEditRequests = new ArrayList<>();
-        TipoRespostaEditRequest tipoRespostaEditRequest = new TipoRespostaEditRequest();
+        List<AlternativaRespostaEditRequest> tipoRespostaEditRequests = new ArrayList<>();
+        AlternativaRespostaEditRequest tipoRespostaEditRequest = new AlternativaRespostaEditRequest();
         tipoRespostaEditRequest.setId(tipoRespostaId);
         tipoRespostaEditRequest.setAcao("delete");
         tipoRespostaEditRequests.add(tipoRespostaEditRequest);

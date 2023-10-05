@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Tag(name = "Interface Repositório de Usuário")
 public interface UsuarioRepositorio extends JpaRepository<Usuario, Integer> {
-  @Operation(summary = "Encontra Usuário pelo nome")
+  @Operation(summary = "Encontra usuário pelo nome")
   public Optional<Usuario> findByNome(String nome);
 
   @Operation(summary = "Encontra todos os Usuário pelo nome")

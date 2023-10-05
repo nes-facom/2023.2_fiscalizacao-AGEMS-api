@@ -10,7 +10,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.TipoRespostaRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import org.apache.commons.collections4.IterableUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class TipoRespostaRepositorioTest {
   private ModeloRepositorio modeloRepositorio;
 
   @Autowired
-  private TipoRespostaRepositorio tipoRespostaRepositorio;
+  private AlternativaRespostaRepositorio tipoRespostaRepositorio;
 
   @Autowired
   private QuestaoRepositorio questaoRepositorio;

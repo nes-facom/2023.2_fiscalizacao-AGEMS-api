@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,21 +17,21 @@ public class ModeloEditRequestTest {
   public void testModeloEditRequest() {
     int id = 1;
     String modeloNome = "Modelo 01";
-    List<TipoRespostaEditRequest> tipoRespostas = Arrays.asList(
-      new TipoRespostaEditRequest("edit", 1, "Tipo 1"),
-      new TipoRespostaEditRequest("edit", 2, "Tipo 2"),
-      new TipoRespostaEditRequest("edit", 3, "Tipo 3")
+    List<AlternativaRespostaEditRequest> tipoRespostas = Arrays.asList(
+      new AlternativaRespostaEditRequest("edit", 1, "Tipo 1"),
+      new AlternativaRespostaEditRequest("edit", 2, "Tipo 2"),
+      new AlternativaRespostaEditRequest("edit", 3, "Tipo 3")
     );
 
-    List<TipoRespostaEditRequest> tipoRespostas2 = Arrays.asList(
-      new TipoRespostaEditRequest("edit", 4, "Tipo 1"),
-      new TipoRespostaEditRequest("edit", 5, "Tipo 2"),
-      new TipoRespostaEditRequest("edit", 6, "Tipo 3")
+    List<AlternativaRespostaEditRequest> tipoRespostas2 = Arrays.asList(
+      new AlternativaRespostaEditRequest("edit", 4, "Tipo 1"),
+      new AlternativaRespostaEditRequest("edit", 5, "Tipo 2"),
+      new AlternativaRespostaEditRequest("edit", 6, "Tipo 3")
     );
-    List<TipoRespostaEditRequest> tipoRespostas3 = Arrays.asList(
-      new TipoRespostaEditRequest("edit", 7, "Tipo 1"),
-      new TipoRespostaEditRequest("edit", 8, "Tipo 2"),
-      new TipoRespostaEditRequest("edit", 9, "Tipo 3")
+    List<AlternativaRespostaEditRequest> tipoRespostas3 = Arrays.asList(
+      new AlternativaRespostaEditRequest("edit", 7, "Tipo 1"),
+      new AlternativaRespostaEditRequest("edit", 8, "Tipo 2"),
+      new AlternativaRespostaEditRequest("edit", 9, "Tipo 3")
     );
     List<QuestaoEditRequest> questoes = Arrays.asList(
       new QuestaoEditRequest(

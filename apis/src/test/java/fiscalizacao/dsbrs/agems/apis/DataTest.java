@@ -24,8 +24,8 @@ import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.RespostaEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.RespostaRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaEditRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.UsuarioEditRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
@@ -42,7 +42,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.responses.RespostaResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.TipoRespostaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.UsuarioFormResponse;
 import jakarta.annotation.Nonnull;
@@ -151,7 +151,7 @@ public class DataTest {
       .withIgnoredAnnotations(Nonnull.class)
       .verify();
     EqualsVerifier
-      .forClass(TipoRespostaRegisterRequest.class)
+      .forClass(AlternativaRespostaRegisterRequest.class)
       .withRedefinedSuperclass()
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
@@ -159,7 +159,7 @@ public class DataTest {
       .verify();
 
     EqualsVerifier
-      .forClass(TipoRespostaEditRequest.class)
+      .forClass(AlternativaRespostaEditRequest.class)
       .withRedefinedSuperclass()
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
@@ -283,7 +283,7 @@ public class DataTest {
       .withIgnoredAnnotations(Nonnull.class)
       .verify();
     EqualsVerifier
-      .forClass(TipoRespostaResponse.class)
+      .forClass(AlternativaRespostaResponse.class)
       .withRedefinedSuperclass()
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)

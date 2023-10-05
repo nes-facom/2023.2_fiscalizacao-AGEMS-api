@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TipoRespostaResponse {
+public class AlternativaRespostaResponse {
 
   @Schema(
     title = "Id",

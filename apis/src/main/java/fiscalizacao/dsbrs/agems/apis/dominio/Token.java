@@ -37,7 +37,7 @@ public class Token {
 
   @Schema(
     title = "Id",
-    description = "Id de Token, autogerável no Banco",
+    description = "Id de Token, autogerável no banco",
     required = true,
     format = "number",
     type = "integer",
@@ -93,12 +93,4 @@ public class Token {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_Usuario")
   private Usuario usuario;
-
-  public boolean isExpired() {
-    return expired;
-  }
-
-  public boolean isRevoked() {
-    return revoked;
-  }
 }

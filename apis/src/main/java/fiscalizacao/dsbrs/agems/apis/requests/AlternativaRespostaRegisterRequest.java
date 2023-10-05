@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TipoRespostaRegisterRequest {
+public class AlternativaRespostaRegisterRequest {
 
   @Schema(title = "Resposta",
     description = "Um tipo de resposta da questão em questão",

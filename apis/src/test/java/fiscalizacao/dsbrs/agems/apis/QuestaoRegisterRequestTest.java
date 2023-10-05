@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -45,9 +45,9 @@ public class QuestaoRegisterRequestTest {
 
     @Test
     public void testGetTipoRespostas() {
-        TipoRespostaRegisterRequest resposta1 = TipoRespostaRegisterRequest.builder().build();
-        TipoRespostaRegisterRequest resposta2 = TipoRespostaRegisterRequest.builder().build();
-        List<TipoRespostaRegisterRequest> tipoRespostas = Arrays.asList(resposta1, resposta2);
+        AlternativaRespostaRegisterRequest resposta1 = AlternativaRespostaRegisterRequest.builder().build();
+        AlternativaRespostaRegisterRequest resposta2 = AlternativaRespostaRegisterRequest.builder().build();
+        List<AlternativaRespostaRegisterRequest> tipoRespostas = Arrays.asList(resposta1, resposta2);
         QuestaoRegisterRequest request = QuestaoRegisterRequest.builder()
                 .tipoRespostas(tipoRespostas)
                 .build();

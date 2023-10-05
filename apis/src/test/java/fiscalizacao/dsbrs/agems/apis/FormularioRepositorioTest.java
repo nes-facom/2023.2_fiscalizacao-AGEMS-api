@@ -12,7 +12,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
 import fiscalizacao.dsbrs.agems.apis.repositorio.FormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.TipoRespostaRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import java.time.LocalDate;
@@ -47,7 +47,7 @@ public class FormularioRepositorioTest {
   private UnidadeRepositorio unidadeRepositorio;
 
   @Autowired
-  private TipoRespostaRepositorio tipoRespostaRepositorio;
+  private AlternativaRespostaRepositorio tipoRespostaRepositorio;
 
   private Usuario usuarioSalvo;
   private Modelo modeloSalvo;

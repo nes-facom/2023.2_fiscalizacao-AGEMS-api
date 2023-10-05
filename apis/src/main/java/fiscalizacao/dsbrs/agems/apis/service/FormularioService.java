@@ -1,23 +1,29 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Formulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.Imagem;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.Resposta;
-import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
 import fiscalizacao.dsbrs.agems.apis.repositorio.FormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ImagemRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.RespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.FormularioRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.FormularioRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.RespostaRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResponse;
@@ -27,14 +33,10 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloFormResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.responses.RespostaResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.TipoRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.UsuarioFormResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -46,13 +48,14 @@ public class FormularioService {
 
   private final ModeloRepositorio MODELO_REPOSITORIO;
 
-  private final QuestaoRepositorio QUESTAO_REPOSITORIO;
+  private final QuestaoModeloRepositorio QUESTAO_MODELO_REPOSITORIO;
 
   private final RespostaRepositorio RESPOSTA_REPOSITORIO;
 
   private final UnidadeRepositorio UNIDADE_REPOSITORIO;
 
   private final ImagemRepositorio IMAGEM_REPOSITORIO;
+  
   private List<Questao> questoes;
   private List<Imagem> imagens;
   private FormularioResponse formularioResponse;
@@ -119,8 +122,7 @@ public class FormularioService {
         .build();
     }
     formulario = new Formulario();
-    formulario.setUsuario(usuario);
-    formulario.setModelo(modelo);
+    formulario.setUsuarioCriacao(usuario);
     formulario.setUnidade(unidade);
     formulario.setDate();
     if (
@@ -134,10 +136,10 @@ public class FormularioService {
     }
 
     questoes =
-      MODELO_REPOSITORIO
+      QUESTAO_MODELO_REPOSITORIO
         .findById(novoFormulario.getModelo())
         .get()
-        .getPerguntas();
+        .getQuestoes();
     if (questoes.size() != novoFormulario.getRespostas().size()) {
       return ErroResponse
         .builder()
@@ -181,14 +183,7 @@ public class FormularioService {
             imagem.setImagem(
               novoFormulario.getImagens().get(numImagem).getImagem()
             );
-            imagem.setDate();
-            imagem.setQuestao(
-              QUESTAO_REPOSITORIO
-                .findById(
-                  novoFormulario.getImagens().get(numImagem).getQuestao()
-                )
-                .get()
-            );
+            imagem.setDataCriacao();
             Imagem newImagem = IMAGEM_REPOSITORIO.save(imagem);
             imagemResponse =
               ImagemResponse
@@ -196,7 +191,6 @@ public class FormularioService {
                 .id(newImagem.getId())
                 .formulario(newForm.getId())
                 .imagem(imagem.getImagem())
-                .questao(imagem.getQuestao().getId())
                 .build();
             imagensResponses.add(imagemResponse);
           }
@@ -209,21 +203,21 @@ public class FormularioService {
           Resposta resposta = new Resposta();
           resposta.setFormulario(formulario);
           resposta.setQuestao(questoes.get(questao));
-          List<TipoRespostaResponse> responsetipoRespostas = new ArrayList<>();
+          List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
 
-          List<TipoResposta> tipoRespostas = questoes
+          List<AlternativaResposta> AlternativaRespostas = questoes
             .get(questao)
             .getRespostas();
 
-          for (TipoResposta tipoRes : tipoRespostas) {
-            TipoRespostaResponse responseTipo = TipoRespostaResponse
+          for (AlternativaResposta tipoRes : AlternativaRespostas) {
+            AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
               .builder()
               .id(tipoRes.getId())
               .resposta(tipoRes.getResposta())
               .idQuestao(tipoRes.getQuestao().getId())
               .build();
 
-            responsetipoRespostas.add(responseTipo);
+            responseAlternativaRespostas.add(responseTipo);
           }
           questaoResponse =
             QuestaoResponse
@@ -233,7 +227,7 @@ public class FormularioService {
               .idModelo(questoes.get(questao).getModelo().getId())
               .portaria(questoes.get(questao).getPortaria())
               .objetiva(questoes.get(questao).isObjetiva())
-              .respostas(responsetipoRespostas)
+              .respostas(responseAlternativaRespostas)
               .build();
           responsesQuestao.add(questaoResponse);
           resposta.setResposta(
@@ -290,9 +284,7 @@ public class FormularioService {
   ) {
     Usuario usuario = extrairUsuarioEmailHeader(request);
     List<FormularioResumoResponse> responsesFormulario = new ArrayList<>();
-    List<Formulario> formularios = FORMULARIO_REPOSITORIO.findByUsuario(
-      usuario
-    );
+    Iterable<Formulario> formularios = FORMULARIO_REPOSITORIO.findAll();
     for (Formulario formulario : formularios) {
       formularioResumoResponse =
         FormularioResumoResponse.builder().id(formulario.getId()).build();
@@ -373,19 +365,19 @@ public class FormularioService {
         .idUnidade(formulario.getUnidade().getIdUnidade())
         .build();
     for (Questao questao : modelo.getPerguntas()) {
-      List<TipoRespostaResponse> responsetipoRespostas = new ArrayList<>();
+      List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
 
-      List<TipoResposta> tipoRespostas = questao.getRespostas();
+      List<AlternativaResposta> AlternativaRespostas = questao.getRespostas();
 
-      for (TipoResposta tipoRes : tipoRespostas) {
-        TipoRespostaResponse responseTipo = TipoRespostaResponse
+      for (AlternativaResposta tipoRes : AlternativaRespostas) {
+        AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
           .builder()
           .id(tipoRes.getId())
           .resposta(tipoRes.getResposta())
           .idQuestao(tipoRes.getQuestao().getId())
           .build();
 
-        responsetipoRespostas.add(responseTipo);
+        responseAlternativaRespostas.add(responseTipo);
       }
       questaoResponse =
         QuestaoResponse
@@ -395,7 +387,7 @@ public class FormularioService {
           .idModelo(questao.getModelo().getId())
           .portaria(questao.getPortaria())
           .objetiva(questao.isObjetiva())
-          .respostas(responsetipoRespostas)
+          .respostas(responseAlternativaRespostas)
           .build();
       responsesQuestao.add(questaoResponse);
     }
@@ -504,19 +496,19 @@ public class FormularioService {
         .build();
 
     for (Questao questao : modelo.getPerguntas()) {
-      List<TipoRespostaResponse> responsetipoRespostas = new ArrayList<>();
+      List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
 
-      List<TipoResposta> tipoRespostas = questao.getRespostas();
+      List<AlternativaResposta> AlternativaRespostas = questao.getRespostas();
 
-      for (TipoResposta tipoRes : tipoRespostas) {
-        TipoRespostaResponse responseTipo = TipoRespostaResponse
+      for (AlternativaResposta tipoRes : AlternativaRespostas) {
+        AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
           .builder()
           .id(tipoRes.getId())
           .resposta(tipoRes.getResposta())
           .idQuestao(tipoRes.getQuestao().getId())
           .build();
 
-        responsetipoRespostas.add(responseTipo);
+        responseAlternativaRespostas.add(responseTipo);
       }
       questaoResponse =
         QuestaoResponse
@@ -526,7 +518,7 @@ public class FormularioService {
           .idModelo(questao.getModelo().getId())
           .portaria(questao.getPortaria())
           .objetiva(questao.isObjetiva())
-          .respostas(responsetipoRespostas)
+          .respostas(responseAlternativaRespostas)
           .build();
       responsesQuestao.add(questaoResponse);
     }
@@ -678,19 +670,19 @@ public class FormularioService {
           .idUnidade(formulario.getUnidade().getIdUnidade())
           .build();
       for (Questao questao : modelo.getPerguntas()) {
-        List<TipoRespostaResponse> responsetipoRespostas = new ArrayList<>();
+        List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
 
-        List<TipoResposta> tipoRespostas = questao.getRespostas();
+        List<AlternativaResposta> AlternativaRespostas = questao.getRespostas();
 
-        for (TipoResposta tipoRes : tipoRespostas) {
-          TipoRespostaResponse responseTipo = TipoRespostaResponse
+        for (AlternativaResposta tipoRes : AlternativaRespostas) {
+          AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
             .builder()
             .id(tipoRes.getId())
             .resposta(tipoRes.getResposta())
             .idQuestao(tipoRes.getQuestao().getId())
             .build();
 
-          responsetipoRespostas.add(responseTipo);
+          responseAlternativaRespostas.add(responseTipo);
         }
         questaoResponse =
           QuestaoResponse
@@ -700,7 +692,7 @@ public class FormularioService {
             .idModelo(questao.getModelo().getId())
             .portaria(questao.getPortaria())
             .objetiva(questao.isObjetiva())
-            .respostas(responsetipoRespostas)
+            .respostas(responseAlternativaRespostas)
             .build();
         responsesQuestao.add(questaoResponse);
       }
