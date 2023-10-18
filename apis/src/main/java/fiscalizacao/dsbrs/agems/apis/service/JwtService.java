@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -147,7 +148,7 @@ public class JwtService {
       .senha(CODIFICADOR_SENHA.encode(request.getSenha()))
       .cargo(request.getCARGOS(request.getCargo()))
       .funcao(Papel.USER)
-      .dataCriacao(LocalDate.now())
+      .dataCriacao(LocalDateTime.now())
       .build();
 
     Usuario usuarioSalvo = REPOSITORIO_USUARIO.save(usuario);

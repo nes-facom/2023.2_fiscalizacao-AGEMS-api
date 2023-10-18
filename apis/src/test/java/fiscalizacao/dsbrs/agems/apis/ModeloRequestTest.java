@@ -15,7 +15,7 @@ public class ModeloRequestTest {
 
     ModeloRequest modeloRequest = new ModeloRequest();
     modeloRequest.setId(id);
-    modeloRequest.setModeloNome(modeloNome);
+    modeloRequest.setNome(modeloNome);
 
     Assertions.assertEquals(id, modeloRequest.getId());
     Assertions.assertEquals(modeloNome, modeloRequest.getModeloNome());

@@ -122,7 +122,7 @@ public class FormularioTest {
     assertEquals(formulario.getDataCriacao(), null);
 
     Modelo modeloNovo = new Modelo();
-    modeloNovo.setModeloNome("Modelo 1");
+    modeloNovo.setNome("Modelo 1");
     modeloNovo.setPerguntas(new ArrayList<>());
     assertFalse(modeloNovo.equals(modelo));
     assertFalse(modelo.equals(null));

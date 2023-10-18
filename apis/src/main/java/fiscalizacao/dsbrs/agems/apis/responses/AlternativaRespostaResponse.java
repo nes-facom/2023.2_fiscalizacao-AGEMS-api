@@ -35,8 +35,8 @@ public class AlternativaRespostaResponse {
     type = "string",
     example = "Sim"
   )
-  @JsonProperty("resposta")
-  private String resposta;
+  @JsonProperty("descricao")
+  private String descricao;
 
   @Schema(
     title = "Questão",

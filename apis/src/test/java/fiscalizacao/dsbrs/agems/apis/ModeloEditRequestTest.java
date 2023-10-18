@@ -62,7 +62,7 @@ public class ModeloEditRequestTest {
 
     ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
     modeloEditRequest.setId(id);
-    modeloEditRequest.setModeloNome(modeloNome);
+    modeloEditRequest.setNome(modeloNome);
     modeloEditRequest.setQuestoes(questoes);
 
     Assertions.assertEquals(id, modeloEditRequest.getId());

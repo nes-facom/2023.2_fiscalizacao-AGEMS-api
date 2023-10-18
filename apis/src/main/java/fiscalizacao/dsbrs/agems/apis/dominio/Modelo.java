@@ -16,9 +16,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Data;
 
 @Schema(title = "Modelo", description = "Objeto de Modelo")
 @Entity
+@Data
 @Table(name = "modelo")
 public class Modelo {
   @Schema(

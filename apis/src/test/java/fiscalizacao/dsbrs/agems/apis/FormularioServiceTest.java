@@ -278,7 +278,7 @@ public class FormularioServiceTest {
 
     Modelo modelo = new Modelo();
     modelo.setId(1);
-    modelo.setModeloNome("Modelo 1");
+    modelo.setNome("Modelo 1");
     List<Questao> questoes = new ArrayList<>();
     Questao q1 = new Questao();
     q1.setModelo(modelo);

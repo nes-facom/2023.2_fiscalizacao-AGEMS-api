@@ -1,34 +1,40 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
-import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
+import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.chaves.QuestaoModeloKey;
+import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ModeloService {
 
   private final ModeloRepositorio MODELO_REPOSITORIO;
-  private final QuestaoModeloRepositorio QUESTAO_REPOSITORIO;
-  private final AlternativaRespostaRepositorio TIPO_RESPOSTA_REPOSITORIO;
+  private final QuestaoRepositorio QUESTAO_REPOSITORIO;
+  private final QuestaoModeloRepositorio QUESTAO_MODELO_REPOSITORIO;
+  private final AlternativaRespostaRepositorio ALTERNATIVA_RESPOSTA_REPOSITORIO;
 
   private ModeloResponse modeloResponse;
 
@@ -37,7 +43,7 @@ public class ModeloService {
 
     Modelo modelo = new Modelo();
 
-    modelo.setModeloNome(novoModelo.getModelo());
+    modelo.setNome(novoModelo.getNome());
     Modelo newModelo = MODELO_REPOSITORIO.save(modelo);
 
     for (QuestaoRegisterRequest questaoRegister : novoModelo.getQuestoes()) {
@@ -46,34 +52,39 @@ public class ModeloService {
       questao.setPergunta(questaoRegister.getPergunta());
       questao.setPortaria(questaoRegister.getPortaria());
       questao.setObjetiva(questaoRegister.getObjetiva());
-      questao.setModelo(newModelo);
+      
       Questao newQuestao = QUESTAO_REPOSITORIO.save(questao);
 
+      QuestaoModelo modeloQuestao = new QuestaoModelo();
+      modeloQuestao.setModelo(newModelo);
+      modeloQuestao.setQuestao(newQuestao);
+      
+      QuestaoModelo newQuestaoModelo = QUESTAO_MODELO_REPOSITORIO.save(modeloQuestao);
+      
       List<AlternativaRespostaResponse> responsesAlternativaRespostas = new ArrayList<>();
-      for (AlternativaRespostaRegisterRequest AlternativaRespostaRegister : questaoRegister.getAlternativaRespostas()) {
-        AlternativaResposta AlternativaResposta = new AlternativaResposta();
+      for (AlternativaRespostaRegisterRequest alternativaRespostaRegister : questaoRegister.getAlternativaRespostas()) {
+        AlternativaResposta alternativaResposta = new AlternativaResposta();
 
-        AlternativaResposta.setResposta(AlternativaRespostaRegister.getResposta());
-        AlternativaResposta.setQuestao(newQuestao);
+        alternativaResposta.setDescricao(alternativaRespostaRegister.getDescricao());
+        alternativaResposta.setQuestao(newQuestao);
 
-        AlternativaResposta newAlternativaResposta = TIPO_RESPOSTA_REPOSITORIO.save(
-          AlternativaResposta
+        AlternativaResposta newAlternativaResposta = ALTERNATIVA_RESPOSTA_REPOSITORIO.save(
+          alternativaResposta
         );
 
-        AlternativaRespostaResponse AlternativaRespostaResponse = AlternativaRespostaResponse
+        AlternativaRespostaResponse alternativaRespostaResponse = AlternativaRespostaResponse
           .builder()
           .idQuestao(newQuestao.getId())
           .id(newAlternativaResposta.getId())
-          .resposta(newAlternativaResposta.getResposta())
+          .descricao(newAlternativaResposta.getDescricao())
           .build();
 
-        responsesAlternativaRespostas.add(AlternativaRespostaResponse);
+        responsesAlternativaRespostas.add(alternativaRespostaResponse);
       }
 
       QuestaoResponse questaoResponse = QuestaoResponse
         .builder()
         .id(questao.getId())
-        .idModelo(newModelo.getId())
         .pergunta(questao.getPergunta())
         .portaria(questao.getPortaria())
         .objetiva(questao.isObjetiva())
@@ -82,11 +93,12 @@ public class ModeloService {
 
       responsesQuestao.add(questaoResponse);
     }
+    
     modeloResponse =
       ModeloResponse
         .builder()
         .id(newModelo.getId())
-        .nome(newModelo.getModeloNome())
+        .nome(newModelo.getNome())
         .questoes(responsesQuestao)
         .build();
 
@@ -100,7 +112,7 @@ public class ModeloService {
         ModeloResponse
           .builder()
           .id(modelo.getId())
-          .nome(modelo.getModeloNome())
+          .nome(modelo.getNome())
           .build();
 
       MODELO_REPOSITORIO.delete(modelo);
@@ -121,31 +133,38 @@ public class ModeloService {
     for (Modelo modelo : modelos) {
       ModeloListResponse response = new ModeloListResponse();
       response.setId(modelo.getId());
-      response.setNome(modelo.getModeloNome());
+      response.setNome(modelo.getNome());
 
       responsesModelo.add(response);
     }
     return responsesModelo;
   }
 
-  public ModeloResponse verModelo(int pedido) {
-    Modelo modelo = MODELO_REPOSITORIO.findById(pedido).orElse(null);
+  public ModeloResponse verModelo(int idModelo) {
+	  
+    Modelo modelo = MODELO_REPOSITORIO.findById(idModelo).orElse(null);
 
     if (modelo != null) {
+    	
       List<QuestaoResponse> responseQuestoes = new ArrayList<>();
 
-      List<Questao> questoes = modelo.getPerguntas();
+      List<QuestaoModelo> questoesModelo = modelo.getQuestoes();
 
-      for (Questao questao : questoes) {
+      for (QuestaoModelo questaoModelo : questoesModelo) {
+    	
+    	Questao questao = questaoModelo.getQuestao();
+    			
         List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
+        
+        Questao questaoAux = new Questao();
+        
+        List<AlternativaResposta> alternativaRespostas = questao.getAlternativasResposta();
 
-        List<AlternativaResposta> AlternativaRespostas = questao.getRespostas();
-
-        for (AlternativaResposta tipoRes : AlternativaRespostas) {
+        for (AlternativaResposta tipoRes : alternativaRespostas) {
           AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
             .builder()
             .id(tipoRes.getId())
-            .resposta(tipoRes.getResposta())
+            .descricao(tipoRes.getDescricao())
             .idQuestao(tipoRes.getQuestao().getId())
             .build();
 
@@ -155,7 +174,6 @@ public class ModeloService {
         QuestaoResponse responseQuest = QuestaoResponse
           .builder()
           .id(questao.getId())
-          .idModelo(questao.getModelo().getId())
           .pergunta(questao.getPergunta())
           .objetiva(questao.isObjetiva())
           .portaria(questao.getPortaria())
@@ -168,56 +186,64 @@ public class ModeloService {
       return ModeloResponse
         .builder()
         .id(modelo.getId())
-        .nome(modelo.getModeloNome())
+        .nome(modelo.getNome())
         .questoes(responseQuestoes)
         .build();
     }
     return null;
   }
 
-  public ModeloAcaoResponse editaModelo(ModeloEditRequest pedido) {
-    Modelo modelo = MODELO_REPOSITORIO.findById(pedido.getId()).orElse(null);
+  public ModeloAcaoResponse editaModelo(ModeloEditRequest modeloEditRequest) {
+	
+    Modelo modelo = MODELO_REPOSITORIO.findById(modeloEditRequest.getId()).orElse(null);
+    
     if (modelo != null) {
-      modelo.setModeloNome(pedido.getModeloNome());
+    	
+      modelo.setNome(modeloEditRequest.getModeloNome());
 
-      List<QuestaoEditRequest> questaoEditRequests = pedido.getQuestoes();
+      List<QuestaoEditRequest> questaoEditRequests = modeloEditRequest.getQuestoes();
       List<QuestaoResponse> responsesQuestao = new ArrayList<>();
+      
       for (QuestaoEditRequest questEdit : questaoEditRequests) {
         if (questEdit.getAcao().equalsIgnoreCase("delete")) {
+        	
           Questao questao = QUESTAO_REPOSITORIO
             .findById(questEdit.getId())
             .orElse(null);
 
           QUESTAO_REPOSITORIO.delete(questao);
+          
         } else if (questEdit.getAcao().equalsIgnoreCase("edit")) {
+        	
           Questao questao = QUESTAO_REPOSITORIO
             .findById(questEdit.getId())
             .orElse(null);
 
           if (questao != null) {
-            List<AlternativaRespostaEditRequest> pedidosAlternativaResposta = questEdit.getAlternativaRespostas();
-
+        	  
+            List<AlternativaRespostaEditRequest> pedidosAlternativaResposta = questEdit.getAlternativasResposta();
             List<AlternativaRespostaResponse> responsesAlternativaRespostas = new ArrayList<>();
+            
             for (AlternativaRespostaEditRequest tipoEdit : pedidosAlternativaResposta) {
-              AlternativaResposta AlternativaResposta = TIPO_RESPOSTA_REPOSITORIO
+              AlternativaResposta AlternativaResposta = ALTERNATIVA_RESPOSTA_REPOSITORIO
                 .findById(tipoEdit.getId())
                 .orElse(null);
 
               if (tipoEdit.getAcao().equalsIgnoreCase("delete")) {
-                TIPO_RESPOSTA_REPOSITORIO.delete(AlternativaResposta);
+                ALTERNATIVA_RESPOSTA_REPOSITORIO.delete(AlternativaResposta);
               } else if (tipoEdit.getAcao().equalsIgnoreCase("edit")) {
                 if (AlternativaResposta != null) {
-                  AlternativaResposta.setResposta(tipoEdit.getResposta());
+                  AlternativaResposta.setDescricao(tipoEdit.getResposta());
 
-                  TIPO_RESPOSTA_REPOSITORIO.save(AlternativaResposta);
+                  ALTERNATIVA_RESPOSTA_REPOSITORIO.save(AlternativaResposta);
 
-                  AlternativaRespostaResponse AlternativaRespostaResponse = AlternativaRespostaResponse
+                  AlternativaRespostaResponse alternativaRespostaResponse = AlternativaRespostaResponse
                     .builder()
                     .id(AlternativaResposta.getId())
-                    .resposta(AlternativaResposta.getResposta())
+                    .descricao(AlternativaResposta.getDescricao())
                     .build();
 
-                  responsesAlternativaRespostas.add(AlternativaRespostaResponse);
+                  responsesAlternativaRespostas.add(alternativaRespostaResponse);
                 }
               }
             }
@@ -230,7 +256,7 @@ public class ModeloService {
 
             QuestaoResponse questaoResponse = QuestaoResponse
               .builder()
-              .id(pedido.getId())
+              .id(modeloEditRequest.getId())
               .pergunta(questao.getPergunta())
               .portaria(questEdit.getPortaria())
               .objetiva(questEdit.getObjetiva())
@@ -247,7 +273,7 @@ public class ModeloService {
       ModeloResponse moldResponse = ModeloResponse
         .builder()
         .id(modelo.getId())
-        .nome(modelo.getModeloNome())
+        .nome(modelo.getNome())
         .questoes(responsesQuestao)
         .build();
 

@@ -49,7 +49,7 @@ public class ModeloController {
   public ResponseEntity<?> adicionaModelo(
       @RequestBody ModeloRegisterRequest novoModelo) {
     try {
-      if (novoModelo.getModelo().length() == 0) {
+      if (novoModelo.getNome().length() == 0) {
         return ResponseEntity
             .badRequest()
             .body(
@@ -76,6 +76,7 @@ public class ModeloController {
                   .erro("Bad Request:" + e.getMessage())
                   .build());
     } catch (RuntimeException e) {
+    	e.printStackTrace();
       return ResponseEntity
           .status(500)
           .body(

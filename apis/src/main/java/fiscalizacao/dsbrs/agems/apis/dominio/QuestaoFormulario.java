@@ -41,7 +41,7 @@ public class QuestaoFormulario {
     type = "integer"
   )
   @ManyToOne(fetch = FetchType.EAGER, targetEntity = Questao.class)
-  @MapsId("questaoId")
+  @MapsId("idQuestao")
   @JoinColumn(name = "idQuestao")
   private Questao questao;
 
@@ -53,7 +53,32 @@ public class QuestaoFormulario {
     type = "integer"
   )
   @ManyToOne(fetch = FetchType.EAGER, targetEntity = Formulario.class)
-  @MapsId("formularioId")
+  @MapsId("idFormulario")
   @JoinColumn(name = "idFormulario")
   private Formulario formulario;
+  
+  public void setQuestao(Questao questao) {
+	  this.questao = questao;
+	  this.setKeyQuestao(questao == null ? null : questao.getId());
+  }
+  
+  public void setFormulario(Formulario formulario) {
+	  this.formulario = formulario;
+	  this.setKeyFormulario(formulario == null ? null : formulario.getId());
+  }
+  
+  private void setKeyQuestao(Integer questaoId) {
+    this.initializeKey();
+    this.id.setIdQuestao(questaoId);
+  }
+  
+  private void setKeyFormulario(Integer formularioId) {
+    this.initializeKey();
+    this.id.setIdFormulario(formularioId);
+  }
+  
+  private void initializeKey() {
+	  if(this.id == null)
+		  this.id = new QuestaoFormularioKey();
+  }
 }

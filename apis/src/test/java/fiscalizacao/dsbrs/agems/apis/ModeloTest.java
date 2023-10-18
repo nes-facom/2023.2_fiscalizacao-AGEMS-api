@@ -28,7 +28,7 @@ public class ModeloTest {
   @Test
   public void testGetandSetNome() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 1");
+    modelo.setNome("Modelo 1");
 
     assertEquals(modelo.getModeloNome(), "Modelo 1");
   }
@@ -37,7 +37,7 @@ public class ModeloTest {
   public void testGetandSetPerguntas() {
     Modelo modelo = new Modelo();
 
-    modelo.setModeloNome("Modelo 1");
+    modelo.setNome("Modelo 1");
 
     List<Questao> questoes = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class ModeloTest {
   @Test
   public void testGetId() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 1");
+    modelo.setNome("Modelo 1");
     Modelo modeloSalvo = modeloRepositorio.save(modelo);
 
     assertNotNull(modeloSalvo.getId());

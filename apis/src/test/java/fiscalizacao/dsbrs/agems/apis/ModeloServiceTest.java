@@ -103,7 +103,7 @@ public class ModeloServiceTest {
         int modeloId = 1;
         Modelo foundModelo = new Modelo();
         foundModelo.setId(modeloId);
-        foundModelo.setModeloNome("Test Modelo");
+        foundModelo.setNome("Test Modelo");
         foundModelo.setPerguntas(new ArrayList<>());
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(foundModelo));
@@ -186,12 +186,12 @@ public class ModeloServiceTest {
         List<Modelo> modelos = new ArrayList<>();
         Modelo modelo1 = new Modelo();
 
-        modelo1.setModeloNome("Modelo 1");
+        modelo1.setNome("Modelo 1");
         modelos.add(modelo1);
 
         Modelo modelo2 = new Modelo();
         modelo2.setId(2);
-        modelo2.setModeloNome("Modelo 2");
+        modelo2.setNome("Modelo 2");
         modelos.add(modelo2);
 
         when(modeloRepositorio.findAll()).thenReturn(modelos);
@@ -211,7 +211,7 @@ public class ModeloServiceTest {
         int modeloId = 1;
         Modelo modelo1 = new Modelo();
         modelo1.setId(modeloId);
-        modelo1.setModeloNome("modelo 1");
+        modelo1.setNome("modelo 1");
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(modelo1));
 
@@ -252,7 +252,7 @@ public class ModeloServiceTest {
         // Cria modelo
         Modelo modelo = new Modelo();
         modelo.setId(modeloId);
-        modelo.setModeloNome("Old Model");
+        modelo.setNome("Old Model");
 
         // Cria questão
         Questao questao = new Questao(questaoId);
@@ -294,7 +294,7 @@ public class ModeloServiceTest {
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
         modeloEditRequest.setId(modeloId);
-        modeloEditRequest.setModeloNome(novoModeloNome);
+        modeloEditRequest.setNome(novoModeloNome);
         modeloEditRequest.setQuestoes(questaoEditRequests);
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(modelo));
@@ -338,7 +338,7 @@ public class ModeloServiceTest {
         // Cria modelo
         Modelo modelo = new Modelo();
         modelo.setId(modeloId);
-        modelo.setModeloNome("Old Model");
+        modelo.setNome("Old Model");
 
         // Cria questão
         Questao questao = new Questao(questaoId);
@@ -369,7 +369,7 @@ public class ModeloServiceTest {
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
         modeloEditRequest.setId(modeloId);
-        modeloEditRequest.setModeloNome(novoModeloNome);
+        modeloEditRequest.setNome(novoModeloNome);
         modeloEditRequest.setQuestoes(questaoEditRequests);
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(modelo));
@@ -401,7 +401,7 @@ public class ModeloServiceTest {
         // Cria modelo
         Modelo modelo = new Modelo();
         modelo.setId(modeloId);
-        modelo.setModeloNome("Old Model");
+        modelo.setNome("Old Model");
 
         // Cria questão
         Questao questao = new Questao(questaoId);
@@ -443,7 +443,7 @@ public class ModeloServiceTest {
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
         modeloEditRequest.setId(modeloId);
-        modeloEditRequest.setModeloNome(novoModeloNome);
+        modeloEditRequest.setNome(novoModeloNome);
         modeloEditRequest.setQuestoes(questaoEditRequests);
 
         // Mock repository method calls

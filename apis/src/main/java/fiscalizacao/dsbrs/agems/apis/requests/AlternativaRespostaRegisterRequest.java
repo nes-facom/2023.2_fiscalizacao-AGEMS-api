@@ -19,5 +19,5 @@ public class AlternativaRespostaRegisterRequest {
     type = "string",
     example = "Sim"
   )
-  private String resposta;
+  private String descricao;
 }

@@ -72,7 +72,7 @@ public class Resposta {
     type = "integer"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
-  @JoinColumn(name = "idUsuariCriacao")
+  @JoinColumn(name = "idUsuarioCriacao")
   private Usuario usuarioCriacao;
 
   @Schema(

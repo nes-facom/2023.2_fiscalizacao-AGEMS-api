@@ -3,6 +3,7 @@ package fiscalizacao.dsbrs.agems.apis.dominio;
 import java.time.LocalDateTime;
 import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -85,8 +86,22 @@ public class Formulario {
     title = "Respostas do formulário",
     description = "Respostas associadas a um formulário"
   )
-  @OneToMany(mappedBy = "resposta", fetch = FetchType.LAZY ) 
+  @OneToMany(mappedBy = "formulario", fetch = FetchType.EAGER ) 
   private List<Resposta> respostas;
+
+  @Schema(
+    title = "Lista de questões",
+    description = "Questões associadas ao formulário",
+    required = true,
+    type = "array"
+  )
+  @OneToMany(
+    mappedBy = "formulario",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true,
+    fetch = FetchType.EAGER
+  )
+  private List<QuestaoFormulario> questoes;
   
   @Schema(
     title = "Imagens do formulário",

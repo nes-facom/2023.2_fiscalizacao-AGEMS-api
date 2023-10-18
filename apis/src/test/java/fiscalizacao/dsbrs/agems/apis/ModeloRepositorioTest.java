@@ -39,7 +39,7 @@ public class ModeloRepositorioTest {
   @Test
   public void testFindById() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("modelo1");
+    modelo.setNome("modelo1");
     Modelo modeloSalvo = modeloRepositorio.save(modelo);
     Modelo modeloRecuperado = modeloRepositorio
       .findById(modeloSalvo.getId())
@@ -51,7 +51,7 @@ public class ModeloRepositorioTest {
   @Test
   public void testSave() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("modelo1");
+    modelo.setNome("modelo1");
     Modelo modeloSalvo = modeloRepositorio.save(modelo);
 
     assertNotNull(modeloSalvo.getId());
@@ -60,10 +60,10 @@ public class ModeloRepositorioTest {
   @Test
   public void testUpdate() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("mdelo1");
+    modelo.setNome("mdelo1");
     Modelo modeloEdit = modeloRepositorio.save(modelo);
 
-    modeloEdit.setModeloNome("modelo1");
+    modeloEdit.setNome("modelo1");
     modeloRepositorio.save(modeloEdit);
     Modelo modeloSalvo = modeloRepositorio
       .findById(modeloEdit.getId())
@@ -75,7 +75,7 @@ public class ModeloRepositorioTest {
   @Test
   public void testDeleteByEntidade() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("modelo1");
+    modelo.setNome("modelo1");
     Modelo modeloSalvo = modeloRepositorio.save(modelo);
 
     modeloRepositorio.delete(modeloSalvo);
@@ -85,7 +85,7 @@ public class ModeloRepositorioTest {
   @Test
   public void testDeleteById() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("modelo1");
+    modelo.setNome("modelo1");
     Modelo modeloSalvo = modeloRepositorio.save(modelo);
 
     modeloRepositorio.deleteById(modeloSalvo.getId());
@@ -95,13 +95,13 @@ public class ModeloRepositorioTest {
   @Test
   public void testFindAll() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("modelo1");
+    modelo.setNome("modelo1");
     modeloRepositorio.save(modelo);
     Modelo modelo2 = new Modelo();
-    modelo2.setModeloNome("modelo2");
+    modelo2.setNome("modelo2");
     modeloRepositorio.save(modelo2);
     Modelo modelo3 = new Modelo();
-    modelo3.setModeloNome("modelo3");
+    modelo3.setNome("modelo3");
     modeloRepositorio.save(modelo3);
 
     Iterable<Modelo> modelos = modeloRepositorio.findAll();
@@ -111,7 +111,7 @@ public class ModeloRepositorioTest {
   @Test
   public void testDeletCascade() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("modelo1");
+    modelo.setNome("modelo1");
     Modelo modeloSalvo = modeloRepositorio.save(modelo);
 
     List<Questao> questoes = new ArrayList<>();

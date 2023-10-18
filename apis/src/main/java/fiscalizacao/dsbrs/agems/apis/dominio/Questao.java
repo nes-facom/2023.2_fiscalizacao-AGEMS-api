@@ -14,10 +14,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Data
 @Table(name = "questao")
 public class Questao {
 
@@ -88,6 +91,33 @@ public class Questao {
     fetch = FetchType.LAZY
   )
   private List<QuestaoModelo> modelos;
+  
+  @Schema(
+    title = "Lista de formulários",
+    description = "Formulários associados a uma questão",
+    required = true,
+    type = "array"
+  )
+  @OneToMany(
+    mappedBy = "questao",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true,
+    fetch = FetchType.LAZY
+  )
+  private List<QuestaoFormulario> formularios;
+
+  @Schema(
+    title = "Alternativas da questão",
+    description = "Alternativas associadas a uma questão",
+    required = true,	
+    type = "array"
+  )
+  @OneToMany(
+	fetch = FetchType.LAZY,
+	cascade = CascadeType.ALL,
+  	mappedBy = "questao"
+  )
+  private List<AlternativaResposta> alternativasResposta;
   
   @Schema(
     title = "Respostas da questão",

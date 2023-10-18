@@ -81,7 +81,7 @@ public class FormularioRepositorioTest {
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(2,usuarioSalvo.getId());
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 01");
+    modelo.setNome("Modelo 01");
     modeloSalvo = modeloRepositorio.save(modelo);
 
     List<Questao> questoes = new ArrayList<>();
@@ -175,7 +175,7 @@ public class FormularioRepositorioTest {
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(5,usuarioSalvo.getId());
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 01");
+    modelo.setNome("Modelo 01");
     modeloSalvo = modeloRepositorio.save(modelo);
 
     List<Questao> questoes = new ArrayList<>();
@@ -307,7 +307,7 @@ public class FormularioRepositorioTest {
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(3,usuarioSalvo.getId());
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 01");
+    modelo.setNome("Modelo 01");
     modeloSalvo = modeloRepositorio.save(modelo);
 
     List<Questao> questoes = new ArrayList<>();
@@ -436,7 +436,7 @@ public class FormularioRepositorioTest {
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(4,usuarioSalvo.getId());
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 01");
+    modelo.setNome("Modelo 01");
     modeloSalvo = modeloRepositorio.save(modelo);
 
     List<Questao> questoes = new ArrayList<>();
@@ -564,7 +564,7 @@ public class FormularioRepositorioTest {
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(1,usuarioSalvo.getId());
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 01");
+    modelo.setNome("Modelo 01");
     modeloSalvo = modeloRepositorio.save(modelo);
 
     List<Questao> questoes = new ArrayList<>();

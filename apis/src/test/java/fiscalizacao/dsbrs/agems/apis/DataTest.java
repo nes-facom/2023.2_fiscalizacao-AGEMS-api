@@ -399,7 +399,7 @@ public class DataTest {
       .withIgnoredAnnotations(Nonnull.class)
       .verify();
     Modelo modelo1 = new Modelo();
-    modelo1.setModeloNome("Modelo 1");
+    modelo1.setNome("Modelo 1");
     List<Questao> questoes1 = new ArrayList<>();
 
     Questao questao1 = new Questao();
@@ -410,7 +410,7 @@ public class DataTest {
 
     modelo1.setPerguntas(questoes1);
     Modelo modelo2 = new Modelo();
-    modelo2.setModeloNome("Modelo 1");
+    modelo2.setNome("Modelo 1");
     List<Questao> questoes2 = new ArrayList<>();
 
     

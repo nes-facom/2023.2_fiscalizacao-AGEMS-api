@@ -41,8 +41,8 @@ public class QuestaoModelo {
     type = "integer"
   )
   @ManyToOne(fetch = FetchType.EAGER, targetEntity = Questao.class)
-  @MapsId("questaoId")
-  @JoinColumn(name = "idQuestao")
+  @MapsId("idQuestao")
+  @JoinColumn(name = "id_questao")
   private Questao questao;
 
   @Schema(
@@ -53,7 +53,32 @@ public class QuestaoModelo {
     type = "integer"
   )
   @ManyToOne(fetch = FetchType.EAGER, targetEntity = Modelo.class)
-  @MapsId("modeloId")
-  @JoinColumn(name = "idModelo")
+  @MapsId("idModelo")
+  @JoinColumn(name = "id_modelo")
   private Modelo modelo;
+  
+  public void setQuestao(Questao questao) {
+	  this.questao = questao;
+	  this.setKeyQuestao(questao == null ? null : questao.getId());
+  }
+  
+  public void setModelo(Modelo modelo) {
+	  this.modelo = modelo;
+	  this.setKeyModelo(modelo == null ? null : modelo.getId());
+  }
+  
+  private void setKeyQuestao(Integer questaoId) {
+    this.initializeKey();
+    this.id.setIdQuestao(questaoId);
+  }
+  
+  private void setKeyModelo(Integer modeloId) {
+    this.initializeKey();
+    this.id.setIdModelo(modeloId);
+  }
+  
+  private void initializeKey() {
+	  if(this.id == null)
+		  this.id = new QuestaoModeloKey();
+  }
 }

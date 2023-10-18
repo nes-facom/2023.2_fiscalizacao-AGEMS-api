@@ -42,5 +42,5 @@ public class QuestaoRegisterRequest {
     required = true,
     type = "array"
   )
-  private List<AlternativaRespostaRegisterRequest> tipoRespostas;
+  private List<AlternativaRespostaRegisterRequest> alternativaRespostas;
 }

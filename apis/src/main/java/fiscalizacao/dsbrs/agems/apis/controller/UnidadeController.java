@@ -238,7 +238,7 @@ public class UnidadeController {
     Map<String, Object> responseBody = new HashMap<>();
     responseBody.put("ação", "Unidade deletada com sucesso");
     responseBody.put("id", ((UnidadeResponse) response).getId());
-    responseBody.put("idUnidade", ((UnidadeResponse) response).getIdUnidade());
+    responseBody.put("idUnidade", ((UnidadeResponse) response).getId());
     responseBody.put("endereço", ((UnidadeResponse) response).getEndereco());
     return ResponseEntity.ok().body(responseBody);
   }

@@ -43,7 +43,7 @@ public class TipoRespostaRepositorioTest {
   @Before
   public void setup() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 16");
+    modelo.setNome("Modelo 16");
     modeloSalvo = modeloRepositorio.save(modelo);
     assertNotEquals(modeloSalvo.getId(), 0);
     Questao questao = new Questao();

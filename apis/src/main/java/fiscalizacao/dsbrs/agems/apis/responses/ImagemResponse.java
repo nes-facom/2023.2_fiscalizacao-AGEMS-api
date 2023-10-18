@@ -29,7 +29,7 @@ public class ImagemResponse extends Response {
 
   @Schema(
     title = "Id do Formulário",
-    description = "Identificador do Formul\u00E1rio a qual a imagem pertence",
+    description = "Identificador do Formulário a qual a imagem pertence",
     required = true,
     format = "number",
     type = "int",
@@ -37,17 +37,6 @@ public class ImagemResponse extends Response {
   )
   @JsonProperty("formulario")
   private int formulario;
-
-  @Schema(
-    title = "Id da Questão",
-    description = "Identificador da Questão a qual a imagem pertence",
-    required = true,
-    format = "number",
-    type = "int",
-    example = "1"
-  )
-  @JsonProperty("questao")
-  private int questao;
 
   @Schema(
     title = "Imagem",
