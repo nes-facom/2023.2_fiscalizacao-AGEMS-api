@@ -3,8 +3,10 @@ package fiscalizacao.dsbrs.agems.apis.responses;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeDeserializer;
 import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
@@ -88,6 +90,7 @@ public class InfoResponse extends Response {
     example = "1692840670072"
   )
   @JsonProperty("data_criacao")
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime dataCriacao;
 }

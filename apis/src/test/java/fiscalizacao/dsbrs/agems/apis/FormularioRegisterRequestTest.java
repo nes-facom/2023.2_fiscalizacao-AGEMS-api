@@ -193,7 +193,7 @@ public class FormularioRegisterRequestTest {
     String toStringResult = formulario.toString();
 
     String expectedToString =
-      "FormularioRegisterRequest(modelo=1, unidade=1, respostas=[], imagens=[], observacao=)";
+      "FormularioRegisterRequest(dataCriacao=null, modelo=1, unidade=1, respostas=[], imagens=[], observacao=)";
     Assertions.assertEquals(expectedToString, toStringResult);
   }
   @Test
@@ -214,7 +214,7 @@ public class FormularioRegisterRequestTest {
     String toStringResult = builder.toString();
 
     String expectedToString =
-      "FormularioRegisterRequest.FormularioRegisterRequestBuilder(modelo=1, unidade=1, respostas=[], imagens=[], observacao=)";
+      "FormularioRegisterRequest.FormularioRegisterRequestBuilder(dataCriacao=null, modelo=1, unidade=1, respostas=[], imagens=[], observacao=)";
     Assertions.assertEquals(expectedToString, toStringResult);
   }
 }

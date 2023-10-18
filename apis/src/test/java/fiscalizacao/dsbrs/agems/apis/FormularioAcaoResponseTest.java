@@ -38,7 +38,7 @@ public class FormularioAcaoResponseTest {
                 .formulario(new FormularioResponse())
                 .build();
 
-        String expectedToString = "FormularioAcaoResponse(acao=edit, formulario=FormularioResponse(id=0, usuario=null, modelo=null, unidade=null, respostas=null, imagens=null, observacao=null))";
+        String expectedToString = "FormularioAcaoResponse(acao=edit, formulario=FormularioResponse(dataCriacao=null, id=0, usuario=null, modelo=null, unidade=null, respostas=null, imagens=null, observacao=null))";
         assertEquals(expectedToString, response.toString());
     }
 

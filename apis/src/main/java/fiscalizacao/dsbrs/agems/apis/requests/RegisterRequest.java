@@ -3,9 +3,13 @@ package fiscalizacao.dsbrs.agems.apis.requests;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeDeserializer;
+import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -27,12 +31,14 @@ public class RegisterRequest {
     title = "Data de criação",
     description = "Data de criação do usuário",
     required = true,
-    type = "string",
+    type = "number",
+    format = "int64",
     example = "1692840670079"
     
   )
   @JsonProperty("data_criacao")
   @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime dataCriacao;
   
   @Schema(
@@ -77,22 +83,7 @@ public class RegisterRequest {
     type = "string",
     example = "Analista de Regulação"
   )
-  private String cargo;
-
-  public String getCARGOS(String cargo) {
-    final String CARGOS[] = {
-      "Coordenador",
-      "Analista de Regulação",
-      "Assessor Técnico",
-      "Assessor Jurídico",
-    };
-    for (int i = 0; i < CARGOS.length; i++) {
-      if (CARGOS[i].equalsIgnoreCase(cargo)) {
-        return CARGOS[i];
-      }
-    }
-    return null;
-  }
+  private Cargo cargo;
 
   public void setEmail(String email) {
     if (email.contains("@")) {

@@ -11,6 +11,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Token;
 import fiscalizacao.dsbrs.agems.apis.dominio.TokenType;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.FormularioRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.FormularioRequest;
@@ -343,7 +344,7 @@ public class DataTest {
       "jalves@gamil.com",
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6",
       LocalDateTime.now(),
-      "Coordenador",
+      Cargo.COORDENADOR,
       Papel.USER,
       list1
     );
@@ -353,7 +354,7 @@ public class DataTest {
       "lalves@gamil.com",
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv7",
       LocalDateTime.now(),
-      "Coordenador",
+      Cargo.COORDENADOR,
       Papel.USER,
       list2
     );

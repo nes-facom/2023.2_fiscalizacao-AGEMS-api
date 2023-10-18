@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
 
 public class RegisterRequestTest {
@@ -16,7 +17,7 @@ public class RegisterRequestTest {
       "Exemplo Exemplinho Exemplificado",
       "test@example.com",
       "examplo1234#",
-      "Analista de Regulação"
+      Cargo.ANALISTA_DE_REGULACAO
     );
     Assertions.assertEquals("2007-12-03T10:15:30", request.getDataCriacao().toString());
     Assertions.assertEquals("test@example.com", request.getEmail());
@@ -27,7 +28,7 @@ public class RegisterRequestTest {
     Assertions.assertEquals("examplo1234#", request.getSenha());
     Assertions.assertEquals(
       "Analista de Regula\u00E7\u00E3o",
-      request.getCargo()
+      request.getCargo().getDescricao()
     );
   }
 
@@ -38,7 +39,7 @@ public class RegisterRequestTest {
       "Exemplo Exemplinho Exemplificado",
       "test@example.com",
       "examplo1234#",
-      "Analista de Regulação"
+      Cargo.ANALISTA_DE_REGULACAO
     );
 
     String toStringResult = request.toString();
@@ -56,7 +57,7 @@ public class RegisterRequestTest {
       .nome("Exemplo Exemplinho Exemplificado")
       .email("test@example.com")
       .senha("examplo1234#")
-      .cargo("Analista de Regula\u00E7\u00E3o");
+      .cargo(Cargo.ANALISTA_DE_REGULACAO);
 
     String toStringResult = builder.toString();
 
@@ -82,17 +83,15 @@ public class RegisterRequestTest {
 
   @Test
   public void testValidCargo() {
-    RegisterRequest request = new RegisterRequest();
-    String validCargo = "Analista de Regulação";
-    String normalizedCargo = request.getCARGOS(validCargo);
-    Assertions.assertEquals(validCargo, normalizedCargo);
+    String validCargo = Cargo.ANALISTA_DE_REGULACAO.getDescricao();
+    Cargo normalizedCargo = Cargo.getCargoByDescricao(validCargo);
+    Assertions.assertEquals(validCargo, normalizedCargo.getDescricao());
   }
 
   @Test
   public void testInvalidCargo() {
-    RegisterRequest request = new RegisterRequest();
     String invalidCargo = "Invalid Cargo";
-    String normalizedCargo = request.getCARGOS(invalidCargo);
+    Cargo normalizedCargo = Cargo.getCargoByDescricao(invalidCargo);
     Assertions.assertNull(normalizedCargo);
   }
 }

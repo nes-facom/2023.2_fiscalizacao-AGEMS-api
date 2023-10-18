@@ -1,16 +1,22 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
-import fiscalizacao.dsbrs.agems.apis.dominio.Token;
-import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
-import java.time.LocalDate;
+import static org.junit.Assert.assertThat;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
+import fiscalizacao.dsbrs.agems.apis.dominio.Token;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 
 public class UsuarioTest {
 
@@ -41,11 +47,11 @@ public class UsuarioTest {
   public void testSetCargo() {
     Usuario usuario = new Usuario();
 
-    usuario.setCargo("Manager");
+    usuario.setCargo(null);
 
     Assertions.assertEquals(null, usuario.getCargo());
-    usuario.setCargo("Assessor Técnico");
-    Assertions.assertEquals("Assessor Técnico", usuario.getCargo());
+    usuario.setCargo(Cargo.ASSESSOR_TECNICO);
+    Assertions.assertEquals("Assessor Técnico", usuario.getCargo().getDescricao());
   }
 
   @Test
@@ -90,10 +96,15 @@ public class UsuarioTest {
   public void testSetDate() {
     Usuario usuario = new Usuario();
 
-    usuario.setDate();
-    Assertions.assertEquals(LocalDate.now(), usuario.getDataCriacao());
-    usuario.setDataCriacao(LocalDateTime.now());
-    Assertions.assertEquals(LocalDate.now(), usuario.getDataCriacao());
+    LocalDateTime mockedTime = LocalDateTime.now();
+    try (MockedStatic<LocalDateTime> utilities = Mockito.mockStatic(LocalDateTime.class)) {
+        utilities.when(LocalDateTime::now).thenReturn(mockedTime);
+        Assertions.assertEquals(LocalDateTime.now(), mockedTime);
+        usuario.setDate();
+        Assertions.assertEquals(LocalDateTime.now(), usuario.getDataCriacao());
+        usuario.setDataCriacao(LocalDateTime.now());
+        Assertions.assertEquals(LocalDateTime.now(), usuario.getDataCriacao());
+    }
   }
 
   @Test

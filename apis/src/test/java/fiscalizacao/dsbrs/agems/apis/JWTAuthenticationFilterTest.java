@@ -12,6 +12,7 @@ import fiscalizacao.dsbrs.agems.apis.controller.FormularioController;
 import fiscalizacao.dsbrs.agems.apis.controller.ModeloController;
 import fiscalizacao.dsbrs.agems.apis.controller.UnidadeController;
 import fiscalizacao.dsbrs.agems.apis.controller.UsuarioController;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
@@ -26,6 +27,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -128,7 +131,8 @@ public class JWTAuthenticationFilterTest {
     request.setNome("Julia Alves Corazza");
     request.setSenha("fiscaliza-agems1#");
     request.setEmail("juliaacorazza@gmail.com");
-    request.setCargo("Analista de Regulação");
+    request.setDataCriacao(LocalDateTime.now());
+    request.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     ResponseEntity<Response> response = authenticationController.cadastrar(
       request
     );
@@ -179,7 +183,8 @@ public class JWTAuthenticationFilterTest {
     registerRequest.setNome("Luiza Alves Corazza");
     registerRequest.setSenha("fiscaliza-agems1#");
     registerRequest.setEmail("luucorazza@gmail.com");
-    registerRequest.setCargo("Coordenador");
+    registerRequest.setDataCriacao(LocalDateTime.now());
+    registerRequest.setCargo(Cargo.COORDENADOR);
     ResponseEntity<Response> registerResponse = authenticationController.cadastrar(
       registerRequest
     );
@@ -312,7 +317,8 @@ public class JWTAuthenticationFilterTest {
     request.setNome("Jandira Ferreira Jorge");
     request.setSenha("fiscaliza-agems1#");
     request.setEmail("jandireira@gmail.com");
-    request.setCargo("Analista de Regulação");
+    request.setDataCriacao(LocalDateTime.now());
+    request.setCargo(Cargo.COORDENADOR);
     ResponseEntity<Response> response = authenticationController.cadastrar(
       request
     );

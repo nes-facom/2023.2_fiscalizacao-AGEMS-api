@@ -177,7 +177,7 @@ public class UnidadeController {
       ),
     }
   )
-  @Operation(summary = "Ver uma unidade específica.")
+  @Operation(summary = "Ver uma unidadee específica.")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<Response> verUnidade(
