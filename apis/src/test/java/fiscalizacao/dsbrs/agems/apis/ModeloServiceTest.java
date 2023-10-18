@@ -63,7 +63,7 @@ public class ModeloServiceTest {
     @Test
     public void testCadastraModelo() {
         ModeloRegisterRequest request = new ModeloRegisterRequest();
-        request.setModelo("Modelo Teste");
+        request.setNome("Modelo Teste");
 
         QuestaoRegisterRequest questaoRequest1 = new QuestaoRegisterRequest();
         questaoRequest1.setPergunta("Questao Teste 1");
@@ -294,7 +294,7 @@ public class ModeloServiceTest {
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
         modeloEditRequest.setId(modeloId);
-        modeloEditRequest.setModeloNome(novoModeloNome);
+        modeloEditRequest.setNome(novoModeloNome);
         modeloEditRequest.setQuestoes(questaoEditRequests);
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(modelo));
@@ -369,7 +369,7 @@ public class ModeloServiceTest {
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
         modeloEditRequest.setId(modeloId);
-        modeloEditRequest.setModeloNome(novoModeloNome);
+        modeloEditRequest.setNome(novoModeloNome);
         modeloEditRequest.setQuestoes(questaoEditRequests);
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(modelo));
@@ -443,7 +443,7 @@ public class ModeloServiceTest {
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
         modeloEditRequest.setId(modeloId);
-        modeloEditRequest.setModeloNome(novoModeloNome);
+        modeloEditRequest.setNome(novoModeloNome);
         modeloEditRequest.setQuestoes(questaoEditRequests);
 
         // Mock repository method calls

@@ -15,17 +15,17 @@ public class ModeloRequestTest {
 
     ModeloRequest modeloRequest = new ModeloRequest();
     modeloRequest.setId(id);
-    modeloRequest.setModeloNome(modeloNome);
+    modeloRequest.setNome(modeloNome);
 
     Assertions.assertEquals(id, modeloRequest.getId());
-    Assertions.assertEquals(modeloNome, modeloRequest.getModeloNome());
+    Assertions.assertEquals(modeloNome, modeloRequest.getNome());
   }
 
   @Test
   public void testEmptyConstructor() {
     ModeloRequest modeloRequest = new ModeloRequest();
     Assertions.assertEquals(0, modeloRequest.getId());
-    Assertions.assertNull(modeloRequest.getModeloNome());
+    Assertions.assertNull(modeloRequest.getNome());
   }
 
   @Test
@@ -36,7 +36,7 @@ public class ModeloRequestTest {
     ModeloRequest modeloRequest = ModeloRequest
       .builder()
       .id(id)
-      .modeloNome(modeloNome)
+      .nome(modeloNome)
       .build();
     String expectedToString =
       "ModeloRequest(id=1, modeloNome=Modelo 01)";
@@ -53,7 +53,7 @@ public class ModeloRequestTest {
     ModeloRequest.ModeloRequestBuilder modeloRequest = ModeloRequest
       .builder()
       .id(id)
-      .modeloNome(modeloNome);
+      .nome(modeloNome);
     String expectedToString =
       "ModeloRequest.ModeloRequestBuilder(id=1, modeloNome=Modelo 01)";
     String actualToString = modeloRequest.toString();
@@ -69,6 +69,6 @@ public class ModeloRequestTest {
     ModeloRequest modeloRequest = new ModeloRequest(id, modeloNome);
 
     Assertions.assertEquals(id, modeloRequest.getId());
-    Assertions.assertEquals(modeloNome, modeloRequest.getModeloNome());
+    Assertions.assertEquals(modeloNome, modeloRequest.getNome());
   }
 }

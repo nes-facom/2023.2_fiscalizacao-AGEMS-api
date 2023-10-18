@@ -37,7 +37,7 @@ public class ModeloService {
 
     Modelo modelo = new Modelo();
 
-    modelo.setModeloNome(novoModelo.getModelo());
+    modelo.setModeloNome(novoModelo.getNome());
     Modelo newModelo = MODELO_REPOSITORIO.save(modelo);
 
     for (QuestaoRegisterRequest questaoRegister : novoModelo.getQuestoes()) {
@@ -178,7 +178,7 @@ public class ModeloService {
   public ModeloAcaoResponse editaModelo(ModeloEditRequest pedido) {
     Modelo modelo = MODELO_REPOSITORIO.findById(pedido.getId()).orElse(null);
     if (modelo != null) {
-      modelo.setModeloNome(pedido.getModeloNome());
+      modelo.setModeloNome(pedido.getNome());
 
       List<QuestaoEditRequest> questaoEditRequests = pedido.getQuestoes();
       List<QuestaoResponse> responsesQuestao = new ArrayList<>();
