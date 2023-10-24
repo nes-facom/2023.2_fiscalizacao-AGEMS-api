@@ -62,11 +62,11 @@ public class ModeloEditRequestTest {
 
     ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
     modeloEditRequest.setId(id);
-    modeloEditRequest.setModeloNome(modeloNome);
+    modeloEditRequest.setNome(modeloNome);
     modeloEditRequest.setQuestoes(questoes);
 
     Assertions.assertEquals(id, modeloEditRequest.getId());
-    Assertions.assertEquals(modeloNome, modeloEditRequest.getModeloNome());
+    Assertions.assertEquals(modeloNome, modeloEditRequest.getNome());
     Assertions.assertEquals(questoes, modeloEditRequest.getQuestoes());
   }
 
@@ -83,7 +83,7 @@ public class ModeloEditRequestTest {
     );
 
     Assertions.assertEquals(id, modeloEditRequest.getId());
-    Assertions.assertEquals(modeloNome, modeloEditRequest.getModeloNome());
+    Assertions.assertEquals(modeloNome, modeloEditRequest.getNome());
     Assertions.assertEquals(questoes, modeloEditRequest.getQuestoes());
   }
 
@@ -96,7 +96,7 @@ public class ModeloEditRequestTest {
     ModeloEditRequest modeloEditRequest = ModeloEditRequest
       .builder()
       .id(id)
-      .modeloNome(modeloNome)
+      .nome(modeloNome)
       .questoes(questoes)
       .build();
 

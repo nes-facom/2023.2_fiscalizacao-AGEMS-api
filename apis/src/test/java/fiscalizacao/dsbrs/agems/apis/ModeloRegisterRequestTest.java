@@ -56,7 +56,7 @@ public class ModeloRegisterRequestTest {
       questoes
     );
 
-    Assertions.assertEquals(modelo, modeloRegisterRequest.getModelo());
+    Assertions.assertEquals(modelo, modeloRegisterRequest.getNome());
     Assertions.assertEquals(questoes, modeloRegisterRequest.getQuestoes());
   }
 
@@ -70,7 +70,7 @@ public class ModeloRegisterRequestTest {
       questoes
     );
 
-    Assertions.assertEquals(modelo, modeloRegisterRequest.getModelo());
+    Assertions.assertEquals(modelo, modeloRegisterRequest.getNome());
     Assertions.assertEquals(questoes, modeloRegisterRequest.getQuestoes());
   }
 
@@ -84,7 +84,7 @@ public class ModeloRegisterRequestTest {
       questoes
     );
 
-    Assertions.assertEquals(modelo, modeloRegisterRequest.getModelo());
+    Assertions.assertEquals(modelo, modeloRegisterRequest.getNome());
     Assertions.assertNull(modeloRegisterRequest.getQuestoes());
   }
 
@@ -131,11 +131,11 @@ public class ModeloRegisterRequestTest {
 
     ModeloRegisterRequest modeloRegisterRequest = ModeloRegisterRequest
       .builder()
-      .modelo(modelo)
+      .nome(modelo)
       .questoes(questoes)
       .build();
 
-    Assertions.assertEquals(modelo, modeloRegisterRequest.getModelo());
+    Assertions.assertEquals(modelo, modeloRegisterRequest.getNome());
     Assertions.assertEquals(questoes, modeloRegisterRequest.getQuestoes());
   }
 

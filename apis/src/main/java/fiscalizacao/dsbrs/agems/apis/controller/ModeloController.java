@@ -49,7 +49,7 @@ public class ModeloController {
   public ResponseEntity<?> adicionaModelo(
       @RequestBody ModeloRegisterRequest novoModelo) {
     try {
-      if (novoModelo.getModelo().length() == 0) {
+      if (novoModelo.getNome().length() == 0) {
         return ResponseEntity
             .badRequest()
             .body(
@@ -263,8 +263,8 @@ public class ModeloController {
   @PutMapping(path = "/edit", produces = "application/json", consumes = "application/json")
   public ResponseEntity<?> editaModelo(@RequestBody ModeloEditRequest modelo) {
     try {
-      if (modelo.getModeloNome() !=null) {
-        if(!modelo.getModeloNome().isEmpty()){
+      if (modelo.getNome() !=null) {
+        if(!modelo.getNome().isEmpty()){
           
           ModeloAcaoResponse modeloResponse = SERVICO_MODELO.editaModelo(modelo);
           return ResponseEntity.status(200).body(modeloResponse);
