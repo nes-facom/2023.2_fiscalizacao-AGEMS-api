@@ -23,7 +23,7 @@ public class UnidadeService {
 
   public Response cadastraUnidade(UnidadeRequest unidadeRegisterRequest) {
     if (
-      unidadeRegisterRequest.getIdUnidade() == null ||
+      unidadeRegisterRequest.getNome() == null ||
       unidadeRegisterRequest.getEndereco() == null ||
       unidadeRegisterRequest.getTipo() == null
     ) {
@@ -35,13 +35,13 @@ public class UnidadeService {
     }
 
     Unidade unidade = UNIDADE_REPOSITORIO
-      .findByNome(unidadeRegisterRequest.getIdUnidade())
+      .findByNome(unidadeRegisterRequest.getNome())
       .orElse(null);
     if (unidade == null) {
       unidade =
         Unidade
           .builder()
-          .nome(unidadeRegisterRequest.getIdUnidade())
+          .nome(unidadeRegisterRequest.getNome())
           .endereco(unidadeRegisterRequest.getEndereco())
           .tipo(unidadeRegisterRequest.getTipo())
           .build();
@@ -147,10 +147,10 @@ public class UnidadeService {
     if (unidade != null) {
       if (
         (
-          unidadeRequest.getIdUnidade() == null ||
+          unidadeRequest.getNome() == null ||
           (
-            unidadeRequest.getIdUnidade().isEmpty() ||
-            unidadeRequest.getIdUnidade().isBlank()
+            unidadeRequest.getNome().isEmpty() ||
+            unidadeRequest.getNome().isBlank()
           )
         ) &&
         (
@@ -179,10 +179,10 @@ public class UnidadeService {
         return erroResponse;
       } else if (
         (
-          unidadeRequest.getIdUnidade() == null ||
+          unidadeRequest.getNome() == null ||
           (
-            unidadeRequest.getIdUnidade().isEmpty() ||
-            unidadeRequest.getIdUnidade().isBlank()
+            unidadeRequest.getNome().isEmpty() ||
+            unidadeRequest.getNome().isBlank()
           )
         ) &&
         (
@@ -214,10 +214,10 @@ public class UnidadeService {
         return unidadeResponse;
       } else if (
         (
-          unidadeRequest.getIdUnidade() == null ||
+          unidadeRequest.getNome() == null ||
           (
-            unidadeRequest.getIdUnidade().isEmpty() ||
-            unidadeRequest.getIdUnidade().isBlank()
+            unidadeRequest.getNome().isEmpty() ||
+            unidadeRequest.getNome().isBlank()
           )
         ) &&
         (
@@ -248,9 +248,9 @@ public class UnidadeService {
         return unidadeResponse;
       } else if (
         (
-          unidadeRequest.getIdUnidade() != null &&
-          !unidadeRequest.getIdUnidade().isEmpty() &&
-          !unidadeRequest.getIdUnidade().isBlank()
+          unidadeRequest.getNome() != null &&
+          !unidadeRequest.getNome().isEmpty() &&
+          !unidadeRequest.getNome().isBlank()
         ) &&
         (
           unidadeRequest.getEndereco() == null ||
@@ -268,7 +268,7 @@ public class UnidadeService {
         )
       ) {
         Unidade outraUnidadeExiste = UNIDADE_REPOSITORIO
-          .findByNome(unidadeRequest.getIdUnidade())
+          .findByNome(unidadeRequest.getNome())
           .orElse(null);
         if (outraUnidadeExiste != null) {
           if (unidade.getId() != outraUnidadeExiste.getId()) {
@@ -281,7 +281,7 @@ public class UnidadeService {
               .build();
           }
         }
-        unidade.setNome(unidadeRequest.getIdUnidade());
+        unidade.setNome(unidadeRequest.getNome());
         Unidade unidadeAtualizada = UNIDADE_REPOSITORIO.save(unidade);
         UnidadeResponse unidadeResponse = UnidadeResponse
           .builder()
@@ -293,9 +293,9 @@ public class UnidadeService {
         return unidadeResponse;
       } else if (
         (
-          unidadeRequest.getIdUnidade() != null &&
-          !unidadeRequest.getIdUnidade().isEmpty() &&
-          !unidadeRequest.getIdUnidade().isBlank()
+          unidadeRequest.getNome() != null &&
+          !unidadeRequest.getNome().isEmpty() &&
+          !unidadeRequest.getNome().isBlank()
         ) &&
         (
           unidadeRequest.getEndereco() == null ||
@@ -311,7 +311,7 @@ public class UnidadeService {
         )
       ) {
         Unidade outraUnidadeExiste = UNIDADE_REPOSITORIO
-          .findByNome(unidadeRequest.getIdUnidade())
+          .findByNome(unidadeRequest.getNome())
           .orElse(null);
         if (outraUnidadeExiste != null) {
           if (unidade.getId() != outraUnidadeExiste.getId()) {
@@ -324,7 +324,7 @@ public class UnidadeService {
               .build();
           }
         }
-        unidade.setNome(unidadeRequest.getIdUnidade());
+        unidade.setNome(unidadeRequest.getNome());
         unidade.setTipo(unidadeRequest.getTipo());
         Unidade unidadeAtualizada = UNIDADE_REPOSITORIO.save(unidade);
         UnidadeResponse unidadeResponse = UnidadeResponse
@@ -337,10 +337,10 @@ public class UnidadeService {
         return unidadeResponse;
       } else if (
         (
-          unidadeRequest.getIdUnidade() == null ||
+          unidadeRequest.getNome() == null ||
           (
-            unidadeRequest.getIdUnidade().isEmpty() ||
-            unidadeRequest.getIdUnidade().isBlank()
+            unidadeRequest.getNome().isEmpty() ||
+            unidadeRequest.getNome().isBlank()
           )
         ) &&
         (
@@ -367,9 +367,9 @@ public class UnidadeService {
         return unidadeResponse;
       } else if (
         (
-          unidadeRequest.getIdUnidade() != null &&
-          !unidadeRequest.getIdUnidade().isEmpty() &&
-          !unidadeRequest.getIdUnidade().isBlank()
+          unidadeRequest.getNome() != null &&
+          !unidadeRequest.getNome().isEmpty() &&
+          !unidadeRequest.getNome().isBlank()
         ) &&
         (
           unidadeRequest.getEndereco() != null &&
@@ -385,7 +385,7 @@ public class UnidadeService {
         )
       ) {
         Unidade outraUnidadeExiste = UNIDADE_REPOSITORIO
-          .findByNome(unidadeRequest.getIdUnidade())
+          .findByNome(unidadeRequest.getNome())
           .orElse(null);
         if (outraUnidadeExiste != null) {
           if (unidade.getId() != outraUnidadeExiste.getId()) {
@@ -398,7 +398,7 @@ public class UnidadeService {
               .build();
           }
         }
-        unidade.setNome(unidadeRequest.getIdUnidade());
+        unidade.setNome(unidadeRequest.getNome());
         unidade.setEndereco(unidadeRequest.getEndereco());
         Unidade unidadeAtualizada = UNIDADE_REPOSITORIO.save(unidade);
         UnidadeResponse unidadeResponse = UnidadeResponse
@@ -411,7 +411,7 @@ public class UnidadeService {
         return unidadeResponse;
       } else {
         Unidade outraUnidadeExiste = UNIDADE_REPOSITORIO
-          .findByNome(unidadeRequest.getIdUnidade())
+          .findByNome(unidadeRequest.getNome())
           .orElse(null);
         if (outraUnidadeExiste != null) {
           if (unidade.getId() != outraUnidadeExiste.getId()) {
@@ -424,7 +424,7 @@ public class UnidadeService {
               .build();
           }
         }
-        unidade.setNome(unidadeRequest.getIdUnidade());
+        unidade.setNome(unidadeRequest.getNome());
         unidade.setEndereco(unidadeRequest.getEndereco());
         unidade.setTipo(unidadeRequest.getTipo());
         Unidade unidadeAtualizada = UNIDADE_REPOSITORIO.save(unidade);

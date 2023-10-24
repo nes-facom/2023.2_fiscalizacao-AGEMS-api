@@ -23,7 +23,7 @@ public class UnidadeRequest {
     type = "string",
     example = "Unidade 1 de Tratamento de Esgoto de Dourados"
   )
-  private String idUnidade;
+  private String nome;
 
   @Schema(
     title = "Endereço",
