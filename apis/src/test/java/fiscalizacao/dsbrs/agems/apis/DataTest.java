@@ -47,6 +47,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.UsuarioFormResponse;
 import jakarta.annotation.Nonnull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -341,7 +342,7 @@ public class DataTest {
       "Julia Corazza",
       "jalves@gamil.com",
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6",
-      LocalDate.now(),
+      LocalDateTime.now(),
       "Coordenador",
       Papel.USER,
       list1
@@ -351,7 +352,7 @@ public class DataTest {
       "Luiza Corazza",
       "lalves@gamil.com",
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv7",
-      LocalDate.now(),
+      LocalDateTime.now(),
       "Coordenador",
       Papel.USER,
       list2
@@ -374,7 +375,7 @@ public class DataTest {
       user1,
       new Modelo(),
       new Unidade(),
-      LocalDate.now(),
+      LocalDateTime.now(),
       "obs"
     );
     Formulario form2 = new Formulario(
@@ -382,7 +383,7 @@ public class DataTest {
       user2,
       new Modelo(),
       new Unidade(),
-      LocalDate.now(),
+      LocalDateTime.now(),
       "obs"
     );
     EqualsVerifier

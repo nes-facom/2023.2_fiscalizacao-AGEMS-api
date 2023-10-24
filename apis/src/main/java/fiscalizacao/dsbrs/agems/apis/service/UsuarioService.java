@@ -144,6 +144,7 @@ public class UsuarioService {
         .email(usuario.getEmail())
         .cargo(usuario.getCargo())
         .senha(usuario.getSenha())
+        .dataCriacao(usuario.getDataCriacao())
         .build();
     }
     return ErroResponse

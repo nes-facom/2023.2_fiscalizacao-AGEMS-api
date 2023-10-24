@@ -4,10 +4,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.Formulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.Imagem;
@@ -33,19 +47,6 @@ import fiscalizacao.dsbrs.agems.apis.responses.FormularioResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.service.FormularioService;
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 public class FormularioServiceTest {
@@ -333,7 +334,7 @@ public class FormularioServiceTest {
       "Tratamento de Esgoto"
     );
     Formulario formulario = new Formulario();
-    formulario.setDataCriacao(LocalDate.now());
+    formulario.setDataCriacao(LocalDateTime.now());
     formulario.setId(1);
     formulario.setUsuario(usuario);
     formulario.setModelo(modelo);

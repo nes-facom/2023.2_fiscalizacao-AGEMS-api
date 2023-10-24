@@ -1,6 +1,20 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.Formulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
@@ -15,16 +29,6 @@ import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = TestConfig.class)
 @SpringBootTest
@@ -151,7 +155,7 @@ public class FormularioRepositorioTest {
         .usuario(usuarioSalvo)
         .modelo(modeloSalvo)
         .unidade(unidadeSalva)
-        .dataCriacao(LocalDate.now())
+        .dataCriacao(LocalDateTime.now())
         .build();
 
     formularioSalvo = formularioRepositorio.save(formulario);
@@ -245,7 +249,7 @@ public class FormularioRepositorioTest {
         .usuario(usuarioSalvo)
         .modelo(modeloSalvo)
         .unidade(unidadeSalva)
-        .dataCriacao(LocalDate.now())
+        .dataCriacao(LocalDateTime.now())
         .build();
 
     formularioSalvo = formularioRepositorio.save(formulario);
@@ -377,7 +381,7 @@ public class FormularioRepositorioTest {
         .usuario(usuarioSalvo)
         .modelo(modeloSalvo)
         .unidade(unidadeSalva)
-        .dataCriacao(LocalDate.now())
+        .dataCriacao(LocalDateTime.now())
         .build();
 
     formularioSalvo = formularioRepositorio.save(formulario);
@@ -506,7 +510,7 @@ public class FormularioRepositorioTest {
         .usuario(usuarioSalvo)
         .modelo(modeloSalvo)
         .unidade(unidadeSalva)
-        .dataCriacao(LocalDate.now())
+        .dataCriacao(LocalDateTime.now())
         .build();
 
     formularioSalvo = formularioRepositorio.save(formulario);
@@ -634,7 +638,7 @@ public class FormularioRepositorioTest {
         .usuario(usuarioSalvo)
         .modelo(modeloSalvo)
         .unidade(unidadeSalva)
-        .dataCriacao(LocalDate.now())
+        .dataCriacao(LocalDateTime.now())
         .build();
 
     formularioSalvo = formularioRepositorio.save(formulario);

@@ -128,8 +128,8 @@ public class FormularioService {
     formulario = new Formulario();
     formulario.setUsuarioCriacao(usuario);
     formulario.setUnidade(unidade);
-    formulario.setDataCriacao(LocalDateTime.now()); //INSERIR A DATA DE CRIAÇÃO DA REQUEST APÓS O MERGE//
-    
+    formulario.setDataCriacao(novoFormulario.getDataCriacao());
+
     if (
       novoFormulario.getObservacao().isEmpty() ||
       (novoFormulario.getObservacao()).isBlank() ||
@@ -258,6 +258,7 @@ public class FormularioService {
         .respostas(responsesResposta)
         .imagens(imagensResponses)
         .observacao(novoFormularioAux.getObservacao())
+        .dataCriacao(formulario.getDataCriacao())
         .build();
 
     return formularioResponse;
@@ -398,7 +399,8 @@ public class FormularioService {
       FormularioResponse
         .builder()
         .id(formulario.getId())
-        .usuario(usuarioResponse)
+        .dataCriacao(formulario.getDataCriacao())
+    	.usuario(usuarioResponse)
         .unidade(unidadeResponse)
         .respostas(responsesResposta)
         .imagens(imagemResponses)
