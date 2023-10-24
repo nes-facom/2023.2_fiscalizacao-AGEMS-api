@@ -1,7 +1,6 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import static org.junit.Assert.assertThat;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;

@@ -32,7 +32,6 @@ public class RegisterRequest {
     description = "Data de criação do usuário",
     required = true,
     type = "number",
-    format = "int64",
     example = "1692840670079"
     
   )

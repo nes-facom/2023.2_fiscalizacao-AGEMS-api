@@ -86,7 +86,7 @@ public class InfoResponse extends Response {
     title = "Data de criação",
     description = "Data de criação do usuário",
     required = true,
-    type = "string",
+    type = "number",
     example = "1692840670072"
   )
   @JsonProperty("data_criacao")

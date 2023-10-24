@@ -5,6 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.UsuarioEditRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.InfoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -76,12 +84,12 @@ public class IntegrationTestApi {
   public void testCadastraUsuario201() {
     String url = "http://localhost:" + port + "/usuarios/cadastro";
     RegisterRequest request = new RegisterRequest(
-    	      LocalDateTime.parse("2007-12-03T10:15:30"),
-    	      "Ronaldo Silva da Sousa",
-    	      "rss@smail.com",
-    	      "rss1234%",
-    	      Cargo.ASSESSOR_TECNICO
-    	    );
+	  LocalDateTime.parse("2007-12-03T10:15:30"),
+	  "Ronaldo Silva da Sousa",
+	  "rss@smail.com",
+	  "rss1234%",
+	  Cargo.ASSESSOR_TECNICO
+	);
     ResponseEntity<AuthenticationResponse> response = restTemplate.postForEntity(
       url,
       request,
