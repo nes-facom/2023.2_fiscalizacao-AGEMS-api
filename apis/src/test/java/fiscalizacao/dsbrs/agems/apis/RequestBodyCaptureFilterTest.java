@@ -14,6 +14,7 @@ import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -48,17 +49,22 @@ class RequestBodyCaptureFilterTest {
 
   @Mock
   private FilterChain filterChain;
+  
+  private AutoCloseable mocksOpener;
 
   @BeforeEach
   void setUp() {
-    MockitoAnnotations.initMocks(this);
+    mocksOpener = MockitoAnnotations.openMocks(this);
     filter = new RequestBodyCaptureFilter();
     servletResponse = mock(HttpServletResponse.class);
     request = mock(HttpServletRequest.class);
     servletRequest = mock(HttpServletRequest.class);
   }
 
-
+  @AfterEach
+  void tearDown() throws Exception {
+    mocksOpener.close();
+  }
 
   @Test
   void testDoFilterWithException() throws IOException, ServletException {

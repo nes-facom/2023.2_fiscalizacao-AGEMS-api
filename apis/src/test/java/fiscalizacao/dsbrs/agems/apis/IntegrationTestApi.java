@@ -5,14 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.UsuarioEditRequest;
-import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.InfoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.Response;
-
 import java.time.LocalDateTime;
 import java.util.Collections;
 
