@@ -76,7 +76,6 @@ public class ModeloController {
                   .erro("Bad Request:" + e.getMessage())
                   .build());
     } catch (RuntimeException e) {
-    	e.printStackTrace();
       return ResponseEntity
           .status(500)
           .body(

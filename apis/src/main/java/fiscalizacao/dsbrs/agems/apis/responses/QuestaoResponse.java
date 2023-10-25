@@ -31,17 +31,6 @@ public class QuestaoResponse extends Response {
   @JsonProperty("id")
   private int id;
 
-//  @Schema(
-//    title = "Modelo",
-//    description = "Id do Modelo a qual a Questão pertence",
-//    required = true,
-//    format = "number",
-//    type = "int",
-//    example = "1"
-//  )
-//  @JsonProperty("idModelo")
-//  private int idModelo;
-
   @Schema(
     title = "Pergunta",
     description = "Pergunta para a questão do Modelo",

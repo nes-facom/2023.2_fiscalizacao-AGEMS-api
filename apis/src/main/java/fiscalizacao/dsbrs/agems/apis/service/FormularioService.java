@@ -167,7 +167,7 @@ public class FormularioService {
 	  Imagem imagem = new Imagem();
 	  imagem.setFormulario(formulario);
 	  imagem.setImagem(novoFormulario.getImagens().get(numImagem).getImagem());
-	  imagem.setDataCriacao(LocalDateTime.now());  //INSERIR A DATA DE CRIAÇÃO DA REQUEST APÓS O MERGE//
+	  imagem.setDataCriacao(novoFormulario.getDataCriacao());
 	  Imagem novaImagem = IMAGEM_REPOSITORIO.save(imagem);
 	  
 	  imagemResponse =
@@ -222,7 +222,7 @@ public class FormularioService {
         
         resposta.setUsuarioCriacao(usuario);
         
-        resposta.setDataCriacao(LocalDateTime.now()); //INSERIR A DATA DE CRIAÇÃO DA REQUEST APÓS O MERGE//)
+        resposta.setDataCriacao(novoFormulario.getDataCriacao());
         
         RESPOSTA_REPOSITORIO.save(resposta);
         respostaResponse =
@@ -451,15 +451,6 @@ public class FormularioService {
           .build();
       imagemResponses.add(imagemResponse);
     }
-    
-//    Modelo modelo = MODELO_REPOSITORIO
-//      .findById(formulario.getModelo().getId())
-//      .get();
-//    usuarioResponse =
-//      UsuarioFormResponse
-//        .builder()
-//        .nome(formulario.getUsuarioCriacao().getNome())
-//        .build();
 
     unidadeResponse =
       UnidadeResponse
@@ -498,13 +489,6 @@ public class FormularioService {
           .build();
       responsesQuestao.add(questaoResponse);
     }
-
-//    modeloResponse =
-//      ModeloFormResponse
-//        .builder()
-//        .nome(formulario.getModelo().getModeloNome())
-//        .questoes(responsesQuestao)
-//        .build();
     
     List<Resposta> respostas = RESPOSTA_REPOSITORIO.findByFormulario(formulario);
     
@@ -615,15 +599,6 @@ public class FormularioService {
         imagemResponses.add(imagemResponse);
       }
 
-//      Modelo modelo = MODELO_REPOSITORIO
-//        .findById(formulario.getModelo().getId())
-//        .get();
-//      usuarioResponse =
-//        UsuarioFormResponse
-//          .builder()
-//          .nome(formulario.getUsuarioCriacao().getNome())
-//          .build();
-
       unidadeResponse =
         UnidadeResponse
           .builder()
@@ -660,12 +635,6 @@ public class FormularioService {
             .build();
         responsesQuestao.add(questaoResponse);
       }
-//      modeloResponse =
-//        ModeloFormResponse
-//          .builder()
-//          .nome(formulario.getModelo().getModeloNome())
-//          .questoes(responsesQuestao)
-//          .build();
       
       List<Resposta> respostas = RESPOSTA_REPOSITORIO.findByFormulario(formulario);
       

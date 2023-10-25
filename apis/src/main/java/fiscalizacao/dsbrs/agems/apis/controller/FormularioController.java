@@ -98,7 +98,6 @@ public class FormularioController {
         .body(formularioResponse);
       return ResponseEntity.status(201).body(formularioResponse);
     } catch (RuntimeException e) {
-      e.printStackTrace();
       return ResponseEntity
         .status(500)
         .body(
