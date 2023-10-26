@@ -1,6 +1,9 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +22,7 @@ public class ModeloListResponse {
 
   @Schema(description = "id do modelo", required = true)
   @JsonProperty("id")
-  private int id;
+  private UUID id;
 
   @Schema(description = "nome do Modelo", required = true)
   @JsonProperty("nome")

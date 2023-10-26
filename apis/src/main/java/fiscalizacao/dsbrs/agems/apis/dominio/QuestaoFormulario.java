@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
+import java.util.UUID;
+
 import fiscalizacao.dsbrs.agems.apis.dominio.chaves.QuestaoFormularioKey;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EmbeddedId;
@@ -67,12 +69,12 @@ public class QuestaoFormulario {
 	  this.setKeyFormulario(formulario == null ? null : formulario.getId());
   }
   
-  private void setKeyQuestao(Integer questaoId) {
+  private void setKeyQuestao(UUID questaoId) {
     this.initializeKey();
     this.id.setIdQuestao(questaoId);
   }
   
-  private void setKeyFormulario(Integer formularioId) {
+  private void setKeyFormulario(UUID formularioId) {
     this.initializeKey();
     this.id.setIdFormulario(formularioId);
   }

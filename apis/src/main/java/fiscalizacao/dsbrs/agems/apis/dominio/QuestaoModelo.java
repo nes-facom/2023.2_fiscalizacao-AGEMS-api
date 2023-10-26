@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
+import java.util.UUID;
+
 import fiscalizacao.dsbrs.agems.apis.dominio.chaves.QuestaoModeloKey;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EmbeddedId;
@@ -67,12 +69,12 @@ public class QuestaoModelo {
 	  this.setKeyModelo(modelo == null ? null : modelo.getId());
   }
   
-  private void setKeyQuestao(Integer questaoId) {
+  private void setKeyQuestao(UUID questaoId) {
     this.initializeKey();
     this.id.setIdQuestao(questaoId);
   }
   
-  private void setKeyModelo(Integer modeloId) {
+  private void setKeyModelo(UUID modeloId) {
     this.initializeKey();
     this.id.setIdModelo(modeloId);
   }

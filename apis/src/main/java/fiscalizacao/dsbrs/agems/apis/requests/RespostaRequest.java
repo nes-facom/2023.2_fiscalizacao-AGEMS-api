@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,11 +22,11 @@ public class RespostaRequest {
     title = "Questão",
     description = "Id da Questão que se refere a Resposta",
     required = true,
-    format = "number",
-    type = "int",
+    format = "string",
+    type = "UUID",
     example = "1"
   )
-  private int questao;
+  private UUID questao;
 
   @Schema(
     title = "Resposta",

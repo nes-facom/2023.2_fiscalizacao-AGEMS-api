@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,9 +22,9 @@ public class FormularioResumoResponse extends Response {
     title = "Id",
     description = "Código do Formulário",
     required = true,
-    format = "number",
-    type = "int",
+    format = "string",
+    type = "UUID",
     example = "1"
   )
-  private int id;
+  private UUID id;
 }

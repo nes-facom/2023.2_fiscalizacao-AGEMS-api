@@ -1,5 +1,20 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
@@ -14,19 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Modelo", description = "APIs de Gerenciamento dos Modelos")
 @RestController
@@ -98,7 +101,7 @@ public class ModeloController {
   @SecurityRequirement(name = "BEARER")
   @DeleteMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<?> deletaModelo(
-      @PathVariable(value = "id") int modelo) {
+      @PathVariable(value = "id") UUID modelo) {
     try {
       ModeloAcaoResponse modeloResponse = SERVICO_MODELO.deletaModelo(modelo);
       if (modeloResponse == null) {
@@ -198,9 +201,9 @@ public class ModeloController {
   @Operation(summary = "Listar um modelo")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/{id}", produces = "application/json")
-  public ResponseEntity<?> verModelo(@PathVariable(name = "id") int id) {
+  public ResponseEntity<?> verModelo(@PathVariable(name = "id") UUID id) {
     try {
-      if (id >= 0) {
+      if (id != null) {
         ModeloResponse modeloResponse = SERVICO_MODELO.verModelo(id);
         if (modeloResponse == null) {
           return ResponseEntity

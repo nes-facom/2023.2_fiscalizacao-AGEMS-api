@@ -1,6 +1,9 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,11 +23,11 @@ public class RespostaResponse extends Response {
     title = "Questão",
     description = "Id da Questão que se refere a Resposta",
     required = true,
-    format = "number",
-    type = "int",
+    format = "string",
+    type = "UUID",
     example = "1"
   )
-  private int questao;
+  private UUID questao;
 
    @Schema(title = "Resposta",
     description = "Resposta para a questão do Formulário (objetiva, subjetiva ou múltipla)",

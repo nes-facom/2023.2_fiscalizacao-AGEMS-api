@@ -2,6 +2,8 @@ package fiscalizacao.dsbrs.agems.apis.dominio;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,12 +29,12 @@ public class Modelo {
     title = "Id",
     description = "Id de Modelo, autogerável no banco",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Schema(
     title = "Id do usuário de criação",

@@ -1,5 +1,9 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,9 +20,6 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Entity
 @Data
 @Table(name = "questao")
@@ -28,14 +29,14 @@ public class Questao {
     title = "Id",
     description = "Id de Questão, autogerável no banco",
     required = true,
-    format = "number",
-    type = "integer",
+    format = "string",
+    type = "UUID",
     example = "1"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id")
-  private int id;
+  private UUID id;
 
   @Schema(
     title = "Id do usuário de criação",
