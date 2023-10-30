@@ -7,6 +7,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Token;
 import fiscalizacao.dsbrs.agems.apis.dominio.TokenType;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.TokenRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class TokenRepositorioTest {
     usuario.setSenha("exemplinho");
     usuario.setDate();
     usuario.setFuncao(Papel.ADMIN);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
     usuarioSalvo = usuarioRepositorio.save(usuario);
   }
 

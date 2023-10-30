@@ -23,6 +23,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.FormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
@@ -81,7 +82,7 @@ public class FormularioRepositorioTest {
     );
     usuario.setDate();
     usuario.setFuncao(Papel.USER);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(2,usuarioSalvo.getId());
     Modelo modelo = new Modelo();
@@ -175,7 +176,7 @@ public class FormularioRepositorioTest {
     );
     usuario.setDate();
     usuario.setFuncao(Papel.USER);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(5,usuarioSalvo.getId());
     Modelo modelo = new Modelo();
@@ -307,7 +308,7 @@ public class FormularioRepositorioTest {
     );
     usuario.setDate();
     usuario.setFuncao(Papel.USER);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(3,usuarioSalvo.getId());
     Modelo modelo = new Modelo();
@@ -436,7 +437,7 @@ public class FormularioRepositorioTest {
     );
     usuario.setDate();
     usuario.setFuncao(Papel.USER);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(4,usuarioSalvo.getId());
     Modelo modelo = new Modelo();
@@ -564,7 +565,7 @@ public class FormularioRepositorioTest {
     );
     usuario.setDate();
     usuario.setFuncao(Papel.USER);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
     usuarioSalvo = usuarioRepositorio.save(usuario);
     assertEquals(1,usuarioSalvo.getId());
     Modelo modelo = new Modelo();

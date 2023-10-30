@@ -1,17 +1,22 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.Formulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import org.junit.Test;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 
 public class FormularioTest {
 
@@ -29,12 +34,13 @@ public class FormularioTest {
 
   @Test
   public void testConstrutorAllArgs() {
+	LocalDateTime now = LocalDateTime.now();
     Formulario formulario = new Formulario(
       1,
       new Usuario(),
       new Modelo(),
       new Unidade(),
-      LocalDateTime.now(),
+      now,
       ""
     );
     assertTrue(formulario != null);
@@ -50,20 +56,21 @@ public class FormularioTest {
     assertTrue(formulario.getUsuario() instanceof Usuario);
     assertTrue(formulario.getModelo() instanceof Modelo);
     assertTrue(formulario.getUnidade() instanceof Unidade);
-    assertEquals(formulario.getDataCriacao(), LocalDate.now());
+    assertEquals(formulario.getDataCriacao(), now);
   }
 
   @Test
   public void testSetEGetUsuario() {
     Formulario formulario = new Formulario();
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     Usuario usuarioNovo = new Usuario(
       1,
       "Zezinho Zé da Silva Sauro",
       "zezinho.silva@gmail.com",
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6",
-      LocalDateTime.now(),
-      "Coordenador",
+      now,
+      Cargo.COORDENADOR,
       Papel.USER,
       new ArrayList<>()
     );
@@ -103,11 +110,11 @@ public class FormularioTest {
     );
 
     assertTrue(
-      (formulario.getUsuario().getDataCriacao()).equals(LocalDate.now())
+      (formulario.getUsuario().getDataCriacao()).equals(now)
     );
 
     assertTrue((formulario.getUsuario().getFuncao()).equals(Papel.USER));
-    assertTrue((formulario.getUsuario().getCargo()).equals("Coordenador"));
+    assertTrue((formulario.getUsuario().getCargo()).equals(Cargo.COORDENADOR));
   }
 
   @Test
@@ -173,6 +180,7 @@ public class FormularioTest {
 
   @Test
   public void testBuilderAllArgs() {
+	LocalDateTime now = LocalDateTime.now();
     Modelo modelo = new Modelo();
     Formulario formulario = Formulario
       .builder()
@@ -181,7 +189,7 @@ public class FormularioTest {
       .modelo(modelo)
       .unidade(new Unidade())
       .observacao("Em conformidade")
-      .dataCriacao(LocalDateTime.now())
+      .dataCriacao(now)
       .build();
 
     assertTrue(formulario != null);
@@ -197,12 +205,12 @@ public class FormularioTest {
     assertTrue(formulario.getUsuario() instanceof Usuario);
     assertTrue(formulario.getModelo() instanceof Modelo);
     assertTrue(formulario.getUnidade() instanceof Unidade);
-    assertEquals(formulario.getDataCriacao(), LocalDate.now());
+    assertEquals(formulario.getDataCriacao(), now);
     assertEquals(
       "Formulario(id=1, usuario=Usuario(id=0, nome=null, email=null, senha=null, dataCriacao=null, cargo=null, funcao=null, tokens=null), modelo=" +
       modelo.toString() +
       ", unidade=Unidade(id=0, idUnidade=null, endereco=null, tipo=null), dataCriacao=" +
-      LocalDate.now().toString() +
+      now.toString() +
       ", observacao=Em conformidade)",
       formulario.toString()
     );
@@ -210,6 +218,7 @@ public class FormularioTest {
 
   @Test
   public void testBuildertoString() {
+	LocalDateTime now = LocalDateTime.now();
     Modelo modelo = new Modelo();
     Formulario.FormularioBuilder builder = Formulario
       .builder()
@@ -218,7 +227,7 @@ public class FormularioTest {
       .modelo(modelo)
       .unidade(new Unidade())
       .observacao("Em conformidade")
-      .dataCriacao(LocalDateTime.now());
+      .dataCriacao(now);
 
     assertTrue(builder != null);
 
@@ -226,7 +235,7 @@ public class FormularioTest {
       "Formulario.FormularioBuilder(id=1, usuario=Usuario(id=0, nome=null, email=null, senha=null, dataCriacao=null, cargo=null, funcao=null, tokens=null), modelo=" +
       modelo.toString() +
       ", unidade=Unidade(id=0, idUnidade=null, endereco=null, tipo=null), dataCriacao=" +
-      LocalDate.now().toString() +
+      now.toString() +
       ", observacao=Em conformidade)",
       builder.toString()
     );
@@ -284,26 +293,28 @@ public class FormularioTest {
 
   @Test
   public void testBuilderArgDataCriacao() {
+	LocalDateTime now = LocalDateTime.now();
     Formulario formulario = Formulario
       .builder()
-      .dataCriacao(LocalDateTime.now())
+      .dataCriacao(now)
       .build();
     assertTrue(formulario != null);
     assertEquals(formulario.getId(), 0);
     assertEquals(formulario.getUsuario(), null);
     assertEquals(formulario.getModelo(), null);
     assertEquals(formulario.getUnidade(), null);
-    assertEquals(formulario.getDataCriacao(), LocalDate.now());
+    assertEquals(formulario.getDataCriacao(), now);
   }
 
   @Test
   public void testSetDateEGetDataCriacao() {
+	LocalDateTime now = LocalDateTime.now();
     Formulario formulario = new Formulario();
-    formulario.setDataCriacao(LocalDateTime.now());
+    formulario.setDataCriacao(now);
     assertTrue(formulario != null);
     assertTrue(formulario.getDataCriacao() != null);
     assertTrue(formulario.getDataCriacao() instanceof LocalDateTime);
-    assertEquals(formulario.getDataCriacao(), LocalDateTime.now());
+    assertEquals(formulario.getDataCriacao(), now);
   }
 
   @Test
@@ -318,10 +329,11 @@ public class FormularioTest {
 
   @Test
   public void testSetEGetDataCriacao() {
+	LocalDateTime now = LocalDateTime.now();
     Formulario formulario = new Formulario();
-    formulario.setDataCriacao(LocalDateTime.now());
+    formulario.setDataCriacao(now);
     assertTrue(formulario.getDataCriacao() != null);
     assertTrue(formulario.getDataCriacao() instanceof LocalDateTime);
-    assertEquals(formulario.getDataCriacao(), LocalDateTime.now());
+    assertEquals(formulario.getDataCriacao(), now);
   }
 }

@@ -1,5 +1,15 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,19 +20,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Schema(title = "Usuário", description = "Objeto de Usuário do sistema")
 @Data
@@ -93,7 +94,7 @@ public class Usuario implements UserDetails {
     implementation = String.class
   )
   @Column(nullable = false)
-  private String cargo;
+  private Cargo cargo;
 
   @Schema(
     title = "Papel do Usuário no sistema",
@@ -112,24 +113,12 @@ public class Usuario implements UserDetails {
   @OneToMany(mappedBy = "usuario")
   private List<Token> tokens;
 
-  public String getCargo() {
+  public Cargo getCargo() {
     return this.cargo;
   }
 
-  public void setCargo(String cargo) {
-    final String CARGOS[] = {
-      "Coordenador",
-      "Analista de Regulação",
-      "Assessor Técnico",
-      "Assessor Jurídico",
-    };
-    for (int i = 0; i < CARGOS.length; i++) {
-      if (CARGOS[i].equalsIgnoreCase(cargo)) {
-        this.cargo = CARGOS[i];
-        return;
-      }
-    }
-    this.cargo = null;
+  public void setCargo(Cargo cargo) {
+    this.cargo = cargo;
   }
 
   public String getEmail() {
