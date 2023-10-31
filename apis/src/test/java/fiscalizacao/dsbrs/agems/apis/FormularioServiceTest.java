@@ -32,6 +32,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Resposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.FormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ImagemRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
@@ -269,7 +270,7 @@ public class FormularioServiceTest {
     Usuario usuario = new Usuario();
     usuario.setNome("Júlia Alves Corazza");
     usuario.setEmail(userEmail);
-    usuario.setCargo("Analista de Regulação");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuario.setSenha(
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
     );

@@ -6,6 +6,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Token;
 import fiscalizacao.dsbrs.agems.apis.dominio.TokenType;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.TokenRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
@@ -145,7 +146,7 @@ public class JwtService {
       .nome(request.getNome())
       .email(request.getEmail())
       .senha(CODIFICADOR_SENHA.encode(request.getSenha()))
-      .cargo(request.getCARGOS(request.getCargo()))
+      .cargo(request.getCargo())
       .funcao(Papel.USER)
       .dataCriacao(request.getDataCriacao())
       .build();

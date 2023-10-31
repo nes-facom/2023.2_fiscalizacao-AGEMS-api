@@ -4,27 +4,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
-import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
-import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
-import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.collections4.IterableUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
+import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
+import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
+import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class ModeloRepositorioTest {
 
   @Autowired
@@ -69,7 +76,7 @@ public class ModeloRepositorioTest {
       .findById(modeloEdit.getId())
       .orElse(null);
 
-    assertEquals("modelo1", modeloSalvo.getModeloNome());
+    assertEquals("modelo1", modeloSalvo.getNome());
   }
 
   @Test
@@ -115,54 +122,59 @@ public class ModeloRepositorioTest {
     Modelo modeloSalvo = modeloRepositorio.save(modelo);
 
     List<Questao> questoes = new ArrayList<>();
-
     Questao questao = new Questao();
-    questao.setModelo(modelo);
+    QuestaoModelo questaoModelo = new QuestaoModelo();
+    questaoModelo.setModelo(modelo);
+    questaoModelo.setQuestao(questao);
+    questao.setModelos(Collections.singletonList(questaoModelo));
     questao.setObjetiva(false);
     questao.setPergunta("Pergunta1");
     questao.setPortaria("1234567");
 
     Questao questaoSalva = questaoRepositorio.save(questao);
 
-    TipoResposta tipoResposta1 = new TipoResposta();
+    AlternativaResposta tipoResposta1 = new AlternativaResposta();
     tipoResposta1.setQuestao(questaoSalva);
-    tipoResposta1.setResposta("Resposta1");
+    tipoResposta1.setDescricao("Resposta1");
 
-    List<TipoResposta> listRespostas = new ArrayList<>();
+    List<AlternativaResposta> listRespostas = new ArrayList<>();
     tipoRespostaRepositorio.save(tipoResposta1);
-    TipoResposta tipoRespostaSalva = tipoRespostaRepositorio
+    AlternativaResposta tipoRespostaSalva = tipoRespostaRepositorio
       .findById(tipoResposta1.getId())
       .orElse(null);
     listRespostas.add(tipoRespostaSalva);
 
-    questaoSalva.setRespostas(listRespostas);
+    questaoSalva.setAlternativasResposta(listRespostas);
 
     questoes.add(questaoSalva);
 
     Questao questao2 = new Questao();
-    questao2.setModelo(modelo);
+    QuestaoModelo questao2Modelo = new QuestaoModelo();
+    questao2Modelo.setModelo(modelo);
+    questao2Modelo.setQuestao(questao2);
+    questao2.setModelos(Collections.singletonList(questao2Modelo));
     questao2.setObjetiva(false);
     questao2.setPergunta("Pergunta2");
     questao2.setPortaria("1234567421");
 
     Questao questaoSalva2 = questaoRepositorio.save(questao2);
 
-    TipoResposta tipoResposta2 = new TipoResposta();
+    AlternativaResposta tipoResposta2 = new AlternativaResposta();
     tipoResposta2.setQuestao(questaoSalva2);
-    tipoResposta2.setResposta("Resposta2");
+    tipoResposta2.setDescricao("Resposta2");
 
-    List<TipoResposta> listRespostas2 = new ArrayList<>();
+    List<AlternativaResposta> listRespostas2 = new ArrayList<>();
     tipoRespostaRepositorio.save(tipoResposta2);
-    TipoResposta tipoRespostaSalva2 = tipoRespostaRepositorio
+    AlternativaResposta tipoRespostaSalva2 = tipoRespostaRepositorio
       .findById(tipoResposta2.getId())
       .orElse(null);
     listRespostas2.add(tipoRespostaSalva2);
 
-    questaoSalva2.setRespostas(listRespostas2);
+    questaoSalva2.setAlternativasResposta(listRespostas2);
 
     questoes.add(questaoSalva2);
 
-    modeloSalvo.setPerguntas(questoes);
+    modeloSalvo.setQuestoes(List.of(questaoModelo, questao2Modelo));
 
     modeloRepositorio.delete(modeloSalvo);
 

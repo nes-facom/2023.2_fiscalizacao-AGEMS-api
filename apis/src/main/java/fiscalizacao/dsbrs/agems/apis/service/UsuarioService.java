@@ -66,7 +66,7 @@ public class UsuarioService {
           .id(usuario.getId())
           .nome(usuario.getNome())
           .email(usuario.getEmail())
-          .cargo(usuario.getCargo())
+          .cargo(usuario.getCargo().getDescricao())
           .senha(usuario.getSenha())
           .build();
       } else {
@@ -87,7 +87,7 @@ public class UsuarioService {
         .id(usuario.getId())
         .nome(usuario.getNome())
         .email(usuario.getEmail())
-        .cargo(usuario.getCargo())
+        .cargo(usuario.getCargo().getDescricao())
         .senha(usuario.getSenha())
         .build();
     } else {
@@ -115,7 +115,7 @@ public class UsuarioService {
           .id(usuario.getId())
           .nome(usuario.getNome())
           .email(usuario.getEmail())
-          .cargo(usuario.getCargo())
+          .cargo(usuario.getCargo().getDescricao())
           .senha(usuario.getSenha())
           .build();
       } else {
@@ -142,7 +142,7 @@ public class UsuarioService {
         .id(usuario.getId())
         .nome(usuario.getNome())
         .email(usuario.getEmail())
-        .cargo(usuario.getCargo())
+        .cargo(usuario.getCargo().getDescricao())
         .senha(usuario.getSenha())
         .dataCriacao(usuario.getDataCriacao())
         .build();

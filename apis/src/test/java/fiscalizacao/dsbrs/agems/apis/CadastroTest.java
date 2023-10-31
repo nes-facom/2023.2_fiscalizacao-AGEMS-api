@@ -4,11 +4,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDateTime;
+
 import fiscalizacao.dsbrs.agems.apis.config.ApplicationConfig;
 import fiscalizacao.dsbrs.agems.apis.config.JwtAuthenticationFilter;
 import fiscalizacao.dsbrs.agems.apis.config.PatternFilter;
 import fiscalizacao.dsbrs.agems.apis.config.RequestBodyCaptureFilter;
 import fiscalizacao.dsbrs.agems.apis.controller.AuthenticationController;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
@@ -23,6 +26,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(
@@ -38,6 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
 )
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CadastroTest {
 
@@ -51,7 +57,8 @@ public class CadastroTest {
     request.setNome("Julia Alves Corazza");
     request.setSenha("fiscaliza-agems1#");
     request.setEmail("juliaacorazza@gmail.com");
-    request.setCargo("Analista de Regulação");
+    request.setCargo(Cargo.ANALISTA_DE_REGULACAO);
+    request.setDataCriacao(LocalDateTime.of(2000, 12, 7, 0, 0, 0));
     ResponseEntity<Response> response = authenticationControllerAutowired.cadastrar(
       request
     );
@@ -71,7 +78,8 @@ public class CadastroTest {
     request.setNome("Julia Alves Corazza");
     request.setSenha("fiscaliza-agems1#");
     request.setEmail("juliaacorazza@gmail.com");
-    request.setCargo("Analista de Regulação");
+    request.setCargo(Cargo.ANALISTA_DE_REGULACAO);
+    request.setDataCriacao(LocalDateTime.of(2000, 12, 7, 0, 0, 0));
 
     ResponseEntity<Response> response = authenticationControllerAutowired.cadastrar(
       request
@@ -123,7 +131,7 @@ public class CadastroTest {
     request.setNome("Julia Alves Corazza");
     request.setSenha("fiscaliza-agems1#");
 
-    request.setCargo("Analista de Regulação");
+    request.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     ResponseEntity<Response> response = authenticationControllerAutowired.cadastrar(
       request
     );
@@ -147,7 +155,7 @@ public class CadastroTest {
     RegisterRequest request = new RegisterRequest();
     request.setNome("Julia Alves Corazza");
     request.setEmail("juliaacorazzagmail.com");
-    request.setCargo("Analista de Regulação");
+    request.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     ResponseEntity<Response> response = authenticationControllerAutowired.cadastrar(
       request
     );
@@ -172,7 +180,7 @@ public class CadastroTest {
 
     request.setEmail("juliaacorazza@gmail.com");
     request.setSenha("fiscaliza-agems1#");
-    request.setCargo("Analista de Regulação");
+    request.setCargo(Cargo.ANALISTA_DE_REGULACAO);
 
     ResponseEntity<Response> response = authenticationControllerAutowired.cadastrar(
       request

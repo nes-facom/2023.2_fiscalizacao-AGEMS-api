@@ -1,5 +1,9 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
+import java.time.LocalDateTime;
+
+import org.apache.tomcat.util.codec.binary.Base64;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +16,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import java.time.LocalDateTime;
-import org.apache.tomcat.util.codec.binary.Base64;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -109,7 +111,10 @@ public class Imagem {
   }
 
   public String getImagem() {
-    
     return Base64.encodeBase64String(this.imagem);
+  }
+  
+  public byte[] getImagemBytes() {
+    return this.imagem;
   }
 }

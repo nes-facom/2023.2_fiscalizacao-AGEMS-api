@@ -9,6 +9,7 @@ import fiscalizacao.dsbrs.agems.apis.config.JwtAuthenticationFilter;
 import fiscalizacao.dsbrs.agems.apis.config.PatternFilter;
 import fiscalizacao.dsbrs.agems.apis.config.RequestBodyCaptureFilter;
 import fiscalizacao.dsbrs.agems.apis.controller.AuthenticationController;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
@@ -45,7 +46,7 @@ public class AutenticarTest {
     request.setNome("Julia Alves Corazza");
     request.setSenha("fiscaliza-agems1#");
     request.setEmail("juliaacorazza@outlook.com");
-    request.setCargo("Analista de Regulação");
+    request.setCargo(Cargo.ANALISTA_DE_REGULACAO);
 
     ResponseEntity<Response> response = authenticationControllerAutowired.cadastrar(
       request
