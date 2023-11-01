@@ -50,4 +50,9 @@ public class AlternativaResposta {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "idQuestao", nullable = false)
   private Questao questao;
+
+  @Override
+  public String toString() {
+    return "AlternativaResposta [id=" + id + "]";
+  }
 }

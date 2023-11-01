@@ -40,7 +40,7 @@ class ModeloControllerTest {
     public void testAdicionaModeloRetornaSucesso() {
 
         ModeloRegisterRequest novoModelo = new ModeloRegisterRequest();
-        novoModelo.setModelo("Modelo 01");
+        novoModelo.setNome("Modelo 01");
         ResponseEntity<?> response = modeloController.adicionaModelo(novoModelo);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
