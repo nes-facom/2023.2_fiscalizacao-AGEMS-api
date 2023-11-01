@@ -53,15 +53,6 @@ public class FormularioResponse extends Response {
   private UsuarioFormResponse usuario;
 
   @Schema(
-    title = "Modelo",
-    description = "Response de Modelo atrelado ao Formulário",
-    required = true,
-    implementation = ModeloFormResponse.class
-  )
-  @JsonProperty("modelo")
-  private ModeloFormResponse modelo;
-
-  @Schema(
     title = "Unidade",
     description = "Response de Unidade atrelada ao Formulário",
     required = true,

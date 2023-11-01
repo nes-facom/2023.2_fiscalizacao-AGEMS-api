@@ -41,5 +41,5 @@ public class RespostaRequest {
     type = "string",
     example = "Em conformidade."
   )
-  private String obs;
+  private String observacao;
 }

@@ -51,7 +51,7 @@ class UnidadeControllerTest {
     UnidadeResponse expectedResponse = UnidadeResponse
       .builder()
       .id(1)
-      .idUnidade("Unidade 03")
+      .nome("Unidade 03")
       .endereco("Endereco 03")
       .build();
     when(unidadeService.cadastraUnidade(any(UnidadeRequest.class)))
@@ -63,7 +63,7 @@ class UnidadeControllerTest {
           .content(objectMapper.writeValueAsString(request))
       )
       .andExpect(status().isCreated())
-      .andExpect(jsonPath("$.idUnidade").value("Unidade 03"))
+      .andExpect(jsonPath("$.nome").value("Unidade 03"))
       .andExpect(jsonPath("$.endereco").value("Endereco 03"));
   }
 

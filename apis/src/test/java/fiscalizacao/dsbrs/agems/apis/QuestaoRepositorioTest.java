@@ -5,15 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
-import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
-import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
-import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.TipoRespostaRepositorio;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.collections4.IterableUtils;
+import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +21,14 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
+import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
+import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
+import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -36,7 +41,7 @@ public class QuestaoRepositorioTest {
   private ModeloRepositorio modeloRepositorio;
 
   @Autowired
-  private TipoRespostaRepositorio tipoRespostaRepositorio;
+  private AlternativaRespostaRepositorio tipoRespostaRepositorio;
 
   @Autowired
   private QuestaoRepositorio questaoRepositorio;
@@ -46,7 +51,7 @@ public class QuestaoRepositorioTest {
   @Before
   public void setup() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 16");
+    modelo.setNome("Modelo 16");
     modeloSalvo = modeloRepositorio.save(modelo);
     assertNotEquals(modeloSalvo.getId(), 0);
   }
@@ -54,7 +59,10 @@ public class QuestaoRepositorioTest {
   @Test
   public void testFindById() {
     Questao questao = new Questao();
-    questao.setModelo(modeloSalvo);
+    QuestaoModelo questaoModelo = new QuestaoModelo();
+    questaoModelo.setQuestao(questao);
+    questaoModelo.setModelo(modeloSalvo);
+    questao.setModelos(Collections.singletonList(questaoModelo));
     questao.setObjetiva(false);
     questao.setPergunta("Pergunta1");
     questao.setPortaria("1234567");
@@ -71,7 +79,10 @@ public class QuestaoRepositorioTest {
   @Test
   public void testSave() {
     Questao questao = new Questao();
-    questao.setModelo(modeloSalvo);
+    QuestaoModelo questaoModelo = new QuestaoModelo();
+    questaoModelo.setQuestao(questao);
+    questaoModelo.setModelo(modeloSalvo);
+    questao.setModelos(Collections.singletonList(questaoModelo));
     questao.setObjetiva(false);
     questao.setPergunta("Pergunta1");
     questao.setPortaria("1234567");
@@ -84,7 +95,10 @@ public class QuestaoRepositorioTest {
   @Test
   public void testUpdate() {
     Questao questao = new Questao();
-    questao.setModelo(modeloSalvo);
+    QuestaoModelo questaoModelo = new QuestaoModelo();
+    questaoModelo.setQuestao(questao);
+    questaoModelo.setModelo(modeloSalvo);
+    questao.setModelos(Lists.list(questaoModelo));
     questao.setObjetiva(false);
     questao.setPergunta("Pergunta1");
     questao.setPortaria("1234567");
@@ -110,7 +124,10 @@ public class QuestaoRepositorioTest {
   @Test
   public void testFindAll() {
     Questao questao = new Questao();
-    questao.setModelo(modeloSalvo);
+    QuestaoModelo questaoModelo = new QuestaoModelo();
+    questaoModelo.setQuestao(questao);
+    questaoModelo.setModelo(modeloSalvo);
+    questao.setModelos(Collections.singletonList(questaoModelo));
     questao.setObjetiva(false);
     questao.setPergunta("Pergunta1");
     questao.setPortaria("1234567");
@@ -118,7 +135,10 @@ public class QuestaoRepositorioTest {
     questaoRepositorio.save(questao);
 
     Questao questao2 = new Questao();
-    questao2.setModelo(modeloSalvo);
+    QuestaoModelo questao2Modelo = new QuestaoModelo();
+    questao2Modelo.setQuestao(questao2);
+    questao2Modelo.setModelo(modeloSalvo);
+    questao.setModelos(Collections.singletonList(questao2Modelo));
     questao2.setObjetiva(false);
     questao2.setPergunta("Pergunta2");
     questao2.setPortaria("7654321");
@@ -126,7 +146,10 @@ public class QuestaoRepositorioTest {
     questaoRepositorio.save(questao2);
 
     Questao questao3 = new Questao();
-    questao3.setModelo(modeloSalvo);
+    QuestaoModelo questao3Modelo = new QuestaoModelo();
+    questao3Modelo.setQuestao(questao3);
+    questao3Modelo.setModelo(modeloSalvo);
+    questao.setModelos(Collections.singletonList(questao3Modelo));
     questao3.setObjetiva(false);
     questao3.setPergunta("Pergunta3");
     questao3.setPortaria("9876543");
@@ -141,7 +164,10 @@ public class QuestaoRepositorioTest {
   @Test
   public void testDeleteByEntidade() {
     Questao questao = new Questao();
-    questao.setModelo(modeloSalvo);
+    QuestaoModelo questaoModelo = new QuestaoModelo();
+    questaoModelo.setQuestao(questao);
+    questaoModelo.setModelo(modeloSalvo);
+    questao.setModelos(Collections.singletonList(questaoModelo));
     questao.setObjetiva(false);
     questao.setPergunta("Pergunta1");
     questao.setPortaria("1234567");
@@ -160,7 +186,10 @@ public class QuestaoRepositorioTest {
   @Test
   public void testDeleteById() {
     Questao questao = new Questao();
-    questao.setModelo(modeloSalvo);
+    QuestaoModelo questaoModelo = new QuestaoModelo();
+    questaoModelo.setQuestao(questao);
+    questaoModelo.setModelo(modeloSalvo);
+    questao.setModelos(Collections.singletonList(questaoModelo));
     questao.setObjetiva(false);
     questao.setPergunta("Pergunta1");
     questao.setPortaria("1234567");
@@ -179,30 +208,33 @@ public class QuestaoRepositorioTest {
   @Test
   public void testDeletCascade() {
     Questao questao = new Questao();
-    questao.setModelo(modeloSalvo);
+    QuestaoModelo questaoModelo = new QuestaoModelo();
+    questaoModelo.setQuestao(questao);
+    questaoModelo.setModelo(modeloSalvo);
+    questao.setModelos(Collections.singletonList(questaoModelo));
     questao.setObjetiva(false);
     questao.setPergunta("Pergunta1");
     questao.setPortaria("1234567");
 
     Questao questaoSalva = questaoRepositorio.save(questao);
 
-    TipoResposta tipoResposta1 = new TipoResposta();
+    AlternativaResposta tipoResposta1 = new AlternativaResposta();
     tipoResposta1.setQuestao(questaoSalva);
-    tipoResposta1.setResposta("Resposta1");
+    tipoResposta1.setDescricao("Resposta1");
 
-    List<TipoResposta> listRespostas = new ArrayList<>();
+    List<AlternativaResposta> listRespostas = new ArrayList<>();
     tipoRespostaRepositorio.save(tipoResposta1);
-    TipoResposta tipoRespostaSalva = tipoRespostaRepositorio
+    AlternativaResposta tipoRespostaSalva = tipoRespostaRepositorio
       .findById(tipoResposta1.getId())
       .orElse(null);
 
     assertEquals(tipoResposta1, tipoRespostaSalva);
 
     listRespostas.add(tipoRespostaSalva);
-    questaoSalva.setRespostas(listRespostas);
+    questaoSalva.setAlternativasResposta(listRespostas);
     questaoRepositorio.delete(questaoSalva);
 
-    TipoResposta tipoRespostaDeletada = tipoRespostaRepositorio
+    AlternativaResposta tipoRespostaDeletada = tipoRespostaRepositorio
       .findById(tipoResposta1.getId())
       .orElse(null);
 

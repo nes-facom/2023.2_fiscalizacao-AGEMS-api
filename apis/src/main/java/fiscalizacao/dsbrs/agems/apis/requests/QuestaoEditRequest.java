@@ -63,5 +63,5 @@ public class QuestaoEditRequest {
     required = true,
     type = "array"
   )
-  private List<TipoRespostaEditRequest> tipoRespostas;
+  private List<AlternativaRespostaEditRequest> alternativasResposta;
 }

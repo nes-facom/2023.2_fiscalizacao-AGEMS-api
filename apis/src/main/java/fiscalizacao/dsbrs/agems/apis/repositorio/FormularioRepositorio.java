@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 @Tag(name = "Interface Repositório de Formulário")
 public interface FormularioRepositorio
   extends CrudRepository<Formulario, Integer> {
-  @Operation(summary = "Encontra Formul\u00E1rios por Usuário")
-  public List<Formulario> findByUsuario(Usuario usuario);
+  @Operation(summary = "Encontra formulários por usuário de criação")
+  public List<Formulario> findByUsuarioCriacao(Usuario usuario);
 }

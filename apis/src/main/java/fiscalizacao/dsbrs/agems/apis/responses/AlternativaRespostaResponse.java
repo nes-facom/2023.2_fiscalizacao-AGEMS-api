@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TipoRespostaResponse {
+public class AlternativaRespostaResponse {
 
   @Schema(
     title = "Id",
@@ -35,8 +35,8 @@ public class TipoRespostaResponse {
     type = "string",
     example = "Sim"
   )
-  @JsonProperty("resposta")
-  private String resposta;
+  @JsonProperty("descricao")
+  private String descricao;
 
   @Schema(
     title = "Questão",

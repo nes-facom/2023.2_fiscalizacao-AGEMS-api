@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 @Tag(name = "Interface Repositório de Resposta")
 public interface RespostaRepositorio
   extends CrudRepository<Resposta, RespostaKey> {
-  @Operation(summary = "Encontra Respostas por Formul\u00E1rio")
+  @Operation(summary = "Encontra respostas por formulário")
   public List<Resposta> findByFormulario(Formulario formulario);
 }

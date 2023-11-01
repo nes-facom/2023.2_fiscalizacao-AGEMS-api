@@ -25,7 +25,7 @@ public class ModeloTest {
   @Test
   public void testGetId() {
     Modelo modelo = new Modelo();
-    modelo.setModeloNome("Modelo 1");
+    modelo.setNome("Modelo 1");
     Modelo modeloSalvo = modeloRepositorio.save(modelo);
 
     assertNotNull(modeloSalvo.getId());

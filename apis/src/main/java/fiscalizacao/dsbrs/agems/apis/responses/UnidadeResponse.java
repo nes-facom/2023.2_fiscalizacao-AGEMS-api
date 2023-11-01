@@ -37,8 +37,8 @@ public class UnidadeResponse extends Response {
     type = "String",
     example = "Unidade 1 de Tratamento de Esgoto de Dourados"
   )
-  @JsonProperty("idUnidade")
-  private String idUnidade;
+  @JsonProperty("nome")
+  private String nome;
 
   @Schema(
     title = "Endere\u00E7o",

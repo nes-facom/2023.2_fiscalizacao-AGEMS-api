@@ -160,6 +160,7 @@ public class FormularioController {
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/todos/", produces = "application/json")
   public ResponseEntity<?> listaFormularios(HttpServletRequest request) {
+	  
     try {
       List<FormularioResumoResponse> formularioResponse = SERVICO_FORMULARIO.listaTodosFormularios(
         request

@@ -20,7 +20,7 @@ public class ModeloRegisterRequest {
     type = "string",
     example = "Modelo 01"
   )
-  private String modelo;
+  private String nome;
 
   @Schema(description = "Conjunto de questões do modelo", required = true)
   private List<QuestaoRegisterRequest> questoes;

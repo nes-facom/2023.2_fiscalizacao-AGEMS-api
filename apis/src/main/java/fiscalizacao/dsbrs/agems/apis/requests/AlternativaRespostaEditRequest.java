@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TipoRespostaEditRequest {
+public class AlternativaRespostaEditRequest {
 
   @Schema(
     title = "Ação",
