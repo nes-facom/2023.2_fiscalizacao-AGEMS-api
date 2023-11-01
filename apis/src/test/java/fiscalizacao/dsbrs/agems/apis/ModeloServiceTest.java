@@ -315,7 +315,7 @@ public class ModeloServiceTest {
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
         modeloEditRequest.setId(modeloId);
-        modeloEditRequest.setModeloNome(novoModeloNome);
+        modeloEditRequest.setNome(novoModeloNome);
         modeloEditRequest.setQuestoes(questaoEditRequests);
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(modelo));
@@ -395,7 +395,7 @@ public class ModeloServiceTest {
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
         modeloEditRequest.setId(modeloId);
-        modeloEditRequest.setModeloNome(novoModeloNome);
+        modeloEditRequest.setNome(novoModeloNome);
         modeloEditRequest.setQuestoes(questaoEditRequests);
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(modelo));
@@ -473,7 +473,7 @@ public class ModeloServiceTest {
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
         modeloEditRequest.setId(modeloId);
-        modeloEditRequest.setModeloNome(novoModeloNome);
+        modeloEditRequest.setNome(novoModeloNome);
         modeloEditRequest.setQuestoes(questaoEditRequests);
 
         // Mock repository method calls

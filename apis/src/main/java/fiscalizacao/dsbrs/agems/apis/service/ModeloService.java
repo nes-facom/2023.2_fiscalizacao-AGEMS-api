@@ -198,8 +198,7 @@ public class ModeloService {
     Modelo modelo = MODELO_REPOSITORIO.findById(modeloEditRequest.getId()).orElse(null);
     
     if (modelo != null) {
-    	
-      modelo.setNome(modeloEditRequest.getModeloNome());
+      modelo.setNome(modeloEditRequest.getNome());
 
       List<QuestaoEditRequest> questaoEditRequests = modeloEditRequest.getQuestoes();
       List<QuestaoResponse> responsesQuestao = new ArrayList<>();
