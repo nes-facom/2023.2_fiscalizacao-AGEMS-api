@@ -131,9 +131,9 @@ public class FormularioService {
     formulario.setDataCriacao(novoFormulario.getDataCriacao());
 
     if (
-      novoFormulario.getObservacao().isEmpty() ||
-      (novoFormulario.getObservacao()).isBlank() ||
-      (novoFormulario.getObservacao()).equals(null)
+      (novoFormulario.getObservacao() == null) ||
+      (novoFormulario.getObservacao()).isEmpty() ||
+      (novoFormulario.getObservacao()).isBlank()
     ) {
       formulario.setObservacao("");
     } else {

@@ -9,6 +9,8 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
 import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
@@ -35,10 +37,11 @@ public class UsuarioRepositorioTest {
   @Order(1)
   public void testSave() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("Exemplo Exemplificado Exemplificando");
     usuario.setEmail("exemplo@exemplo.com");
     usuario.setSenha("exemplinho");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.ADMIN);
     usuario.setCargo(Cargo.COORDENADOR);
 
@@ -55,10 +58,11 @@ public class UsuarioRepositorioTest {
   @Order(2)
   public void testFindById() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("J\u00FAlia Alves Corazza");
     usuario.setEmail("alvesju@gmail.com");
     usuario.setSenha("$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.USER);
     usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     Usuario usuarioSalvo = usuarioRepositorio.save(usuario);
@@ -78,11 +82,12 @@ public class UsuarioRepositorioTest {
   @Test
   @Order(4)
   public void testFindByNome() {
+    LocalDateTime now = LocalDateTime.now();
     Usuario usuario = new Usuario();
     usuario.setNome("Exemplo Exemplificado Exemplificando");
     usuario.setEmail("exemplo@exemplo.com");
     usuario.setSenha("exemplinho");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.ADMIN);
     usuario.setCargo(Cargo.COORDENADOR);
     usuarioRepositorio.save(usuario);
@@ -96,10 +101,11 @@ public class UsuarioRepositorioTest {
   @Order(5)
   public void testFindAllByNome() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("Lu\u00EDza Alves Corazza");
     usuario.setEmail("lanvels@gmail.com");
     usuario.setSenha("$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.USER);
     usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuarioRepositorio.save(usuario);
@@ -107,7 +113,7 @@ public class UsuarioRepositorioTest {
     usuario2.setNome("Lu\u00EDza Alves Corazza");
     usuario2.setEmail("l.alves@gmail.com");
     usuario2.setSenha("$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu");
-    usuario2.setDate();
+    usuario2.setDataCriacao(now);
     usuario2.setFuncao(Papel.USER);
     usuario2.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuarioRepositorio.save(usuario2);
@@ -122,10 +128,11 @@ public class UsuarioRepositorioTest {
   @Order(6)
   public void testFindByEmail() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("J\u00FAlia Alves Corazza");
     usuario.setEmail("juahdsj@gmail.com");
     usuario.setSenha("$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.USER);
     usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuarioRepositorio.save(usuario);
@@ -139,10 +146,11 @@ public class UsuarioRepositorioTest {
   @Order(3)
   public void testDelete() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("Exemplo Exemplificado Exemplificando");
     usuario.setEmail("exemplo@exemplo.com");
     usuario.setSenha("exemplinho");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.ADMIN);
     usuario.setCargo(Cargo.COORDENADOR);
     usuarioRepositorio.save(usuario);

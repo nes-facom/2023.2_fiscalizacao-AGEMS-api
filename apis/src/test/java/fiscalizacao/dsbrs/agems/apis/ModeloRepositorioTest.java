@@ -1,6 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -9,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 
 @RunWith(SpringRunner.class)
@@ -42,6 +45,9 @@ public class ModeloRepositorioTest {
 
   @Autowired
   private QuestaoRepositorio questaoRepositorio;
+
+  @Autowired
+  private QuestaoModeloRepositorio questaoModeloRepositorio;
 
   @Test
   public void testFindById() {
@@ -121,17 +127,17 @@ public class ModeloRepositorioTest {
     modelo.setNome("modelo1");
     Modelo modeloSalvo = modeloRepositorio.save(modelo);
 
-    List<Questao> questoes = new ArrayList<>();
+    List<QuestaoModelo> questoes = new ArrayList<>();
     Questao questao = new Questao();
-    QuestaoModelo questaoModelo = new QuestaoModelo();
-    questaoModelo.setModelo(modelo);
-    questaoModelo.setQuestao(questao);
-    questao.setModelos(Collections.singletonList(questaoModelo));
     questao.setObjetiva(false);
     questao.setPergunta("Pergunta1");
     questao.setPortaria("1234567");
-
     Questao questaoSalva = questaoRepositorio.save(questao);
+    
+    QuestaoModelo questaoModelo = new QuestaoModelo();
+    questaoModelo.setModelo(modelo);
+    questaoModelo.setQuestao(questaoSalva);
+    QuestaoModelo questaoModeloSalvo = questaoModeloRepositorio.save(questaoModelo);
 
     AlternativaResposta tipoResposta1 = new AlternativaResposta();
     tipoResposta1.setQuestao(questaoSalva);
@@ -146,18 +152,18 @@ public class ModeloRepositorioTest {
 
     questaoSalva.setAlternativasResposta(listRespostas);
 
-    questoes.add(questaoSalva);
+    questoes.add(questaoModeloSalvo);
 
     Questao questao2 = new Questao();
-    QuestaoModelo questao2Modelo = new QuestaoModelo();
-    questao2Modelo.setModelo(modelo);
-    questao2Modelo.setQuestao(questao2);
-    questao2.setModelos(Collections.singletonList(questao2Modelo));
     questao2.setObjetiva(false);
     questao2.setPergunta("Pergunta2");
     questao2.setPortaria("1234567421");
-
     Questao questaoSalva2 = questaoRepositorio.save(questao2);
+    
+    QuestaoModelo questao2Modelo = new QuestaoModelo();
+    questao2Modelo.setModelo(modelo);
+    questao2Modelo.setQuestao(questao2);
+    QuestaoModelo questao2ModeloSalvo = questaoModeloRepositorio.save(questao2Modelo);
 
     AlternativaResposta tipoResposta2 = new AlternativaResposta();
     tipoResposta2.setQuestao(questaoSalva2);
@@ -172,20 +178,12 @@ public class ModeloRepositorioTest {
 
     questaoSalva2.setAlternativasResposta(listRespostas2);
 
-    questoes.add(questaoSalva2);
-
-    modeloSalvo.setQuestoes(List.of(questaoModelo, questao2Modelo));
-
+    questoes.add(questao2ModeloSalvo);
+    modelo.setQuestoes(questoes);
+    
     modeloRepositorio.delete(modeloSalvo);
 
     assertNull(modeloRepositorio.findById(modeloSalvo.getId()).orElse(null));
-    assertNull(questaoRepositorio.findById(questaoSalva.getId()).orElse(null));
-    assertNull(questaoRepositorio.findById(questaoSalva2.getId()).orElse(null));
-    assertNull(
-      tipoRespostaRepositorio.findById(tipoRespostaSalva.getId()).orElse(null)
-    );
-    assertNull(
-      tipoRespostaRepositorio.findById(tipoRespostaSalva2.getId()).orElse(null)
-    );
+    assertFalse(questaoModeloRepositorio.findAll().iterator().hasNext());
   }
 }

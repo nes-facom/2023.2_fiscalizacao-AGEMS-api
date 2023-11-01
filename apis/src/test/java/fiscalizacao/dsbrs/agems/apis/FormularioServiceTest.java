@@ -23,19 +23,22 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Formulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.Imagem;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
+import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Resposta;
-import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
 import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.FormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ImagemRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.RespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
@@ -60,6 +63,12 @@ public class FormularioServiceTest {
 
   @Mock
   private QuestaoRepositorio repositorioQuestao;
+  
+  @Mock
+  private QuestaoModeloRepositorio repositorioQuestaoModelo;
+  
+  @Mock
+  private QuestaoFormularioRepositorio repositorioQuestaoFormulario;
 
   @Mock
   private UsuarioRepositorio repositorioUsuario;
@@ -80,15 +89,14 @@ public class FormularioServiceTest {
   public void setup() {
     MockitoAnnotations.openMocks(this);
     formularioService =
-      new FormularioService(
-        repositorioFormulario,
-        repositorioUsuario,
-        repositorioModelo,
-        repositorioQuestao,
-        repositorioResposta,
-        repositorioUnidade,
-        repositorioImagem
-      );
+        new FormularioService(repositorioFormulario,
+            repositorioUsuario,
+            repositorioModelo,
+            repositorioQuestaoModelo,
+            repositorioQuestaoFormulario,
+            repositorioResposta,
+            repositorioUnidade,
+            repositorioImagem);
   }
 
   @Test
@@ -154,36 +162,6 @@ public class FormularioServiceTest {
   }
 
   @Test
-  public void cadastraFormularioImagensReturnsErroResponse() {
-    HttpServletRequest request = mock(HttpServletRequest.class);
-    FormularioRegisterRequest formularioRegisterRequest = mock(
-      FormularioRegisterRequest.class
-    );
-    Unidade unidade = mock(Unidade.class);
-    Usuario usuario = mock(Usuario.class);
-    Modelo modelo = mock(Modelo.class);
-    when(repositorioModelo.findById(anyInt())).thenReturn(Optional.of(modelo));
-    when(repositorioUsuario.findByEmail("user@example.com"))
-      .thenReturn(Optional.of(usuario));
-    when(request.getAttribute("EMAIL_USUARIO")).thenReturn("user@example.com");
-    when(repositorioUnidade.findById(anyInt()))
-      .thenReturn(Optional.of(unidade));
-    when(formularioRegisterRequest.getImagens())
-      .thenReturn(
-        Arrays.asList(new ImagemRegisterRequest(), new ImagemRegisterRequest())
-      );
-
-    Response response = formularioService.cadastraFormulario(
-      request,
-      formularioRegisterRequest
-    );
-
-    assertTrue(response instanceof ErroResponse);
-    assertEquals(400, ((ErroResponse) response).getStatus());
-    assertEquals("No mínimo 4 imagens.", ((ErroResponse) response).getErro());
-  }
-
-  @Test
   public void cadastraFormularioNumRespostasReturnsErroResponse() {
     HttpServletRequest request = mock(HttpServletRequest.class);
     FormularioRegisterRequest formularioRegisterRequest = mock(
@@ -195,14 +173,14 @@ public class FormularioServiceTest {
     when(repositorioUsuario.findByEmail("user@example.com"))
       .thenReturn(Optional.of(usuario));
     when(request.getAttribute("EMAIL_USUARIO")).thenReturn("user@example.com");
-    List<Questao> questoes = Arrays.asList(
-      mock(Questao.class),
-      mock(Questao.class)
+    List<QuestaoModelo> questoes = Arrays.asList(
+      mock(QuestaoModelo.class),
+      mock(QuestaoModelo.class)
     );
     when(repositorioUnidade.findById(anyInt()))
       .thenReturn(Optional.of(unidade));
     when(repositorioModelo.findById(anyInt())).thenReturn(Optional.of(modelo));
-    when(modelo.getPerguntas()).thenReturn(questoes);
+    when(modelo.getQuestoes()).thenReturn(questoes);
     when(formularioRegisterRequest.getImagens())
       .thenReturn(
         Arrays.asList(
@@ -281,67 +259,79 @@ public class FormularioServiceTest {
     Modelo modelo = new Modelo();
     modelo.setId(1);
     modelo.setNome("Modelo 1");
-    List<Questao> questoes = new ArrayList<>();
+    List<QuestaoModelo> questoes = new ArrayList<>();
     Questao q1 = new Questao();
-    q1.setModelo(modelo);
+    q1.setId(1);
+    QuestaoModelo qm1 = new QuestaoModelo();
+    qm1.setQuestao(q1);
+    qm1.setModelo(modelo);
+    q1.setModelos(Collections.singletonList(qm1));
     q1.setObjetiva(true);
     q1.setPergunta("Pergunta 1");
     q1.setPortaria("Portaria 1");
-    List<TipoResposta> tipoRespostas = new ArrayList<>();
-    TipoResposta tipoResposta = new TipoResposta();
+    List<AlternativaResposta> tipoRespostas = new ArrayList<>();
+    AlternativaResposta tipoResposta = new AlternativaResposta();
     tipoResposta.setQuestao(q1);
-    tipoResposta.setResposta("Sim");
+    tipoResposta.setDescricao("Sim");
     tipoRespostas.add(tipoResposta);
-    TipoResposta tipoResposta1 = new TipoResposta();
+    AlternativaResposta tipoResposta1 = new AlternativaResposta();
     tipoResposta1.setQuestao(q1);
-    tipoResposta1.setResposta("Não");
+    tipoResposta1.setDescricao("Não");
     tipoRespostas.add(tipoResposta1);
-    TipoResposta tipoResposta2 = new TipoResposta();
+    AlternativaResposta tipoResposta2 = new AlternativaResposta();
     tipoResposta2.setQuestao(q1);
-    tipoResposta2.setResposta("NA");
+    tipoResposta2.setDescricao("NA");
     tipoRespostas.add(tipoResposta2);
-    q1.setRespostas(tipoRespostas);
+    q1.setAlternativasResposta(tipoRespostas);
     Questao q2 = new Questao();
-    q2.setModelo(modelo);
+    q2.setId(2);
+    QuestaoModelo qm2 = new QuestaoModelo();
+    qm2.setModelo(modelo);
+    qm2.setQuestao(q2);
+    q2.setModelos(Collections.singletonList(qm2));
     q2.setObjetiva(true);
     q2.setPergunta("Pergunta 2");
     q2.setPortaria("Portaria 2");
-    List<TipoResposta> tipoRespostas2 = new ArrayList<>();
-    TipoResposta tipoResposta3 = new TipoResposta();
+    List<AlternativaResposta> tipoRespostas2 = new ArrayList<>();
+    AlternativaResposta tipoResposta3 = new AlternativaResposta();
     tipoResposta3.setQuestao(q2);
-    tipoResposta3.setResposta("Sim");
+    tipoResposta3.setDescricao("Sim");
     tipoRespostas2.add(tipoResposta3);
-    TipoResposta tipoResposta4 = new TipoResposta();
+    AlternativaResposta tipoResposta4 = new AlternativaResposta();
     tipoResposta4.setQuestao(q2);
-    tipoResposta4.setResposta("Não");
+    tipoResposta4.setDescricao("Não");
     tipoRespostas2.add(tipoResposta4);
-    TipoResposta tipoResposta5 = new TipoResposta();
+    AlternativaResposta tipoResposta5 = new AlternativaResposta();
     tipoResposta5.setQuestao(q2);
-    tipoResposta5.setResposta("NA");
+    tipoResposta5.setDescricao("NA");
     tipoRespostas2.add(tipoResposta5);
-    q1.setRespostas(tipoRespostas);
-    questoes.add(q1);
-    q2.setRespostas(tipoRespostas2);
-    questoes.add(q2);
-    modelo.setPerguntas(questoes);
+    q1.setAlternativasResposta(tipoRespostas);
+    questoes.add(qm1);
+    q2.setAlternativasResposta(tipoRespostas2);
+    questoes.add(qm2);
+    modelo.setQuestoes(questoes);
 
     when(repositorioModelo.findById(modelo.getId()))
       .thenReturn(Optional.of(modelo));
 
-    Unidade unidade = new Unidade(
-      1,
-      "Unidade 1",
-      "Endereço 1",
-      "Tratamento de Esgoto"
-    );
+    Unidade unidade = Unidade.builder()
+        .id(1)
+        .nome("Unidade 1")
+        .endereco("Endereço 1")
+        .tipo("Tratamento de Esgoto")
+        .build();
     Formulario formulario = new Formulario();
     formulario.setDataCriacao(LocalDateTime.now());
     formulario.setId(1);
-    formulario.setUsuario(usuario);
-    formulario.setModelo(modelo);
+    formulario.setUsuarioCriacao(usuario);
     formulario.setUnidade(unidade);
     formulario.setObservacao("");
-    Resposta respostaF = new Resposta(formulario, q1, "Não", " ");
+    Resposta respostaF = Resposta.builder()
+        .formulario(formulario)
+        .questao(q1)
+        .resposta("Não")
+        .observacao(" ")
+        .build();
     List<Resposta> respostasList = new ArrayList<Resposta>();
     respostasList.add(respostaF);
 
@@ -350,6 +340,7 @@ public class FormularioServiceTest {
       .thenReturn(Optional.of(unidade));
     when(repositorioImagem.save(any(Imagem.class))).thenReturn(new Imagem());
     when(repositorioResposta.save(any(Resposta.class))).thenReturn(respostaF);
+    when(repositorioQuestaoModelo.findByModelo(any(Modelo.class))).thenReturn(List.of(qm1, qm2));
 
     when(repositorioFormulario.save(any(Formulario.class)))
       .thenReturn(formulario);

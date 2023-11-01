@@ -81,4 +81,11 @@ public class QuestaoModelo {
 	  if(this.id == null)
 		  this.id = new QuestaoModeloKey();
   }
+  
+  @Override
+  public String toString() {
+    return "QuestaoModelo(questao=" + (questao == null ? "null" : questao.getId())
+        + ", modelo=" + (modelo == null ? "null" : modelo.getId())
+        + ")";
+  }
 }

@@ -1,16 +1,14 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
-import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
-import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
-import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.Response;
-import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
-import fiscalizacao.dsbrs.agems.apis.service.UnidadeService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +19,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+
+import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
+import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
+import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
+import fiscalizacao.dsbrs.agems.apis.service.UnidadeService;
 
 @ExtendWith(MockitoExtension.class)
 public class UnidadeServiceTest {
@@ -34,15 +40,20 @@ public class UnidadeServiceTest {
   @Test
   public void adicionaUnidadeShouldReturnCreated() {
     UnidadeRequest request = new UnidadeRequest();
-    request.setIdUnidade("123");
+    request.setNome("123");
     request.setEndereco("Sample Address");
     request.setTipo("Tratamento de Esgoto");
 
-    when(unidadeRepositorio.findByIdUnidade("123"))
+    when(unidadeRepositorio.findByNome("123"))
       .thenReturn(java.util.Optional.empty());
     when(unidadeRepositorio.save(any(Unidade.class)))
       .thenReturn(
-        new Unidade(1, "123", "Sample Address", "Tratamento de Esgoto")
+          Unidade.builder()
+          .id(1)
+          .nome("123")
+          .endereco("Sample Address")
+          .tipo("Tratamento de Esgoto")
+          .build()
       );
 
     Response response = unidadeService.cadastraUnidade(request);
@@ -50,21 +61,21 @@ public class UnidadeServiceTest {
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
     assertEquals(1, unidadeResponse.getId());
-    assertEquals("123", unidadeResponse.getIdUnidade());
+    assertEquals("123", unidadeResponse.getNome());
     assertEquals("Sample Address", unidadeResponse.getEndereco());
   }
 
   @Test
   public void adicionaUnidadeShouldReturnConflict() {
     UnidadeRequest request = new UnidadeRequest();
-    request.setIdUnidade("123");
+    request.setNome("123");
     request.setEndereco("Sample Address");
     request.setTipo("Tratamento de Esgoto");
 
     Unidade existingUnidade = new Unidade();
-    existingUnidade.setIdUnidade("123");
+    existingUnidade.setNome("123");
 
-    when(unidadeRepositorio.findByIdUnidade("123"))
+    when(unidadeRepositorio.findByNome("123"))
       .thenReturn(java.util.Optional.of(existingUnidade));
 
     Response response = unidadeService.cadastraUnidade(request);
@@ -94,19 +105,19 @@ public class UnidadeServiceTest {
     int id = 1;
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
       .thenReturn(Optional.of(unidade));
 
-    Response response = unidadeService.verUnidade(unidade.getIdUnidade());
+    Response response = unidadeService.verUnidade(unidade.getNome());
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
     assertEquals(unidade.getId(), unidadeResponse.getId());
-    assertEquals(unidade.getIdUnidade(), unidadeResponse.getIdUnidade());
+    assertEquals(unidade.getNome(), unidadeResponse.getNome());
     assertEquals(unidade.getTipo(), unidadeResponse.getTipo());
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
@@ -143,19 +154,19 @@ public class UnidadeServiceTest {
     int id = 1;
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
       .thenReturn(Optional.of(unidade));
 
-    Response response = unidadeService.deletarUnidade(unidade.getIdUnidade());
+    Response response = unidadeService.deletarUnidade(unidade.getNome());
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
     assertEquals(unidade.getId(), unidadeResponse.getId());
-    assertEquals(unidade.getIdUnidade(), unidadeResponse.getIdUnidade());
+    assertEquals(unidade.getNome(), unidadeResponse.getNome());
     assertEquals(unidade.getTipo(), unidadeResponse.getTipo());
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
@@ -222,17 +233,17 @@ public class UnidadeServiceTest {
     int id = 1;
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
     UnidadeRequest unidadeRequest = new UnidadeRequest();
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
       .thenReturn(Optional.of(unidade));
 
     Response response = unidadeService.editarUnidade(
-      unidade.getIdUnidade(),
+      unidade.getNome(),
       unidadeRequest
     );
     assertTrue(response instanceof ErroResponse);
@@ -249,19 +260,19 @@ public class UnidadeServiceTest {
     int id = 1;
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setEndereco("new Address");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
       .thenReturn(Optional.of(unidade));
     when(unidadeRepositorio.save(any(Unidade.class))).thenReturn(unidade);
 
     Response response = unidadeService.editarUnidade(
-      unidade.getIdUnidade(),
+      unidade.getNome(),
       unidadeRequest
     );
 
@@ -269,7 +280,7 @@ public class UnidadeServiceTest {
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
     assertEquals(unidade.getId(), unidadeResponse.getId());
-    assertEquals(unidade.getIdUnidade(), unidadeResponse.getIdUnidade());
+    assertEquals(unidade.getNome(), unidadeResponse.getNome());
     assertEquals(unidade.getTipo(), unidadeResponse.getTipo());
     assertEquals(unidadeRequest.getEndereco(), unidadeResponse.getEndereco());
   }
@@ -279,27 +290,27 @@ public class UnidadeServiceTest {
     int id = 1;
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
     int id2 = 2;
     Unidade unidade2 = new Unidade();
     unidade.setId(id2);
-    unidade.setIdUnidade("1234");
+    unidade.setNome("1234");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    unidadeRequest.setIdUnidade("1234");
+    unidadeRequest.setNome("1234");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
       .thenReturn(Optional.of(unidade));
-    when(unidadeRepositorio.findByIdUnidade(unidadeRequest.getIdUnidade()))
+    when(unidadeRepositorio.findByNome(unidadeRequest.getNome()))
       .thenReturn(Optional.of(unidade2));
 
     Response response = unidadeService.editarUnidade(
-      unidade.getIdUnidade(),
+      unidade.getNome(),
       unidadeRequest
     );
 
@@ -317,19 +328,19 @@ public class UnidadeServiceTest {
     int id = 1;
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    unidadeRequest.setIdUnidade("1234");
+    unidadeRequest.setNome("1234");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
       .thenReturn(Optional.of(unidade));
     when(unidadeRepositorio.save(any(Unidade.class))).thenReturn(unidade);
 
     Response response = unidadeService.editarUnidade(
-      unidade.getIdUnidade(),
+      unidade.getNome(),
       unidadeRequest
     );
 
@@ -337,7 +348,7 @@ public class UnidadeServiceTest {
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
     assertEquals(unidade.getId(), unidadeResponse.getId());
-    assertEquals(unidadeRequest.getIdUnidade(), unidadeResponse.getIdUnidade());
+    assertEquals(unidadeRequest.getNome(), unidadeResponse.getNome());
     assertEquals(unidade.getTipo(), unidadeResponse.getTipo());
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
@@ -476,8 +487,8 @@ public class UnidadeServiceTest {
     assertEquals(newEndereco, ((UnidadeResponse) response).getEndereco());
 
     assertEquals(
-      existingUnidade.getIdUnidade(),
-      ((UnidadeResponse) response).getIdUnidade()
+      existingUnidade.getNome(),
+      ((UnidadeResponse) response).getNome()
     );
     assertEquals(
       existingUnidade.getTipo(),
@@ -501,8 +512,8 @@ public class UnidadeServiceTest {
     assertEquals(newTipo, ((UnidadeResponse) response).getTipo());
 
     assertEquals(
-      existingUnidade.getIdUnidade(),
-      ((UnidadeResponse) response).getIdUnidade()
+      existingUnidade.getNome(),
+      ((UnidadeResponse) response).getNome()
     );
     assertEquals(
       existingUnidade.getTipo(),
@@ -515,20 +526,20 @@ public class UnidadeServiceTest {
     String id = "1";
     String newIdUnidade = "Novo nome";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    unidadeRequest.setIdUnidade(newIdUnidade);
+    unidadeRequest.setNome(newIdUnidade);
     Unidade existingUnidade = new Unidade();
     when(unidadeRepositorio.findById(Integer.parseInt(id)))
       .thenReturn(Optional.of(existingUnidade));
-    when(unidadeRepositorio.findByIdUnidade(newIdUnidade)).thenReturn(Optional.empty());
+    when(unidadeRepositorio.findByNome(newIdUnidade)).thenReturn(Optional.empty());
   when(unidadeRepositorio.save(any(Unidade.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
     Response response = unidadeService.editarUnidade(id, unidadeRequest);
 
-    assertEquals(newIdUnidade, ((UnidadeResponse) response).getIdUnidade());
+    assertEquals(newIdUnidade, ((UnidadeResponse) response).getNome());
 
     assertEquals(
-      existingUnidade.getIdUnidade(),
-      ((UnidadeResponse) response).getIdUnidade()
+      existingUnidade.getNome(),
+      ((UnidadeResponse) response).getNome()
     );
     assertEquals(
       existingUnidade.getTipo(),
@@ -542,14 +553,14 @@ public void shouldReturnConflictWhenNewIdUnidadeExistsWithDifferentInformation()
     String id = "1";
     String newIdUnidade = "Novo nome";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    unidadeRequest.setIdUnidade(newIdUnidade);
+    unidadeRequest.setNome(newIdUnidade);
     Unidade existingUnidade = new Unidade();
     Unidade existingUnidade2 = new Unidade();
-    existingUnidade2.setIdUnidade(newIdUnidade);
+    existingUnidade2.setNome(newIdUnidade);
     existingUnidade2.setId(3);
     when(unidadeRepositorio.findById(Integer.parseInt(id)))
         .thenReturn(Optional.of(existingUnidade));
-    when(unidadeRepositorio.findByIdUnidade(newIdUnidade))
+    when(unidadeRepositorio.findByNome(newIdUnidade))
         .thenReturn(Optional.of(existingUnidade2));
 
    
