@@ -1,11 +1,12 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
@@ -32,6 +33,7 @@ import fiscalizacao.dsbrs.agems.apis.requests.RespostaRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioAcaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.FormularioBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResumoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ImagemResponse;
@@ -264,27 +266,33 @@ public class FormularioService {
     return formularioResponse;
   }
 
-  public List<FormularioResumoResponse> listaTodosFormularios(
-    HttpServletRequest request
+  public FormularioBuscaResponse listaTodosFormularios(
+    HttpServletRequest request,
+    int pagina,
+    int quantidade
   ) {
 	  
     Usuario usuario = extrairUsuarioEmailHeader(request);
     
     List<FormularioResumoResponse> responsesFormulario = new ArrayList<>();
+    FormularioBuscaResponse response = new FormularioBuscaResponse();
     
-    Iterable<Formulario> formularios = FORMULARIO_REPOSITORIO.findAll();
+    Page<Formulario> formularios = FORMULARIO_REPOSITORIO.findAll(PageRequest.of(pagina, quantidade));
     
-    for (Formulario formulario : formularios) {
-      formularioResumoResponse =
-        FormularioResumoResponse
-        	.builder()
-        	.id(formulario.getId())
-        	.build();
-      
-      responsesFormulario.add(formularioResumoResponse);
-    }
-    
-    return responsesFormulario;
+    response.setPagina(pagina);
+    response.setPaginaMax(Math.max(0, formularios.getTotalPages()-1));
+    response.setFormularios(
+        formularios.stream()
+            .map(form -> new FormularioResumoResponse(
+                            form.getId(),
+                            form.getUnidade().getNome(),
+                            form.getDataCriacao(),
+                            form.getUsuarioCriacao().getNome()
+                         )
+             )
+            .collect(Collectors.toList())
+      );
+    return response;
   }
 
   public Response verFormulario(HttpServletRequest request, int pedido) {

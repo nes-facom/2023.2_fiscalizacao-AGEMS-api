@@ -2,8 +2,10 @@ package fiscalizacao.dsbrs.agems.apis.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
@@ -22,6 +24,7 @@ import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
@@ -126,18 +129,18 @@ public class ModeloService {
     return null;
   }
 
-  public List<ModeloListResponse> listaTodosModelos() {
-    List<ModeloListResponse> responsesModelo = new ArrayList<>();
-    Iterable<Modelo> modelos = MODELO_REPOSITORIO.findAll();
+  public ModeloBuscaResponse listaTodosModelos(int pagina, int quantidade) {
+    ModeloBuscaResponse response = new ModeloBuscaResponse();
+    Page<Modelo> modelos = MODELO_REPOSITORIO.findAll(PageRequest.of(pagina, quantidade));
 
-    for (Modelo modelo : modelos) {
-      ModeloListResponse response = new ModeloListResponse();
-      response.setId(modelo.getId());
-      response.setNome(modelo.getNome());
-
-      responsesModelo.add(response);
-    }
-    return responsesModelo;
+    response.setPagina(pagina);
+    response.setPaginaMax(Math.max(0, modelos.getTotalPages()-1));
+    response.setModelos(
+        modelos.stream()
+            .map(modelo -> new ModeloListResponse(modelo.getId(), modelo.getNome()))
+            .collect(Collectors.toList())
+    );
+    return response;
   }
 
   public ModeloResponse verModelo(int idModelo) {
