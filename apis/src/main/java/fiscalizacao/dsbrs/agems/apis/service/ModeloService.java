@@ -2,6 +2,7 @@ package fiscalizacao.dsbrs.agems.apis.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -105,7 +106,7 @@ public class ModeloService {
     return modeloResponse;
   }
 
-  public ModeloAcaoResponse deletaModelo(int pedido) {
+  public ModeloAcaoResponse deletaModelo(UUID pedido) {
     Modelo modelo = MODELO_REPOSITORIO.findById(pedido).orElse(null);
     if (modelo != null) {
       modeloResponse =
@@ -195,7 +196,7 @@ public class ModeloService {
         .build();
   }
 
-  public ModeloResponse verModelo(int idModelo) {
+  public ModeloResponse verModelo(UUID idModelo) {
 	  
     Modelo modelo = MODELO_REPOSITORIO.findById(idModelo).orElse(null);
 

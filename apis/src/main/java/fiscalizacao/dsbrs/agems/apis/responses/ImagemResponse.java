@@ -1,6 +1,9 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,12 +34,12 @@ public class ImagemResponse extends Response {
     title = "Id do Formulário",
     description = "Identificador do Formulário a qual a imagem pertence",
     required = true,
-    format = "number",
-    type = "int",
+    format = "string",
+    type = "UUID",
     example = "1"
   )
   @JsonProperty("formulario")
-  private int formulario;
+  private UUID formulario;
 
   @Schema(
     title = "Imagem",

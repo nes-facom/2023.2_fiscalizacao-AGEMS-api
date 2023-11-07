@@ -1,6 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,22 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
+import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
@@ -101,7 +118,7 @@ public class ModeloController {
   @SecurityRequirement(name = "BEARER")
   @DeleteMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<?> deletaModelo(
-      @PathVariable(value = "id") int modelo) {
+      @PathVariable(value = "id") UUID modelo) {
     try {
       ModeloAcaoResponse modeloResponse = SERVICO_MODELO.deletaModelo(modelo);
       if (modeloResponse == null) {
@@ -251,9 +268,9 @@ public class ModeloController {
   @Operation(summary = "Listar um modelo")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/{id}", produces = "application/json")
-  public ResponseEntity<?> verModelo(@PathVariable(name = "id") int id) {
+  public ResponseEntity<?> verModelo(@PathVariable(name = "id") UUID id) {
     try {
-      if (id >= 0) {
+      if (id != null) {
         ModeloResponse modeloResponse = SERVICO_MODELO.verModelo(id);
         if (modeloResponse == null) {
           return ResponseEntity

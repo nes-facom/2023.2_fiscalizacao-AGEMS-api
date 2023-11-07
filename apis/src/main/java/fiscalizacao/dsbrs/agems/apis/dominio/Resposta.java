@@ -1,6 +1,8 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 import fiscalizacao.dsbrs.agems.apis.dominio.chaves.RespostaKey;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -34,12 +36,12 @@ public class Resposta {
     title = "Id",
     description = "Id de resposta, autogerável no banco",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Schema(
     title = "Questão",

@@ -1,9 +1,9 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -181,7 +181,7 @@ public class FormularioService {
 	  imagensResponses.add(imagemResponse);
     }
     
-    Map<Integer, QuestaoModelo> questaoMap = questoesModelo.stream().collect(Collectors.toMap(el -> el.getQuestao().getId(), el -> el));
+    Map<UUID, QuestaoModelo> questaoMap = questoesModelo.stream().collect(Collectors.toMap(el -> el.getQuestao().getId(), el -> el));
     for (RespostaRequest respostaRequest : novoFormulario.getRespostas()) {
   	  QuestaoModelo questaoModelo = questaoMap.get(respostaRequest.getQuestao());
       if (questaoModelo != null) {
@@ -287,7 +287,7 @@ public class FormularioService {
     return responsesFormulario;
   }
 
-  public Response verFormulario(HttpServletRequest request, int pedido) {
+  public Response verFormulario(HttpServletRequest request, UUID pedido) {
 	  
     Usuario usuario = extrairUsuarioEmailHeader(request);
     
@@ -409,7 +409,7 @@ public class FormularioService {
     return formularioResponse;
   }
 
-  public Response deletaFormulario(HttpServletRequest request, int pedido) {
+  public Response deletaFormulario(HttpServletRequest request, UUID pedido) {
     Usuario usuario = extrairUsuarioEmailHeader(request);
     if (usuario == null) {
       return ErroResponse
@@ -528,7 +528,7 @@ public class FormularioService {
 
   public Response editaFormulario(
     HttpServletRequest request,
-    int idFormulario,
+    UUID idFormulario,
     FormularioRequest pedido
   ) {
     Usuario usuario = extrairUsuarioEmailHeader(request);
@@ -641,7 +641,7 @@ public class FormularioService {
       if (pedido.getRespostas().size() != 0) {
         for (int index = 0; index < pedido.getRespostas().size(); index++) {
           
-          int id = pedido.getRespostas().get(index).getQuestao();
+          UUID id = pedido.getRespostas().get(index).getQuestao();
           String textoResposta = pedido.getRespostas().get(index).getResposta();
           String observacao = pedido.getRespostas().get(index).getObservacao();
           

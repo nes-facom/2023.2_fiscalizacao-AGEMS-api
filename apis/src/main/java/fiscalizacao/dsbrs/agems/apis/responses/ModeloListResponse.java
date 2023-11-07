@@ -1,6 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -2,6 +2,7 @@ package fiscalizacao.dsbrs.agems.apis.requests;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -35,11 +36,11 @@ public class FormularioRegisterRequest {
     title = "Modelo",
     description = "Modelo que se refere o Formulário",
     required = true,
-    format = "number",
-    type = "int",
+    format = "string",
+    type = "UUID",
     example = "1"
   )
-  private int modelo;
+  private UUID modelo;
 
   @Schema(
     title = "Unidade",

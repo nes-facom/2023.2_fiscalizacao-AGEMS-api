@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.UUID;
 
 @Schema(
   title = "ModeloListResponse",
@@ -19,7 +20,7 @@ public class ModeloResumidoResponse {
 
   @Schema(description = "id do modelo", required = true)
   @JsonProperty("id")
-  private int id;
+  private UUID id;
 
   @Schema(description = "nome do Modelo", required = true)
   @JsonProperty("nome")
