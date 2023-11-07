@@ -50,7 +50,7 @@ public class UnidadeService {
           .build();
 
       Unidade unidadeSalva = UNIDADE_REPOSITORIO.save(unidade);
-//      throw new RuntimeException("Test");
+      
       UnidadeResponse unidadeResponse = UnidadeResponse
         .builder()
         .id(unidadeSalva.getId())
