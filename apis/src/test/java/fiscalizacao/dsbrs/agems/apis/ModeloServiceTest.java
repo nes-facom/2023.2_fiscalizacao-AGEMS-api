@@ -211,7 +211,7 @@ public class ModeloServiceTest {
         modelos.add(modelo2);
 
         when(modeloRepositorio.findAll()).thenReturn(modelos);
-        List<ModeloListResponse> modeloResponses = modeloService.listaTodosModelos();
+        List<ModeloListResponse> modeloResponses = modeloService.listaTodosModelosResumido();
 
         assertEquals(modelos.size(), modeloResponses.size());
         assertEquals(modelo1.getId(), modeloResponses.get(0).getId());
