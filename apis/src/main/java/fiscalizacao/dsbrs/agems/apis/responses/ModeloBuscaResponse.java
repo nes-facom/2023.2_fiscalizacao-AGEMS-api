@@ -45,5 +45,5 @@ public class ModeloBuscaResponse extends Response {
       type = "array"
     )
   @JsonProperty("modelos")
-  private List<ModeloListResponse> modelos;
+  private List<ModeloResumidoResponse> data;
 }

@@ -44,6 +44,7 @@ import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
@@ -215,13 +216,13 @@ public class ModeloServiceTest {
         Page<Modelo> modelosPage = new PageImpl<>(modelos);
 
         when(modeloRepositorio.findAll(PageRequest.of(1, 15))).thenReturn(modelosPage);
-        ModeloBuscaResponse modeloResponses = modeloService.listaTodosModelos(1, 15);
+        ModeloBuscaResponse modeloResponses = modeloService.listaTodosModelosResumido(1, 15);
 
-        assertEquals(modelos.size(), modeloResponses.getModelos().size());
-        assertEquals(modelo1.getId(), modeloResponses.getModelos().get(0).getId());
-        assertEquals(modelo1.getNome(), modeloResponses.getModelos().get(0).getNome());
-        assertEquals(modelo2.getId(), modeloResponses.getModelos().get(1).getId());
-        assertEquals(modelo2.getNome(), modeloResponses.getModelos().get(1).getNome());
+        assertEquals(modelos.size(), modeloResponses.getData().size());
+        assertEquals(modelo1.getId(), modeloResponses.getData().get(0).getId());
+        assertEquals(modelo1.getNome(), modeloResponses.getData().get(0).getNome());
+        assertEquals(modelo2.getId(), modeloResponses.getData().get(1).getId());
+        assertEquals(modelo2.getNome(), modeloResponses.getData().get(1).getNome());
         verify(modeloRepositorio, times(1)).findAll(PageRequest.of(1, 15));
     }
 

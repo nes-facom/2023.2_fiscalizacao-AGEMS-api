@@ -27,6 +27,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -129,18 +130,73 @@ public class ModeloService {
     return null;
   }
 
-  public ModeloBuscaResponse listaTodosModelos(int pagina, int quantidade) {
+  public ModeloBuscaResponse listaTodosModelosResumido(int pagina, int quantidade) {
     ModeloBuscaResponse response = new ModeloBuscaResponse();
     Page<Modelo> modelos = MODELO_REPOSITORIO.findAll(PageRequest.of(pagina, quantidade));
 
     response.setPagina(pagina);
     response.setPaginaMax(Math.max(0, modelos.getTotalPages()-1));
-    response.setModelos(
+    response.setData(
         modelos.stream()
-            .map(modelo -> new ModeloListResponse(modelo.getId(), modelo.getNome()))
+            .map(modelo -> new ModeloResumidoResponse(modelo.getId(), modelo.getNome()))
             .collect(Collectors.toList())
     );
     return response;
+  }
+
+  public ModeloListResponse listaTodosModelos() {
+    
+    List<ModeloResponse> responsesModelo = new ArrayList<>();
+    Iterable<Modelo> modelos = MODELO_REPOSITORIO.findAll();
+
+    for (Modelo modelo : modelos) {
+
+      List<QuestaoResponse> responseQuestoes = new ArrayList<>();
+      List<QuestaoModelo> questoesModelo = modelo.getQuestoes();
+
+      for (QuestaoModelo questaoModelo : questoesModelo) {
+        
+        Questao questao = questaoModelo.getQuestao();
+        List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
+        List<AlternativaResposta> alternativaRespostas = questao.getAlternativasResposta();
+
+        for (AlternativaResposta tipoRes : alternativaRespostas) {
+          AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
+            .builder()
+            .id(tipoRes.getId())
+            .descricao(tipoRes.getDescricao())
+            .idQuestao(tipoRes.getQuestao().getId())
+            .build();
+
+          responseAlternativaRespostas.add(responseTipo);
+        }
+
+        QuestaoResponse responseQuest = QuestaoResponse
+          .builder()
+          .id(questao.getId())
+          .pergunta(questao.getPergunta())
+          .objetiva(questao.isObjetiva())
+          .portaria(questao.getPortaria())
+          .respostas(responseAlternativaRespostas)
+          .build();
+
+        responseQuestoes.add(responseQuest);
+      }
+
+      responsesModelo.add(
+        ModeloResponse
+        .builder()
+        .id(modelo.getId())
+        .nome(modelo.getNome())
+        .questoes(responseQuestoes)
+        .build());
+    
+    }
+    
+    return ModeloListResponse
+        .builder()
+        .data(responsesModelo)
+        .build();
   }
 
   public ModeloResponse verModelo(int idModelo) {

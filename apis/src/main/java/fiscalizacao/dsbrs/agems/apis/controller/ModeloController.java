@@ -1,5 +1,6 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
+import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,6 +21,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -141,22 +143,82 @@ public class ModeloController {
   }
 
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Operação bem sucedida. Retorna um conjunto de Modelos", content = @Content(schema = @Schema(implementation = ModeloListResponse.class))),
+      @ApiResponse(responseCode = "200", description = "Operação bem sucedida. Retorna um conjunto de Modelos", content = @Content(schema = @Schema(implementation = ModeloResponse.class))),
+      @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+      @ApiResponse(responseCode = "500", description = "Erro de Servidor", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+      @ApiResponse(responseCode = "404", description = "Não há modelos cadastrados", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+      @ApiResponse(responseCode = "403", description = "Acesso Negado!", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+      @ApiResponse(responseCode = "401", description = "Não autorizado - Token Expirado ", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+  })
+  @Operation(summary = "Listar todos os modelos detalhadamente")
+  @SecurityRequirement(name = "BEARER")
+  @GetMapping(path = "/", produces = "application/json")
+  public ResponseEntity<?> listaModelos() {
+    try {
+      ModeloListResponse modeloListResponse = SERVICO_MODELO.listaTodosModelos();
+      if (modeloListResponse.getData().size() == 0) {
+        return ResponseEntity
+            .status(404)
+            .body(
+                ErroResponse
+                    .builder()
+                    .status(404)
+                    .erro("Não há modelos cadastrados")
+                    .build());
+      }
+      return ResponseEntity.status(200).body(modeloListResponse);
+    } catch (
+        DataIntegrityViolationException
+        | IllegalArgumentException
+        | NullPointerException
+        | HttpMessageNotReadableException e) {
+      return ResponseEntity
+          .badRequest()
+          .body(
+              ErroResponse
+                  .builder()
+                  .status(400)
+                  .erro("Bad Request:" + e.getMessage())
+                  .build());
+    } catch (RuntimeException e) {
+      return ResponseEntity
+          .status(500)
+          .body(
+              ErroResponse
+                  .builder()
+                  .status(500)
+                  .erro("Internal Server Error:" + e.getMessage())
+                  .build());
+    }
+  }
+  
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Operação bem sucedida. Retorna um conjunto de Modelos", content = @Content(schema = @Schema(implementation = ModeloResumidoResponse.class))),
       @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "500", description = "Erro de Servidor", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "404", description = "N\u00E3o h\u00E1 modelos cadastrados", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "403", description = "Acesso Negado!", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "401", description = "Não autorizado - Token Expirado ", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
   })
-  @Operation(summary = "Listar todos os modelos")
+  @Operation(summary = "Listar todos os modelos resumidamente")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/todos", produces = "application/json")
-  public ResponseEntity<?> listaModelos(
+  public ResponseEntity<?> listaModelosResumido(
       @RequestParam(required = false, defaultValue = "0") int pagina,
       @RequestParam(required = false, defaultValue = "15") int quantidade
   ) {
     try {
-      ModeloBuscaResponse modeloListResponse = SERVICO_MODELO.listaTodosModelos(pagina, quantidade);
+      ModeloBuscaResponse modeloListResponse = SERVICO_MODELO.listaTodosModelosResumido(pagina, quantidade);
+      if (modeloListResponse.getData().size() == 0) {
+        return ResponseEntity
+            .status(404)
+            .body(
+                ErroResponse
+                    .builder()
+                    .status(404)
+                    .erro("Não há modelos cadastrados")
+                    .build());
+      }
       return ResponseEntity.status(200).body(modeloListResponse);
     } catch (
         DataIntegrityViolationException
