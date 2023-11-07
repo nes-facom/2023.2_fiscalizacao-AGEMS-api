@@ -1,5 +1,15 @@
 package fiscalizacao.dsbrs.agems.apis;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,109 +23,152 @@ import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
 
 class ModeloControllerTest {
 
-    @Mock
-    private ModeloRepositorio modeloRepositorio;
+  @Mock
+  private ModeloRepositorio modeloRepositorio;
 
-    @Mock
-    private ModeloService modeloService;
+  @Mock
+  private ModeloService modeloService;
 
-    @InjectMocks
-    private ModeloController modeloController;
+  @InjectMocks
+  private ModeloController modeloController;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.openMocks(this);
+  }
 
-    @Test 
-    public void testAdicionaModeloRetornaSucesso() {
+  @Test
+  public void testAdicionaModeloRetornaSucesso() {
 
-        ModeloRegisterRequest novoModelo = new ModeloRegisterRequest();
-        novoModelo.setNome("Modelo 01");
-        ResponseEntity<?> response = modeloController.adicionaModelo(novoModelo);
+    ModeloRegisterRequest novoModelo = new ModeloRegisterRequest();
+    novoModelo.setNome("Modelo 01");
+    ResponseEntity<?> response = modeloController.adicionaModelo(novoModelo);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        verify(modeloService, times(1)).cadastraModelo(novoModelo);
+    assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    verify(modeloService, times(1)).cadastraModelo(novoModelo);
 
-    }
+  }
 
-    @Test 
-    public void testAdicionaModeloRetornaErroNomeNull() {
+  @Test
+  public void testAdicionaModeloRetornaErroNomeNull() {
 
-        ModeloRegisterRequest novoModelo = new ModeloRegisterRequest();
-        ResponseEntity<?> response = modeloController.adicionaModelo(novoModelo);
+    ModeloRegisterRequest novoModelo = new ModeloRegisterRequest();
+    ResponseEntity<?> response = modeloController.adicionaModelo(novoModelo);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertNotNull(response.getBody());
+  }
 
-    @Test
-    public void testDeletaModeloRetornaNotFound() {
+  @Test
+  public void testDeletaModeloRetornaNotFound() {
 
-        int modeloId = 1;
-        ResponseEntity<?> response = modeloController.deletaModelo(modeloId);
+    int modeloId = 1;
+    ResponseEntity<?> response = modeloController.deletaModelo(modeloId);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNotNull(response.getBody());
-        verify(modeloService, times(1)).deletaModelo(modeloId);
-    }
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    assertNotNull(response.getBody());
+    verify(modeloService, times(1)).deletaModelo(modeloId);
+  }
 
-    @Test
-    public void testVerModeloReturnModelo() {
+  @Test
+  public void testVerModeloReturnModelo() {
 
-        int modelId = 1;
-        ModeloService mockService = mock(ModeloService.class);
-        ModeloResponse expectedResponse = new ModeloResponse();
-        when(mockService.verModelo(modelId)).thenReturn(expectedResponse);
-        ModeloController controller = new ModeloController(mockService);
+    int modelId = 1;
+    ModeloService mockService = mock(ModeloService.class);
+    ModeloResponse expectedResponse = new ModeloResponse();
+    when(mockService.verModelo(modelId)).thenReturn(expectedResponse);
+    ModeloController controller = new ModeloController(mockService);
 
-        ResponseEntity<?> response = controller.verModelo(modelId);
+    ResponseEntity<?> response = controller.verModelo(modelId);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedResponse, response.getBody());
-    }
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(expectedResponse, response.getBody());
+  }
 
-    @Test
-    public void testVerModeloNotFound() {
-        int modelId = 10;
-        ModeloService mockService = mock(ModeloService.class);
-        when(mockService.verModelo(modelId)).thenReturn(null);
-        ModeloController controller = new ModeloController(mockService);
+  @Test
+  public void testVerModeloNotFound() {
+    int modelId = 10;
+    ModeloService mockService = mock(ModeloService.class);
+    when(mockService.verModelo(modelId)).thenReturn(null);
+    ModeloController controller = new ModeloController(mockService);
 
-        ResponseEntity<?> response = controller.verModelo(modelId);
+    ResponseEntity<?> response = controller.verModelo(modelId);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Modelo Não encontrado", ((ErroResponse) response.getBody()).getErro());
-    }
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    assertEquals("Modelo Não encontrado", ((ErroResponse) response.getBody()).getErro());
+  }
 
-    @Test
-    public void testVerModeloIdInvalido() {
-        int modelId = -1;
-        ModeloController controller = new ModeloController(mock(ModeloService.class));
+  @Test
+  public void testVerModeloIdInvalido() {
+    int modelId = -1;
+    ModeloController controller = new ModeloController(mock(ModeloService.class));
 
-        ResponseEntity<?> response = controller.verModelo(modelId);
+    ResponseEntity<?> response = controller.verModelo(modelId);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Id precisa ser um numero inteiro positivo", ((ErroResponse) response.getBody()).getErro());
-    }
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals("Id precisa ser um numero inteiro positivo", ((ErroResponse) response.getBody()).getErro());
+  }
 
-    @Test
-    public void testEditaModelo(){
-        ModeloEditRequest modelo = new ModeloEditRequest();
-        ResponseEntity<?> response = modeloController.editaModelo(modelo);
+  @Test
+  public void testEditaModelo() {
+    ModeloEditRequest modelo = new ModeloEditRequest();
+    ResponseEntity<?> response = modeloController.editaModelo(modelo);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Nome do modelo n\u00E3o pode ser nulo", ((ErroResponse) response.getBody()).getErro());
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals("Nome do modelo n\u00E3o pode ser nulo", ((ErroResponse) response.getBody()).getErro());
 
-    }
+  }
+
+  @Test
+  public void testListaModelosValido() {
+    ModeloListResponse expectedModeloListResponse = ModeloListResponse.builder()
+        .data(Collections.singletonList(new ModeloResponse())).build();
+
+    when(modeloService.listaTodosModelos()).thenReturn(expectedModeloListResponse);
+    ResponseEntity<?> response = modeloController.listaModelos();
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+
+  }
+
+  @Test
+  public void testListaModelosInvalido() {
+    ModeloListResponse expectedModeloListResponse = ModeloListResponse.builder().data(Collections.emptyList()).build();
+
+    when(modeloService.listaTodosModelos()).thenReturn(expectedModeloListResponse);
+    ResponseEntity<?> response = modeloController.listaModelos();
+
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+  }
+
+  @Test
+  public void testListaModelosResumidosValido() {
+    List<ModeloResumidoResponse> expectedModeloListResponse = Collections.singletonList(new ModeloResumidoResponse());
+
+    when(modeloService.listaTodosModelosResumido()).thenReturn(expectedModeloListResponse);
+    ResponseEntity<?> response = modeloController.listaModelosResumido();
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+
+  }
+
+  @Test
+  public void testListaModelosResumidosInvalido() {
+    List<ModeloResumidoResponse> expectedModeloListResponse = Collections.emptyList();
+
+    when(modeloService.listaTodosModelosResumido()).thenReturn(expectedModeloListResponse);
+    ResponseEntity<?> response = modeloController.listaModelosResumido();
+
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+  }
 
 }
