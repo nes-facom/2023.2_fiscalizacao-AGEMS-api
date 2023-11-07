@@ -1,5 +1,6 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,10 +30,12 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ModeloService {
 
   private final ModeloRepositorio MODELO_REPOSITORIO;
@@ -58,7 +61,6 @@ public class ModeloService {
       questao.setObjetiva(questaoRegister.getObjetiva());
       
       Questao newQuestao = QUESTAO_REPOSITORIO.save(questao);
-
       QuestaoModelo modeloQuestao = new QuestaoModelo();
       modeloQuestao.setModelo(newModelo);
       modeloQuestao.setQuestao(newQuestao);

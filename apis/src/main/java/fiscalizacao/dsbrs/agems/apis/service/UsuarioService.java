@@ -6,12 +6,14 @@ import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.InfoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UsuarioService {
 
   private final PasswordEncoder CODIFICADOR_SENHA;
