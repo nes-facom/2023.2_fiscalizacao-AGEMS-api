@@ -1,6 +1,5 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,7 @@ import fiscalizacao.dsbrs.agems.apis.repositorio.ImagemRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.RespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
@@ -54,6 +54,8 @@ public class FormularioService {
 
   private final ModeloRepositorio MODELO_REPOSITORIO;
 
+  private final QuestaoRepositorio QUESTAO_REPOSITORIO;
+  
   private final QuestaoModeloRepositorio QUESTAO_MODELO_REPOSITORIO;
   
   private final QuestaoFormularioRepositorio QUESTAO_FORMULARIO_REPOSITORIO;
@@ -511,14 +513,20 @@ public class FormularioService {
         .imagens(imagemResponses)
         .respostas(respostasResponses)
         .build();
-
-    for (Imagem imagem : imagens) {
-      IMAGEM_REPOSITORIO.delete(imagem);
-    }
-    for (Resposta resposta : respostas) {
-      RESPOSTA_REPOSITORIO.delete(resposta);
-    }
+    
+    List<Questao> questoes = formulario.getQuestoes().stream()
+        .map(QuestaoFormulario::getQuestao)
+        .collect(Collectors.toList());
+    
     FORMULARIO_REPOSITORIO.delete(formulario);
+
+    for(Questao questao : questoes) {
+      List<QuestaoModelo> questaoModeloList = QUESTAO_MODELO_REPOSITORIO.findByQuestao(questao);
+      List<QuestaoFormulario> questaoFormularioList = QUESTAO_FORMULARIO_REPOSITORIO.findByQuestao(questao);
+      if(questaoModeloList.size() == 0 && questaoFormularioList.size() == 0)
+        QUESTAO_REPOSITORIO.delete(questao);
+    }
+    
     return FormularioAcaoResponse
       .builder()
       .acao("Formulário deletado")

@@ -2,16 +2,18 @@ package fiscalizacao.dsbrs.agems.apis.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
+import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoFormulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
@@ -34,6 +36,7 @@ public class ModeloService {
   private final ModeloRepositorio MODELO_REPOSITORIO;
   private final QuestaoRepositorio QUESTAO_REPOSITORIO;
   private final QuestaoModeloRepositorio QUESTAO_MODELO_REPOSITORIO;
+  private final QuestaoFormularioRepositorio QUESTAO_FORMULARIO_REPOSITORIO;
   private final AlternativaRespostaRepositorio ALTERNATIVA_RESPOSTA_REPOSITORIO;
 
   private ModeloResponse modeloResponse;
@@ -108,6 +111,9 @@ public class ModeloService {
   public ModeloAcaoResponse deletaModelo(int pedido) {
     Modelo modelo = MODELO_REPOSITORIO.findById(pedido).orElse(null);
     if (modelo != null) {
+      List<Questao> questoes = modelo.getQuestoes().stream()
+          .map(QuestaoModelo::getQuestao)
+          .collect(Collectors.toList());
       modeloResponse =
         ModeloResponse
           .builder()
@@ -117,6 +123,13 @@ public class ModeloService {
 
       MODELO_REPOSITORIO.delete(modelo);
 
+      for(Questao questao : questoes) {
+        List<QuestaoModelo> questaoModeloList = QUESTAO_MODELO_REPOSITORIO.findByQuestao(questao);
+        List<QuestaoFormulario> questaoFormularioList = QUESTAO_FORMULARIO_REPOSITORIO.findByQuestao(questao);
+        if(questaoModeloList.size() == 0 && questaoFormularioList.size() == 0)
+          QUESTAO_REPOSITORIO.delete(questao);
+      }
+      
       return ModeloAcaoResponse
         .builder()
         .acao("Modelo deletado")

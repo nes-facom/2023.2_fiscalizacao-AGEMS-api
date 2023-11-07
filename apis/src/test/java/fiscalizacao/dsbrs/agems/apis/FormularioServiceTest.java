@@ -92,6 +92,7 @@ public class FormularioServiceTest {
         new FormularioService(repositorioFormulario,
             repositorioUsuario,
             repositorioModelo,
+            repositorioQuestao,
             repositorioQuestaoModelo,
             repositorioQuestaoFormulario,
             repositorioResposta,
