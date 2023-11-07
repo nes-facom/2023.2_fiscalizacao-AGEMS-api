@@ -2,6 +2,7 @@ package fiscalizacao.dsbrs.agems.apis;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,6 +24,7 @@ import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
@@ -152,9 +154,10 @@ class ModeloControllerTest {
   @Test
   public void testListaModelosResumidosValido() {
     List<ModeloResumidoResponse> expectedModeloListResponse = Collections.singletonList(new ModeloResumidoResponse());
+    ModeloBuscaResponse expectedModeloBuscaResponse = new ModeloBuscaResponse(1, 1, expectedModeloListResponse);
 
-    when(modeloService.listaTodosModelosResumido()).thenReturn(expectedModeloListResponse);
-    ResponseEntity<?> response = modeloController.listaModelosResumido();
+    when(modeloService.listaTodosModelosResumido(anyInt(), anyInt())).thenReturn(expectedModeloBuscaResponse);
+    ResponseEntity<?> response = modeloController.listaModelosResumido(1, 15);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -163,9 +166,10 @@ class ModeloControllerTest {
   @Test
   public void testListaModelosResumidosInvalido() {
     List<ModeloResumidoResponse> expectedModeloListResponse = Collections.emptyList();
+    ModeloBuscaResponse expectedModeloBuscaResponse = new ModeloBuscaResponse(1, 0, expectedModeloListResponse);
 
-    when(modeloService.listaTodosModelosResumido()).thenReturn(expectedModeloListResponse);
-    ResponseEntity<?> response = modeloController.listaModelosResumido();
+    when(modeloService.listaTodosModelosResumido(anyInt(), anyInt())).thenReturn(expectedModeloBuscaResponse);
+    ResponseEntity<?> response = modeloController.listaModelosResumido(1, 15);
 
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 

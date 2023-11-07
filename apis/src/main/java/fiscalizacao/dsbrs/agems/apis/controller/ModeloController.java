@@ -1,7 +1,6 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
 import java.util.List;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -12,12 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
@@ -202,10 +203,13 @@ public class ModeloController {
   @Operation(summary = "Listar todos os modelos resumidamente")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/todos", produces = "application/json")
-  public ResponseEntity<?> listaModelosResumido() {
+  public ResponseEntity<?> listaModelosResumido(
+      @RequestParam(required = false, defaultValue = "0") int pagina,
+      @RequestParam(required = false, defaultValue = "15") int quantidade
+  ) {
     try {
-      List<ModeloResumidoResponse> modeloListResponse = SERVICO_MODELO.listaTodosModelosResumido();
-      if (modeloListResponse.size() == 0) {
+      ModeloBuscaResponse modeloListResponse = SERVICO_MODELO.listaTodosModelosResumido(pagina, quantidade);
+      if (modeloListResponse.getData().size() == 0) {
         return ResponseEntity
             .status(404)
             .body(

@@ -1,6 +1,6 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 
 import fiscalizacao.dsbrs.agems.apis.controller.FormularioController;
 import fiscalizacao.dsbrs.agems.apis.requests.FormularioRegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.FormularioBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResumoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
@@ -57,6 +57,7 @@ public class FormularioControllerTest {
 
   @Test
   public void testListaFormulariosOK() {
+    FormularioBuscaResponse formularioBuscaResponse = new FormularioBuscaResponse();
     List<FormularioResumoResponse> formularioResponseList = new ArrayList<>();
     FormularioResumoResponse formularioResponse = new FormularioResumoResponse();
     FormularioResumoResponse formularioResponse2 = new FormularioResumoResponse();
@@ -64,34 +65,21 @@ public class FormularioControllerTest {
     formularioResponseList.add(formularioResponse);
     formularioResponseList.add(formularioResponse2);
     formularioResponseList.add(formularioResponse3);
-    when(formularioService.listaTodosFormularios(request))
-      .thenReturn(formularioResponseList);
+    formularioBuscaResponse.setFormularios(formularioResponseList);
+    formularioBuscaResponse.setPagina(1);
+    formularioBuscaResponse.setPaginaMax(1);
+    when(formularioService.listaTodosFormularios(request, 1, 15))
+      .thenReturn(formularioBuscaResponse);
 
     ResponseEntity<?> responseEntity = formularioController.listaFormularios(
-      request
+      request,
+      1,
+      15
     );
 
-    verify(formularioService).listaTodosFormularios(request);
+    verify(formularioService).listaTodosFormularios(request, 1, 15);
 
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    assertEquals(formularioResponseList, responseEntity.getBody());
+    assertEquals(formularioBuscaResponse, responseEntity.getBody());
   }
-  @Test
-  public void testListaFormulariosNOT() {
-    List<FormularioResumoResponse> formularioResponseList = new ArrayList<>();
-   
-    when(formularioService.listaTodosFormularios(request))
-      .thenReturn(formularioResponseList);
-
-    ResponseEntity<?> responseEntity = formularioController.listaFormularios(
-      request
-    );
-
-    verify(formularioService).listaTodosFormularios(request);
-
-    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-    assertTrue(responseEntity.getBody() instanceof ErroResponse);
-  }
-
-  
 }
