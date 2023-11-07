@@ -6,6 +6,8 @@ import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
+import jakarta.transaction.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UnidadeService {
 
   @Autowired
@@ -47,7 +50,7 @@ public class UnidadeService {
           .build();
 
       Unidade unidadeSalva = UNIDADE_REPOSITORIO.save(unidade);
-
+//      throw new RuntimeException("Test");
       UnidadeResponse unidadeResponse = UnidadeResponse
         .builder()
         .id(unidadeSalva.getId())

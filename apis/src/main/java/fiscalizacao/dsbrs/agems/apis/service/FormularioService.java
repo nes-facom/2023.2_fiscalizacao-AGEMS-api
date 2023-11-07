@@ -42,10 +42,12 @@ import fiscalizacao.dsbrs.agems.apis.responses.RespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.UsuarioFormResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FormularioService {
 
   private final FormularioRepositorio FORMULARIO_REPOSITORIO;
