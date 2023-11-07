@@ -40,7 +40,7 @@ import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
@@ -211,7 +211,7 @@ public class ModeloServiceTest {
         modelos.add(modelo2);
 
         when(modeloRepositorio.findAll()).thenReturn(modelos);
-        List<ModeloListResponse> modeloResponses = modeloService.listaTodosModelosResumido();
+        List<ModeloResumidoResponse> modeloResponses = modeloService.listaTodosModelosResumido();
 
         assertEquals(modelos.size(), modeloResponses.size());
         assertEquals(modelo1.getId(), modeloResponses.get(0).getId());

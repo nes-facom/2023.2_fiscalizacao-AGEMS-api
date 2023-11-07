@@ -23,6 +23,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -125,12 +126,12 @@ public class ModeloService {
     return null;
   }
 
-  public List<ModeloListResponse> listaTodosModelosResumido() {
-    List<ModeloListResponse> responsesModelo = new ArrayList<>();
+  public List<ModeloResumidoResponse> listaTodosModelosResumido() {
+    List<ModeloResumidoResponse> responsesModelo = new ArrayList<>();
     Iterable<Modelo> modelos = MODELO_REPOSITORIO.findAll();
 
     for (Modelo modelo : modelos) {
-      ModeloListResponse response = new ModeloListResponse();
+      ModeloResumidoResponse response = new ModeloResumidoResponse();
       response.setId(modelo.getId());
       response.setNome(modelo.getNome());
 
@@ -139,7 +140,7 @@ public class ModeloService {
     return responsesModelo;
   }
 
-  public List<ModeloResponse> listaTodosModelos() {
+  public ModeloListResponse listaTodosModelos() {
     
     List<ModeloResponse> responsesModelo = new ArrayList<>();
     Iterable<Modelo> modelos = MODELO_REPOSITORIO.findAll();
@@ -178,7 +179,8 @@ public class ModeloService {
         responseQuestoes.add(responseQuest);
       }
 
-      responsesModelo.add(ModeloResponse
+      responsesModelo.add(
+        ModeloResponse
         .builder()
         .id(modelo.getId())
         .nome(modelo.getNome())
@@ -187,7 +189,10 @@ public class ModeloService {
     
     }
     
-    return responsesModelo;
+    return ModeloListResponse
+        .builder()
+        .data(responsesModelo)
+        .build();
   }
 
   public ModeloResponse verModelo(int idModelo) {

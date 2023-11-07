@@ -1,21 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
-import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
-import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -27,6 +13,23 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
+import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Modelo", description = "APIs de Gerenciamento dos Modelos")
 @RestController
@@ -151,8 +154,8 @@ public class ModeloController {
   @GetMapping(path = "/", produces = "application/json")
   public ResponseEntity<?> listaModelos() {
     try {
-      List<ModeloResponse> modeloResponse = SERVICO_MODELO.listaTodosModelos();
-      if (modeloResponse.size() == 0) {
+      ModeloListResponse modeloListResponse = SERVICO_MODELO.listaTodosModelos();
+      if (modeloListResponse.getData().size() == 0) {
         return ResponseEntity
             .status(404)
             .body(
@@ -162,7 +165,7 @@ public class ModeloController {
                     .erro("Não há modelos cadastrados")
                     .build());
       }
-      return ResponseEntity.status(200).body(modeloResponse);
+      return ResponseEntity.status(200).body(modeloListResponse);
     } catch (
         DataIntegrityViolationException
         | IllegalArgumentException
@@ -189,7 +192,7 @@ public class ModeloController {
   }
   
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Operação bem sucedida. Retorna um conjunto de Modelos", content = @Content(schema = @Schema(implementation = ModeloListResponse.class))),
+      @ApiResponse(responseCode = "200", description = "Operação bem sucedida. Retorna um conjunto de Modelos", content = @Content(schema = @Schema(implementation = ModeloResumidoResponse.class))),
       @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "500", description = "Erro de Servidor", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "404", description = "N\u00E3o h\u00E1 modelos cadastrados", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
@@ -201,7 +204,7 @@ public class ModeloController {
   @GetMapping(path = "/todos", produces = "application/json")
   public ResponseEntity<?> listaModelosResumido() {
     try {
-      List<ModeloListResponse> modeloListResponse = SERVICO_MODELO.listaTodosModelosResumido();
+      List<ModeloResumidoResponse> modeloListResponse = SERVICO_MODELO.listaTodosModelosResumido();
       if (modeloListResponse.size() == 0) {
         return ResponseEntity
             .status(404)
