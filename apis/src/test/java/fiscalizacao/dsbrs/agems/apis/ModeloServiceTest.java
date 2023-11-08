@@ -424,8 +424,8 @@ public class ModeloServiceTest {
 
         assertTrue(modeloResponse.getQuestoes().isEmpty());
     }
-        @Test
-        public void testEditaModeloDeleteAlternativaResposta() {
+      @Test
+      public void testEditaModeloDeleteAlternativaResposta() {
         // Mock data
         int modeloId = 1;
         int questaoId = 1;
@@ -545,5 +545,26 @@ public class ModeloServiceTest {
       modeloService.deletaModelo(1);
       
       verify(questaoRepositorio, times(1)).delete(any(Questao.class));
+    }
+
+    @Test
+    public void testDeletarModeloQuestaoComRelacionamento() {
+      Questao questao = new Questao();
+      questao.setId(1);
+      questao.setAlternativasResposta(Collections.emptyList());
+      Modelo modelo = new Modelo();
+      modelo.setId(1);
+      QuestaoModelo questaoModelo = new QuestaoModelo();
+      questaoModelo.setModelo(modelo);
+      questaoModelo.setQuestao(questao);
+      List<QuestaoModelo> questoes = new ArrayList<>();
+      questoes.add(questaoModelo);
+      modelo.setQuestoes(questoes);
+      when(questaoModeloRepositorio.findByQuestao(any(Questao.class))).thenReturn(questoes);
+      when(modeloRepositorio.findById(1)).thenReturn(Optional.of(modelo));
+      
+      modeloService.deletaModelo(1);
+      
+      verify(questaoRepositorio, times(0)).delete(any(Questao.class));
     }
 }
