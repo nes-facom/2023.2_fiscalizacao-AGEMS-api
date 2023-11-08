@@ -4,6 +4,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Token;
 import fiscalizacao.dsbrs.agems.apis.repositorio.TokenRepositorio;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class LogoutService implements LogoutHandler {
 
   private final TokenRepositorio REPOSITORIO_TOKEN;

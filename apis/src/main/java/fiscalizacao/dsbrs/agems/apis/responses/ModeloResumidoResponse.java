@@ -1,9 +1,6 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,9 +15,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ModeloListResponse {
+public class ModeloResumidoResponse {
 
-  @Schema(description = "Lista de ModeloResponse", required = true)
-  @JsonProperty("data")
-  private List<ModeloResponse> data;
+  @Schema(description = "id do modelo", required = true)
+  @JsonProperty("id")
+  private int id;
+
+  @Schema(description = "nome do Modelo", required = true)
+  @JsonProperty("nome")
+  private String nome;
 }

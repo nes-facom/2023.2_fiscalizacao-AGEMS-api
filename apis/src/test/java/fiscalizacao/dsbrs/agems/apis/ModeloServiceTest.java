@@ -21,6 +21,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -40,7 +43,8 @@ import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
@@ -198,7 +202,6 @@ public class ModeloServiceTest {
 
     @Test
     public void testListaTodosModelos() {
-
         List<Modelo> modelos = new ArrayList<>();
         Modelo modelo1 = new Modelo();
 
@@ -209,16 +212,18 @@ public class ModeloServiceTest {
         modelo2.setId(2);
         modelo2.setNome("Modelo 2");
         modelos.add(modelo2);
+        
+        Page<Modelo> modelosPage = new PageImpl<>(modelos);
 
-        when(modeloRepositorio.findAll()).thenReturn(modelos);
-        List<ModeloListResponse> modeloResponses = modeloService.listaTodosModelos();
+        when(modeloRepositorio.findAll(PageRequest.of(1, 15))).thenReturn(modelosPage);
+        ModeloBuscaResponse modeloResponses = modeloService.listaTodosModelosResumido(1, 15);
 
-        assertEquals(modelos.size(), modeloResponses.size());
-        assertEquals(modelo1.getId(), modeloResponses.get(0).getId());
-        assertEquals(modelo1.getNome(), modeloResponses.get(0).getNome());
-        assertEquals(modelo2.getId(), modeloResponses.get(1).getId());
-        assertEquals(modelo2.getNome(), modeloResponses.get(1).getNome());
-        verify(modeloRepositorio, times(1)).findAll();
+        assertEquals(modelos.size(), modeloResponses.getData().size());
+        assertEquals(modelo1.getId(), modeloResponses.getData().get(0).getId());
+        assertEquals(modelo1.getNome(), modeloResponses.getData().get(0).getNome());
+        assertEquals(modelo2.getId(), modeloResponses.getData().get(1).getId());
+        assertEquals(modelo2.getNome(), modeloResponses.getData().get(1).getNome());
+        verify(modeloRepositorio, times(1)).findAll(PageRequest.of(1, 15));
     }
 
     @Test
