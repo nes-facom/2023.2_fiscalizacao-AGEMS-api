@@ -1,23 +1,17 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
-import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoFormulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
@@ -27,23 +21,18 @@ import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ModeloService {
 
   private final ModeloRepositorio MODELO_REPOSITORIO;
   private final QuestaoRepositorio QUESTAO_REPOSITORIO;
-  private final QuestaoModeloRepositorio QUESTAO_MODELO_REPOSITORIO;
-  private final QuestaoFormularioRepositorio QUESTAO_FORMULARIO_REPOSITORIO;
   private final AlternativaRespostaRepositorio ALTERNATIVA_RESPOSTA_REPOSITORIO;
 
   private ModeloResponse modeloResponse;
@@ -64,11 +53,10 @@ public class ModeloService {
       questao.setObjetiva(questaoRegister.getObjetiva());
       
       Questao newQuestao = QUESTAO_REPOSITORIO.save(questao);
+
       QuestaoModelo modeloQuestao = new QuestaoModelo();
       modeloQuestao.setModelo(newModelo);
       modeloQuestao.setQuestao(newQuestao);
-      
-      QuestaoModelo newQuestaoModelo = QUESTAO_MODELO_REPOSITORIO.save(modeloQuestao);
       
       List<AlternativaRespostaResponse> responsesAlternativaRespostas = new ArrayList<>();
       for (AlternativaRespostaRegisterRequest alternativaRespostaRegister : questaoRegister.getAlternativaRespostas()) {
@@ -114,12 +102,9 @@ public class ModeloService {
     return modeloResponse;
   }
 
-  public ModeloAcaoResponse deletaModelo(int pedido) {
+  public ModeloAcaoResponse deletaModelo(UUID pedido) {
     Modelo modelo = MODELO_REPOSITORIO.findById(pedido).orElse(null);
     if (modelo != null) {
-      List<Questao> questoes = modelo.getQuestoes().stream()
-          .map(QuestaoModelo::getQuestao)
-          .collect(Collectors.toList());
       modeloResponse =
         ModeloResponse
           .builder()
@@ -129,13 +114,6 @@ public class ModeloService {
 
       MODELO_REPOSITORIO.delete(modelo);
 
-      for(Questao questao : questoes) {
-        List<QuestaoModelo> questaoModeloList = QUESTAO_MODELO_REPOSITORIO.findByQuestao(questao);
-        List<QuestaoFormulario> questaoFormularioList = QUESTAO_FORMULARIO_REPOSITORIO.findByQuestao(questao);
-        if(questaoModeloList.size() == 0 && questaoFormularioList.size() == 0)
-          QUESTAO_REPOSITORIO.delete(questao);
-      }
-      
       return ModeloAcaoResponse
         .builder()
         .acao("Modelo deletado")
@@ -145,18 +123,18 @@ public class ModeloService {
     return null;
   }
 
-  public ModeloBuscaResponse listaTodosModelosResumido(int pagina, int quantidade) {
-    ModeloBuscaResponse response = new ModeloBuscaResponse();
-    Page<Modelo> modelos = MODELO_REPOSITORIO.findAll(PageRequest.of(pagina, quantidade));
+  public List<ModeloResumidoResponse> listaTodosModelosResumido() {
+    List<ModeloResumidoResponse> responsesModelo = new ArrayList<>();
+    Iterable<Modelo> modelos = MODELO_REPOSITORIO.findAll();
 
-    response.setPagina(pagina);
-    response.setPaginaMax(Math.max(0, modelos.getTotalPages()-1));
-    response.setData(
-        modelos.stream()
-            .map(modelo -> new ModeloResumidoResponse(modelo.getId(), modelo.getNome()))
-            .collect(Collectors.toList())
-    );
-    return response;
+    for (Modelo modelo : modelos) {
+      ModeloResumidoResponse response = new ModeloResumidoResponse();
+      response.setId(modelo.getId());
+      response.setNome(modelo.getNome());
+
+      responsesModelo.add(response);
+    }
+    return responsesModelo;
   }
 
   public ModeloListResponse listaTodosModelos() {
@@ -214,7 +192,7 @@ public class ModeloService {
         .build();
   }
 
-  public ModeloResponse verModelo(int idModelo) {
+  public ModeloResponse verModelo(UUID idModelo) {
 	  
     Modelo modelo = MODELO_REPOSITORIO.findById(idModelo).orElse(null);
 
@@ -229,9 +207,7 @@ public class ModeloService {
     	Questao questao = questaoModelo.getQuestao();
     			
         List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
-        
-        Questao questaoAux = new Questao();
-        
+                
         List<AlternativaResposta> alternativaRespostas = questao.getAlternativasResposta();
 
         for (AlternativaResposta tipoRes : alternativaRespostas) {

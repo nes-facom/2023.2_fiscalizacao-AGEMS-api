@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -23,12 +25,11 @@ public class UnidadeResponse extends Response {
     title = "Id",
     description = "Id da Unidade",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  @JsonProperty("id")
-  private int id;
+  @JsonProperty("UUID")
+  private UUID id;
 
   @Schema(
     title = "Id Unidade",

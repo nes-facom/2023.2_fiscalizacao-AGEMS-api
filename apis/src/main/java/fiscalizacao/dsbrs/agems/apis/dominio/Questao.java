@@ -18,6 +18,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -28,14 +29,12 @@ public class Questao {
     title = "Id",
     description = "Id de Questão, autogerável no banco",
     required = true,
-    format = "number",
-    type = "integer",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  private int id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Schema(
     title = "Id do usuário de criação",

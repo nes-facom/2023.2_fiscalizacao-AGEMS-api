@@ -3,6 +3,8 @@ package fiscalizacao.dsbrs.agems.apis.responses;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,12 +26,11 @@ public class QuestaoResponse extends Response {
     title = "Id",
     description = "Id da Questão",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
   @JsonProperty("id")
-  private int id;
+  private UUID id;
 
   @Schema(
     title = "Pergunta",

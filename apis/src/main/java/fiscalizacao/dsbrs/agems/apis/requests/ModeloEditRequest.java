@@ -1,7 +1,9 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import java.util.UUID;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,11 +23,10 @@ public class ModeloEditRequest {
     title = "Id",
     description = "id do modelo",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int id;
+  private UUID id;
 
   @Schema(
     title = "Nome de Modelo",

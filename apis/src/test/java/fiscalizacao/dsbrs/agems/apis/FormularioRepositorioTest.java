@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
@@ -145,7 +146,7 @@ public class FormularioRepositorioTest {
     modeloSalvo.setQuestoes(questoes);
 
     Unidade unidade = Unidade.builder()
-        .id(0)
+        .id(UUID.fromString("ASIK003SDKASF0A"))
         .nome("Unidade 01")
         .endereco("Rua das Neves")
         .tipo("Tratamento de Esgoto")

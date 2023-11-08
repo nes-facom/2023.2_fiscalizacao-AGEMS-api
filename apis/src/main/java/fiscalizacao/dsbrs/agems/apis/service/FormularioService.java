@@ -3,6 +3,7 @@ package fiscalizacao.dsbrs.agems.apis.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -71,12 +72,10 @@ public class FormularioService {
 
   private final ImagemRepositorio IMAGEM_REPOSITORIO;
   
-  private List<Questao> questoes;
   private List<Imagem> imagens;
   private FormularioResponse formularioResponse;
   private FormularioResumoResponse formularioResumoResponse;
   private UsuarioFormResponse usuarioResponse;
-  private ModeloFormResponse modeloResponse;
   private UnidadeResponse unidadeResponse;
   private RespostaResponse respostaResponse;
   private QuestaoResponse questaoResponse;
@@ -188,7 +187,7 @@ public class FormularioService {
 	  imagensResponses.add(imagemResponse);
     }
     
-    Map<Integer, QuestaoModelo> questaoMap = questoesModelo.stream().collect(Collectors.toMap(el -> el.getQuestao().getId(), el -> el));
+    Map<UUID, QuestaoModelo> questaoMap = questoesModelo.stream().collect(Collectors.toMap(el -> el.getQuestao().getId(), el -> el));
     for (RespostaRequest respostaRequest : novoFormulario.getRespostas()) {
   	  QuestaoModelo questaoModelo = questaoMap.get(respostaRequest.getQuestao());
       if (questaoModelo != null) {
@@ -276,9 +275,7 @@ public class FormularioService {
     int pagina,
     int quantidade
   ) {
-	  
-    Usuario usuario = extrairUsuarioEmailHeader(request);
-    
+	      
     List<FormularioResumoResponse> responsesFormulario = new ArrayList<>();
     FormularioBuscaResponse response = new FormularioBuscaResponse();
     
@@ -300,7 +297,7 @@ public class FormularioService {
     return response;
   }
 
-  public Response verFormulario(HttpServletRequest request, int pedido) {
+  public Response verFormulario(HttpServletRequest request, UUID pedido) {
 	  
     Usuario usuario = extrairUsuarioEmailHeader(request);
     
@@ -422,7 +419,7 @@ public class FormularioService {
     return formularioResponse;
   }
 
-  public Response deletaFormulario(HttpServletRequest request, int pedido) {
+  public Response deletaFormulario(HttpServletRequest request, UUID pedido) {
     Usuario usuario = extrairUsuarioEmailHeader(request);
     if (usuario == null) {
       return ErroResponse
@@ -547,7 +544,7 @@ public class FormularioService {
 
   public Response editaFormulario(
     HttpServletRequest request,
-    int idFormulario,
+    UUID idFormulario,
     FormularioRequest pedido
   ) {
     Usuario usuario = extrairUsuarioEmailHeader(request);
@@ -582,7 +579,7 @@ public class FormularioService {
       imagens = IMAGEM_REPOSITORIO.findByFormulario(formulario);
       if (pedido.getImagens().size() != 0) {
         for (int index = 0; index < pedido.getImagens().size(); index++) {
-          int id = pedido.getImagens().get(index).getId();
+          UUID id = pedido.getImagens().get(index).getId();
           if (
             pedido.getImagens().get(index).getAcao().equalsIgnoreCase("delete")
           ) {
@@ -660,7 +657,7 @@ public class FormularioService {
       if (pedido.getRespostas().size() != 0) {
         for (int index = 0; index < pedido.getRespostas().size(); index++) {
           
-          int id = pedido.getRespostas().get(index).getQuestao();
+          UUID id = pedido.getRespostas().get(index).getQuestao();
           String textoResposta = pedido.getRespostas().get(index).getResposta();
           String observacao = pedido.getRespostas().get(index).getObservacao();
           

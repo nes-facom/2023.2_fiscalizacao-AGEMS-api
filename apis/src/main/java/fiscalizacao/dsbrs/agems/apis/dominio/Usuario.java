@@ -3,6 +3,7 @@ package fiscalizacao.dsbrs.agems.apis.dominio;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,12 +43,12 @@ public class Usuario implements UserDetails {
     title = "Id",
     description = "Id de Usuário, autogerável no banco",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Schema(
     title = "Nome do usuário",

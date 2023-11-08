@@ -2,6 +2,7 @@ package fiscalizacao.dsbrs.agems.apis.responses;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -37,11 +38,11 @@ public class FormularioResponse extends Response {
     title = "Id",
     description = "Código do Formulário",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int id;
+  @JsonProperty("id")
+  private UUID id;
 
   @Schema(
     title = "Usuário",

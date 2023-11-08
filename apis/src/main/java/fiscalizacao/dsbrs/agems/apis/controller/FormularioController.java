@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
+import java.util.UUID;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -245,7 +247,7 @@ public class FormularioController {
   @DeleteMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<Response> deletaFormulario(
     HttpServletRequest request,
-    @PathVariable(value = "id") int formulario
+    @PathVariable(value = "id") UUID formulario
   ) {
     try {
       Response formularioResponse = SERVICO_FORMULARIO.deletaFormulario(
@@ -324,7 +326,7 @@ public class FormularioController {
   )
   public ResponseEntity<Response> editaFormulario(
     HttpServletRequest request,
-    @PathVariable(name = "id") int id,
+    @PathVariable(name = "id") UUID id,
     @RequestBody FormularioRequest formulario
   ) {
     try {
@@ -418,7 +420,7 @@ public class FormularioController {
   @GetMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<Response> verFormulario(
     HttpServletRequest request,
-    @PathVariable(name = "id") int id
+    @PathVariable(name = "id") UUID id
   ) {
     try {
       Response formularioResponse = SERVICO_FORMULARIO.verFormulario(
