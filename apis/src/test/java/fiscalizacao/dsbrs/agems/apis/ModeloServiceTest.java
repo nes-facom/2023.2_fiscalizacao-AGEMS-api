@@ -33,6 +33,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
@@ -44,7 +45,6 @@ import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
@@ -63,6 +63,8 @@ public class ModeloServiceTest {
     private QuestaoRepositorio questaoRepositorio;
     @Mock
     private QuestaoModeloRepositorio questaoModeloRepositorio;
+    @Mock
+    private QuestaoFormularioRepositorio questaoFormularioRepositorio;
 
     @InjectMocks
     private ModeloService modeloService;
@@ -233,6 +235,7 @@ public class ModeloServiceTest {
         Modelo modelo1 = new Modelo();
         modelo1.setId(modeloId);
         modelo1.setNome("modelo 1");
+        modelo1.setQuestoes(Collections.emptyList());
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(modelo1));
 
@@ -522,6 +525,25 @@ public class ModeloServiceTest {
         assertNull(acao);
     }
 
-
-
+    @Test
+    public void testDeletarModeloQuestaoSemRelacionamento() {
+      Questao questao = new Questao();
+      questao.setId(1);
+      questao.setAlternativasResposta(Collections.emptyList());
+      Modelo modelo = new Modelo();
+      modelo.setId(1);
+      QuestaoModelo questaoModelo = new QuestaoModelo();
+      questaoModelo.setModelo(modelo);
+      questaoModelo.setQuestao(questao);
+      List<QuestaoModelo> questoes = new ArrayList<>();
+      questoes.add(questaoModelo);
+      modelo.setQuestoes(questoes);
+      when(questaoModeloRepositorio.findByModelo(any(Modelo.class))).thenReturn(Collections.emptyList());
+      when(questaoModeloRepositorio.findByQuestao(any(Questao.class))).thenReturn(Collections.emptyList());
+      when(modeloRepositorio.findById(1)).thenReturn(Optional.of(modelo));
+      
+      modeloService.deletaModelo(1);
+      
+      verify(questaoRepositorio, times(1)).delete(any(Questao.class));
+    }
 }
