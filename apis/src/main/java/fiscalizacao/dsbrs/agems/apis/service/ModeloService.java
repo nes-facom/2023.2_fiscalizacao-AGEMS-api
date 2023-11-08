@@ -3,7 +3,10 @@ package fiscalizacao.dsbrs.agems.apis.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
@@ -12,6 +15,8 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
@@ -21,6 +26,7 @@ import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
@@ -33,6 +39,8 @@ public class ModeloService {
 
   private final ModeloRepositorio MODELO_REPOSITORIO;
   private final QuestaoRepositorio QUESTAO_REPOSITORIO;
+  private final QuestaoModeloRepositorio QUESTAO_MODELO_REPOSITORIO;
+  private final QuestaoFormularioRepositorio QUESTAO_FORMULARIO_REPOSITORIO;
   private final AlternativaRespostaRepositorio ALTERNATIVA_RESPOSTA_REPOSITORIO;
 
   private ModeloResponse modeloResponse;
@@ -57,6 +65,8 @@ public class ModeloService {
       QuestaoModelo modeloQuestao = new QuestaoModelo();
       modeloQuestao.setModelo(newModelo);
       modeloQuestao.setQuestao(newQuestao);
+      
+      QUESTAO_MODELO_REPOSITORIO.save(modeloQuestao);
       
       List<AlternativaRespostaResponse> responsesAlternativaRespostas = new ArrayList<>();
       for (AlternativaRespostaRegisterRequest alternativaRespostaRegister : questaoRegister.getAlternativaRespostas()) {
@@ -122,19 +132,19 @@ public class ModeloService {
     }
     return null;
   }
+  
+  public ModeloBuscaResponse listaTodosModelosResumido(int pagina, int quantidade) {
+    ModeloBuscaResponse response = new ModeloBuscaResponse();
+    Page<Modelo> modelos = MODELO_REPOSITORIO.findAll(PageRequest.of(pagina, quantidade));
 
-  public List<ModeloResumidoResponse> listaTodosModelosResumido() {
-    List<ModeloResumidoResponse> responsesModelo = new ArrayList<>();
-    Iterable<Modelo> modelos = MODELO_REPOSITORIO.findAll();
-
-    for (Modelo modelo : modelos) {
-      ModeloResumidoResponse response = new ModeloResumidoResponse();
-      response.setId(modelo.getId());
-      response.setNome(modelo.getNome());
-
-      responsesModelo.add(response);
-    }
-    return responsesModelo;
+    response.setPagina(pagina);
+    response.setPaginaMax(Math.max(0, modelos.getTotalPages()-1));
+    response.setData(
+        modelos.stream()
+            .map(modelo -> new ModeloResumidoResponse(modelo.getId(), modelo.getNome()))
+            .collect(Collectors.toList())
+    );
+    return response;
   }
 
   public ModeloListResponse listaTodosModelos() {

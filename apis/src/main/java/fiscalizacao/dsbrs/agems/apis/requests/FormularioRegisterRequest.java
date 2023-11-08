@@ -45,11 +45,10 @@ public class FormularioRegisterRequest {
     title = "Unidade",
     description = "Unidade analisada pelo Formulário",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int unidade;
+  private UUID unidade;
 
   @Schema(
     title = "Respostas",

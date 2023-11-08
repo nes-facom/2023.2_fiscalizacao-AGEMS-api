@@ -17,16 +17,6 @@ import lombok.NoArgsConstructor;
 public class ImagemRegisterRequest {
 
   @Schema(
-    title = "Questão",
-    description = "Identificador da Questão a qual a imagem pertence",
-    required = true,
-    format = "number",
-    type = "int",
-    example = "1"
-  )
-  private int questao;
-
-  @Schema(
     title = "Imagem",
     description = "Imagem",
     format = "binary",
