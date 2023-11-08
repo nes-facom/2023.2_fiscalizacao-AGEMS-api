@@ -86,7 +86,12 @@ public class Formulario {
     title = "Respostas do formulário",
     description = "Respostas associadas a um formulário"
   )
-  @OneToMany(mappedBy = "formulario", fetch = FetchType.EAGER ) 
+  @OneToMany(
+    mappedBy = "formulario",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true,
+    fetch = FetchType.EAGER
+  )
   private List<Resposta> respostas;
 
   @Schema(
@@ -107,8 +112,13 @@ public class Formulario {
     title = "Imagens do formulário",
     description = "Imagens associadas a um formulário"
   )
-  @OneToMany(mappedBy = "imagem", fetch = FetchType.LAZY ) 
-		  private List<Imagem> imagens;
+  @OneToMany(
+    mappedBy = "formulario",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true,
+    fetch = FetchType.LAZY
+  )
+  private List<Imagem> imagens;
   
   @Schema(
     title = "Data de criação",

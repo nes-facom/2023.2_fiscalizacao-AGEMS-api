@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -29,6 +31,7 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Imagem;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
+import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoFormulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Resposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
@@ -92,6 +95,7 @@ public class FormularioServiceTest {
         new FormularioService(repositorioFormulario,
             repositorioUsuario,
             repositorioModelo,
+            repositorioQuestao,
             repositorioQuestaoModelo,
             repositorioQuestaoFormulario,
             repositorioResposta,
@@ -350,5 +354,93 @@ public class FormularioServiceTest {
     );
     assertTrue(response != null);
     assertTrue(response instanceof FormularioResponse);
+  }
+  
+  @Test
+  public void testDeletarFormularioQuestaoComRelacionamento() {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+
+    String userEmail = "juliaacorazza@gmail.com";
+    Usuario usuario = new Usuario();
+    usuario.setNome("Júlia Alves Corazza");
+    usuario.setEmail(userEmail);
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
+    usuario.setSenha(
+      "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
+    );
+    usuario.setFuncao(Papel.USER);
+    when(repositorioUsuario.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
+    
+    Questao questao = new Questao();
+    questao.setId(1);
+    questao.setAlternativasResposta(Collections.emptyList());
+    Unidade unidade = new Unidade();
+    unidade.setId(1);
+    unidade.setNome("Unidade Teste");
+    unidade.setEndereco("Endereço Teste");
+    Formulario formulario = new Formulario();
+    formulario.setId(1);
+    formulario.setUsuarioCriacao(usuario);
+    formulario.setUnidade(unidade);
+    QuestaoFormulario questaoFormulario = new QuestaoFormulario();
+    questaoFormulario.setFormulario(formulario);
+    questaoFormulario.setQuestao(questao);
+    List<QuestaoFormulario> questoes = new ArrayList<>();
+    questoes.add(questaoFormulario);
+    formulario.setQuestoes(questoes);
+    when(repositorioQuestaoFormulario.findByQuestao(any(Questao.class))).thenReturn(questoes);
+    when(repositorioQuestaoModelo.findByQuestao(any(Questao.class))).thenReturn(Collections.emptyList());
+    when(repositorioFormulario.findById(1)).thenReturn(Optional.of(formulario));
+    
+    formularioService.deletaFormulario(request, 1);
+    
+    verify(repositorioQuestao, times(0)).delete(any(Questao.class));
+  }
+  
+  @Test
+  public void testDeletarFormularioQuestaoSemRelacionamento() {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+
+    String userEmail = "juliaacorazza@gmail.com";
+    Usuario usuario = new Usuario();
+    usuario.setNome("Júlia Alves Corazza");
+    usuario.setEmail(userEmail);
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
+    usuario.setSenha(
+      "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
+    );
+    usuario.setFuncao(Papel.USER);
+    when(repositorioUsuario.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
+    
+    Questao questao = new Questao();
+    questao.setId(1);
+    questao.setAlternativasResposta(Collections.emptyList());
+    Unidade unidade = new Unidade();
+    unidade.setId(1);
+    unidade.setNome("Unidade Teste");
+    unidade.setEndereco("Endereço Teste");
+    Formulario formulario = new Formulario();
+    formulario.setId(1);
+    formulario.setUsuarioCriacao(usuario);
+    formulario.setUnidade(unidade);
+    QuestaoFormulario questaoFormulario = new QuestaoFormulario();
+    questaoFormulario.setFormulario(formulario);
+    questaoFormulario.setQuestao(questao);
+    List<QuestaoFormulario> questoes = new ArrayList<>();
+    questoes.add(questaoFormulario);
+    formulario.setQuestoes(questoes);
+    when(repositorioQuestaoFormulario.findByFormulario(any(Formulario.class))).thenReturn(Collections.emptyList());
+    when(repositorioQuestaoModelo.findByQuestao(any(Questao.class))).thenReturn(Collections.emptyList());
+    when(repositorioFormulario.findById(1)).thenReturn(Optional.of(formulario));
+    
+    formularioService.deletaFormulario(request, 1);
+    
+    verify(repositorioQuestao, times(1)).delete(any(Questao.class));
   }
 }
