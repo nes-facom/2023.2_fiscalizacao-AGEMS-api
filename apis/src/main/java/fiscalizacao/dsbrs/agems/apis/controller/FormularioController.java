@@ -238,14 +238,7 @@ public class FormularioController {
         content = @Content(
           schema = @Schema(implementation = ErroResponse.class)
         )
-      ),
-      @ApiResponse(
-        responseCode = "404",
-        description = "Não há formulários cadastrados",
-        content = @Content(
-          schema = @Schema(implementation = ErroResponse.class)
-        )
-      ),
+      )
     }
   )
   @Operation(summary = "Listar todos os formulários")
