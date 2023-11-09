@@ -11,7 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Schema(title = "FormularioResponse", description = "Response para Formulário")
+@Schema(title = "FormularioBuscaResponse", description = "Response para Formulário")
 @Data
 @Builder
 @AllArgsConstructor

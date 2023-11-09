@@ -50,6 +50,7 @@ import fiscalizacao.dsbrs.agems.apis.requests.FormularioRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ImagemRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.RespostaRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.FormularioListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.service.FormularioService;
@@ -442,5 +443,25 @@ public class FormularioServiceTest {
     formularioService.deletaFormulario(request, 1);
     
     verify(repositorioQuestao, times(1)).delete(any(Questao.class));
+  }
+
+  @Test
+  public void testListaFormulariosOK() {
+    Formulario form = Formulario.builder()
+        .id(1)
+        .imagens(Collections.emptyList())
+        .questoes(Collections.emptyList())
+        .respostas(Collections.emptyList())
+        .unidade(new Unidade())
+        .usuarioCriacao(new Usuario())
+        .build();
+    List<Formulario> listForm = Collections.singletonList(form);
+    
+    when(repositorioFormulario.findAll()).thenReturn(listForm);
+    
+    FormularioListResponse response = formularioService.listaTodosFormularios();
+    
+    assertEquals(response.getData().size(), 1);
+    assertEquals(response.getData().get(0).getId(), form.getId());
   }
 }
