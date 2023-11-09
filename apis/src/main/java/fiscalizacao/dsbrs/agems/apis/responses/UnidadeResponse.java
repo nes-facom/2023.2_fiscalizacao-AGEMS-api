@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import java.util.UUID;
 
 @Schema(
   title = "UnidadeResponse",
@@ -24,11 +25,11 @@ public class UnidadeResponse extends Response {
     description = "Id da Unidade",
     required = true,
     format = "number",
-    type = "int",
+    type = "UUID",
     example = "1"
   )
   @JsonProperty("id")
-  private int id;
+  private UUID id;
 
   @Schema(
     title = "Id Unidade",

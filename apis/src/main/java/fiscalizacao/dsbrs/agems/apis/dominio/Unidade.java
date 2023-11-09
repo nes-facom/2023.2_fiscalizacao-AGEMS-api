@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.UUID;
 
 @Schema(title = "Unidade", description = "Objeto de Unidade que é fiscalizada.")
 @Data
@@ -34,11 +35,11 @@ public class Unidade {
     description = "Id de Unidade, autogerável no banco",
     required = true,
     format = "number",
-    type = "integer"
+    type = "UUID"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Schema(
     title = "Id do usuário de criação",
