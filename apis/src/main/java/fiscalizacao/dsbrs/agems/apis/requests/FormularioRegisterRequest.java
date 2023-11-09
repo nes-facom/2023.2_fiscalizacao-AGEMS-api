@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -40,6 +41,15 @@ public class FormularioRegisterRequest {
     type = "UUID"
   )
   private UUID modelo;
+  
+  @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  private UUID uuidLocal;
 
   @Schema(
     title = "Unidade",

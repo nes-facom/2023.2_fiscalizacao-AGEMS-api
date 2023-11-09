@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -41,8 +42,19 @@ public class FormularioResponse extends Response {
     format = "string",
     type = "UUID"
   )
-  @JsonProperty("id")
+  @JsonProperty("uuid")
   private UUID id;
+  
+  @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  @JsonProperty("uuid_local")
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private UUID uuidLocal;
 
   @Schema(
     title = "Usuário",

@@ -229,12 +229,15 @@ public class FormularioService {
         resposta.setDataCriacao(novoFormulario.getDataCriacao());
         
         RESPOSTA_REPOSITORIO.save(resposta);
+        
         respostaResponse =
           RespostaResponse
             .builder()
-            .questao(resposta.getQuestao().getId())
+            .id(resposta.getId())
+            .uuidLocal(respostaRequest.getUuidLocal())
             .resposta(resposta.getResposta())
             .obs(resposta.getObservacao())
+            .questao(resposta.getQuestao().getId())
             .build();
         responsesResposta.add(respostaResponse);
       }
@@ -257,6 +260,7 @@ public class FormularioService {
       FormularioResponse
         .builder()
         .id(novoFormularioAux.getId())
+        .uuidLocal(novoFormulario.getUuidLocal())
         .usuario(usuarioResponse)
         .unidade(unidadeResponse)
         .respostas(responsesResposta)

@@ -92,6 +92,7 @@ public class ModeloService {
       QuestaoResponse questaoResponse = QuestaoResponse
         .builder()
         .id(questao.getId())
+        .uuidLocal(questaoRegister.getUuidLocal())
         .pergunta(questao.getPergunta())
         .portaria(questao.getPortaria())
         .objetiva(questao.isObjetiva())
@@ -105,6 +106,7 @@ public class ModeloService {
       ModeloResponse
         .builder()
         .id(newModelo.getId())
+        .uuidLocal(novoModelo.getUuidLocal())
         .nome(newModelo.getNome())
         .questoes(responsesQuestao)
         .build();

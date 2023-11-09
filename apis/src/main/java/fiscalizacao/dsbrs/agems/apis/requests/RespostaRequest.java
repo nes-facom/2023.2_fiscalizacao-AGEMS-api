@@ -19,6 +19,15 @@ import lombok.NoArgsConstructor;
 public class RespostaRequest {
 
   @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  private UUID uuidLocal;
+  
+  @Schema(
     title = "Questão",
     description = "Id da Questão que se refere a Resposta",
     required = true,

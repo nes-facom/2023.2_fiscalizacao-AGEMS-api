@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +50,7 @@ public class UnidadeServiceTest {
     when(unidadeRepositorio.save(any(Unidade.class)))
       .thenReturn(
           Unidade.builder()
-          .id(1)
+          .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
           .nome("123")
           .endereco("Sample Address")
           .tipo("Tratamento de Esgoto")
@@ -102,17 +103,17 @@ public class UnidadeServiceTest {
 
   @Test
   public void testVerUnidade() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
     unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
 
-    Response response = unidadeService.verUnidade(unidade.getNome());
+    Response response = unidadeService.verUnidade(id);
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
@@ -124,7 +125,7 @@ public class UnidadeServiceTest {
 
   @Test
   public void testVerUnidadeIdInvalido() {
-    String id = "invalidId";
+    UUID id = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
     Response response = unidadeService.verUnidade(id);
 
     assertTrue(response instanceof ErroResponse);
@@ -138,8 +139,8 @@ public class UnidadeServiceTest {
 
   @Test
   public void testVerUnidadeNaoExiste() {
-    String idUnidade = "123";
-    when(unidadeRepositorio.findById(Integer.parseInt(idUnidade)))
+    UUID idUnidade = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
+    when(unidadeRepositorio.findById(idUnidade))
       .thenReturn(Optional.empty());
 
     Response response = unidadeService.verUnidade(idUnidade);
@@ -151,17 +152,17 @@ public class UnidadeServiceTest {
 
   @Test
   public void testDeleteUnidade() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
     unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
 
-    Response response = unidadeService.deletarUnidade(unidade.getNome());
+    Response response = unidadeService.deletarUnidade(id);
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
@@ -173,7 +174,7 @@ public class UnidadeServiceTest {
 
   @Test
   public void testDeleteUnidadeIdInvalido() {
-    String id = "invalidId";
+    UUID id = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
     Response response = unidadeService.deletarUnidade(id);
 
     assertTrue(response instanceof ErroResponse);
@@ -187,8 +188,8 @@ public class UnidadeServiceTest {
 
   @Test
   public void testDeleteUnidadeNaoExiste() {
-    String idUnidade = "123";
-    when(unidadeRepositorio.findById(Integer.parseInt(idUnidade)))
+    UUID idUnidade = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
+    when(unidadeRepositorio.findById(idUnidade))
       .thenReturn(Optional.empty());
 
     Response response = unidadeService.deletarUnidade(idUnidade);
@@ -200,7 +201,7 @@ public class UnidadeServiceTest {
 
   @Test
   public void testEditUnidadeIdInvalido() {
-    String id = "invalidId";
+    UUID id = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
     UnidadeRequest unidade = new UnidadeRequest();
     Response response = unidadeService.editarUnidade(id, unidade);
 
@@ -215,8 +216,8 @@ public class UnidadeServiceTest {
 
   @Test
   public void testEditUnidadeNaoExiste() {
-    String idUnidade = "123";
-    when(unidadeRepositorio.findById(Integer.parseInt(idUnidade)))
+    UUID idUnidade = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
+    when(unidadeRepositorio.findById(idUnidade))
       .thenReturn(Optional.empty());
 
     UnidadeRequest unidade = new UnidadeRequest();
@@ -230,7 +231,7 @@ public class UnidadeServiceTest {
 
   @Test
   public void testEditUnidadeEmptyRequest() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
     unidade.setNome("123");
@@ -239,11 +240,11 @@ public class UnidadeServiceTest {
 
     UnidadeRequest unidadeRequest = new UnidadeRequest();
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
 
     Response response = unidadeService.editarUnidade(
-      unidade.getNome(),
+      id,
       unidadeRequest
     );
     assertTrue(response instanceof ErroResponse);
@@ -257,7 +258,7 @@ public class UnidadeServiceTest {
 
   @Test
   public void testEditUnidadeApenasEndereco() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
     unidade.setNome("123");
@@ -267,12 +268,12 @@ public class UnidadeServiceTest {
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setEndereco("new Address");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
     when(unidadeRepositorio.save(any(Unidade.class))).thenReturn(unidade);
 
     Response response = unidadeService.editarUnidade(
-      unidade.getNome(),
+      id,
       unidadeRequest
     );
 
@@ -287,14 +288,14 @@ public class UnidadeServiceTest {
 
   @Test
   public void testEditUnidadeApenasIdUnidadeJaExiste() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
     unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
-    int id2 = 2;
+    UUID id2 = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
     Unidade unidade2 = new Unidade();
     unidade.setId(id2);
     unidade.setNome("1234");
@@ -304,13 +305,13 @@ public class UnidadeServiceTest {
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setNome("1234");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
     when(unidadeRepositorio.findByNome(unidadeRequest.getNome()))
       .thenReturn(Optional.of(unidade2));
 
     Response response = unidadeService.editarUnidade(
-      unidade.getNome(),
+      id,
       unidadeRequest
     );
 
@@ -325,7 +326,7 @@ public class UnidadeServiceTest {
 
   @Test
   public void testEditUnidadeApenasIdUnidade() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
     unidade.setNome("123");
@@ -335,12 +336,12 @@ public class UnidadeServiceTest {
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setNome("1234");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getNome())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
     when(unidadeRepositorio.save(any(Unidade.class))).thenReturn(unidade);
 
     Response response = unidadeService.editarUnidade(
-      unidade.getNome(),
+      id,
       unidadeRequest
     );
 
@@ -356,8 +357,7 @@ public class UnidadeServiceTest {
   @Test
   public void testEditarUnidade_ExistingUnidade_UpdatesFields() {
     // Arrange
-    int id = 1;
-    String idString = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setEndereco("New Address");
 
@@ -371,7 +371,7 @@ public class UnidadeServiceTest {
       .thenReturn(existingUnidade);
 
     // Act
-    Response response = unidadeService.editarUnidade(idString, unidadeRequest);
+    Response response = unidadeService.editarUnidade(id, unidadeRequest);
 
     // Assert
     assertTrue(response instanceof UnidadeResponse);
@@ -387,15 +387,14 @@ public class UnidadeServiceTest {
   @Test
   public void testEditarUnidade_NonExistingUnidade_ReturnsErroResponse() {
     // Arrange
-    int id = 1;
-    String idString = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setEndereco("New Address");
 
     when(unidadeRepositorio.findById(id)).thenReturn(Optional.empty());
 
     // Act
-    Response response = unidadeService.editarUnidade(idString, unidadeRequest);
+    Response response = unidadeService.editarUnidade(id, unidadeRequest);
 
     // Assert
     assertTrue(response instanceof ErroResponse);
@@ -412,12 +411,12 @@ public class UnidadeServiceTest {
     // Arrange
     List<Unidade> unidades = new ArrayList<>();
     Unidade unidade1 = new Unidade();
-    unidade1.setId(1);
+    unidade1.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
     unidade1.setEndereco("Address 1");
     unidade1.setTipo("Type 1");
     unidades.add(unidade1);
     Unidade unidade2 = new Unidade();
-    unidade2.setId(2);
+    unidade2.setId(UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c"));
     unidade2.setEndereco("Address 2");
     unidade2.setTipo("Type 2");
     unidades.add(unidade2);
@@ -443,9 +442,9 @@ public class UnidadeServiceTest {
 
   @Test
   public void shouldReturnNotFoundWhenUnidadeWithIdDoesNotExist() {
-    String id = "50";
+    UUID id = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    when(unidadeRepositorio.findById(Integer.parseInt(id))).thenReturn(Optional.empty());
+    when(unidadeRepositorio.findById(id)).thenReturn(Optional.empty());
 
     Response response = unidadeService.editarUnidade(id, unidadeRequest);
 
@@ -456,8 +455,8 @@ public class UnidadeServiceTest {
   @Test
   public void shouldReturnBadRequestWhenAllFieldsAreEmptyOrBlank() {
     // Arrange
-    String id = "1";
-    UnidadeRequest unidadeRequest = new UnidadeRequest("", "", "");
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+    UnidadeRequest unidadeRequest = new UnidadeRequest(id, "", "", "");
 
     // Act
     Response response = unidadeService.editarUnidade(id, unidadeRequest);
@@ -472,12 +471,12 @@ public class UnidadeServiceTest {
 
   @Test
   public void shouldUpdateEnderecoWhenOnlyEnderecoFieldIsProvided() {
-    String id = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     String newEndereco = "Novo endereco";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setEndereco(newEndereco);
     Unidade existingUnidade = new Unidade();
-    when(unidadeRepositorio.findById(Integer.parseInt(id)))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(existingUnidade));
       when(unidadeRepositorio.save(any(Unidade.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -498,12 +497,12 @@ public class UnidadeServiceTest {
 
   @Test
   public void shouldUpdateTipoWhenOnlyTipoFieldIsProvided() {
-    String id = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     String newTipo = "Novo tipo";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setTipo(newTipo);
     Unidade existingUnidade = new Unidade();
-    when(unidadeRepositorio.findById(Integer.parseInt(id)))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(existingUnidade));
  when(unidadeRepositorio.save(any(Unidade.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -523,12 +522,12 @@ public class UnidadeServiceTest {
 
   @Test
   public void shouldUpdateIdUnidadeWhenOnlyIdUnidadeFieldIsProvided() {
-    String id = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     String newIdUnidade = "Novo nome";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setNome(newIdUnidade);
     Unidade existingUnidade = new Unidade();
-    when(unidadeRepositorio.findById(Integer.parseInt(id)))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(existingUnidade));
     when(unidadeRepositorio.findByNome(newIdUnidade)).thenReturn(Optional.empty());
   when(unidadeRepositorio.save(any(Unidade.class)))
@@ -550,15 +549,15 @@ public class UnidadeServiceTest {
  @Test
 public void shouldReturnConflictWhenNewIdUnidadeExistsWithDifferentInformation() {
     // Arrange
-    String id = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     String newIdUnidade = "Novo nome";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setNome(newIdUnidade);
     Unidade existingUnidade = new Unidade();
     Unidade existingUnidade2 = new Unidade();
     existingUnidade2.setNome(newIdUnidade);
-    existingUnidade2.setId(3);
-    when(unidadeRepositorio.findById(Integer.parseInt(id)))
+    existingUnidade2.setId(UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c"));
+    when(unidadeRepositorio.findById(id))
         .thenReturn(Optional.of(existingUnidade));
     when(unidadeRepositorio.findByNome(newIdUnidade))
         .thenReturn(Optional.of(existingUnidade2));

@@ -29,7 +29,7 @@ public class ImagemResponse extends Response {
     format = "string",
     type = "UUID"
   )
-  @JsonProperty("id")
+  @JsonProperty("uuid")
   private UUID id;
 
   @Schema(

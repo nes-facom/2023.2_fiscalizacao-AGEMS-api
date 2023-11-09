@@ -54,6 +54,7 @@ public class UnidadeService {
       UnidadeResponse unidadeResponse = UnidadeResponse
         .builder()
         .id(unidadeSalva.getId())
+        .uuidLocal(unidadeRegisterRequest.getUuidLocal())
         .nome(unidadeSalva.getNome())
         .endereco(unidadeSalva.getEndereco())
         .tipo(unidadeSalva.getTipo())

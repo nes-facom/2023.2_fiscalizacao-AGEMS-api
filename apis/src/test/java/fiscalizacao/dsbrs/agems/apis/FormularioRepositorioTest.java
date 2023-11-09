@@ -152,13 +152,13 @@ public class FormularioRepositorioTest {
         .tipo("Tratamento de Esgoto")
         .build();
     unidadeSalva = unidadeRepositorio.save(unidade);
-    usuarioSalvo = usuarioRepositorio.findById(1).orElse(null);
+    usuarioSalvo = usuarioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(usuarioSalvo);
 
-    modeloSalvo = modeloRepositorio.findById(1).orElse(null);
+    modeloSalvo = modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(modeloSalvo);
 
-    unidadeSalva = unidadeRepositorio.findById(1).orElse(null);
+    unidadeSalva = unidadeRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(unidadeSalva);
 
     formulario =
@@ -251,19 +251,19 @@ public class FormularioRepositorioTest {
     modeloSalvo.setQuestoes(questoes);
     
     Unidade unidade = Unidade.builder()
-        .id(0)
+        .id(UUID.fromString("38c7b15b-82cf-4606-8789-3be6336606f8"))
         .nome("Unidade 01")
         .endereco("Rua das Neves")
         .tipo("Tratamento de Esgoto")
         .build();
     unidadeSalva = unidadeRepositorio.save(unidade);
-    usuarioSalvo = usuarioRepositorio.findById(1).orElse(null);
+    usuarioSalvo = usuarioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(usuarioSalvo);
 
-    modeloSalvo = modeloRepositorio.findById(1).orElse(null);
+    modeloSalvo = modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(modeloSalvo);
 
-    unidadeSalva = unidadeRepositorio.findById(1).orElse(null);
+    unidadeSalva = unidadeRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(unidadeSalva);
 
     formulario =
@@ -279,11 +279,11 @@ public class FormularioRepositorioTest {
     assertNotNull(formularioSalvo.getId());
     formulario.setId(formularioSalvo.getId());
 
-    Usuario usuarioSalvoNovo = usuarioRepositorio.findById(1).orElse(null);
+    Usuario usuarioSalvoNovo = usuarioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
 
     
     assertNotNull(usuarioSalvoNovo);
-    Formulario formulario = formularioRepositorio.findById(1).orElse(null);
+    Formulario formulario = formularioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(formulario);
 
     formulario.setUsuarioCriacao(usuarioSalvoNovo);
@@ -384,19 +384,19 @@ public class FormularioRepositorioTest {
      modeloSalvo.setQuestoes(questoes);
 
      Unidade unidade = Unidade.builder()
-         .id(0)
+         .id(UUID.fromString("38c7b15b-82cf-4606-8789-3be6336606f8"))
          .nome("Unidade 01")
          .endereco("Rua das Neves")
          .tipo("Tratamento de Esgoto")
          .build();
     unidadeSalva = unidadeRepositorio.save(unidade);
-    usuarioSalvo = usuarioRepositorio.findById(1).orElse(null);
+    usuarioSalvo = usuarioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(usuarioSalvo);
 
-    modeloSalvo = modeloRepositorio.findById(1).orElse(null);
+    modeloSalvo = modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(modeloSalvo);
 
-    unidadeSalva = unidadeRepositorio.findById(1).orElse(null);
+    unidadeSalva = unidadeRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(unidadeSalva);
 
     formulario =
@@ -413,7 +413,7 @@ public class FormularioRepositorioTest {
     formulario.setId(formularioSalvo.getId());
     Modelo modeloSalvoNovo = modeloRepositorio.findById(modeloSalvo.getId()).orElse(null);
     assertNotNull(modeloSalvoNovo);
-    Formulario formulario = formularioRepositorio.findById(1).orElse(null);
+    Formulario formulario = formularioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(formulario);
 
     Formulario formularioAtualizado = formularioRepositorio.save(formulario);
@@ -512,19 +512,19 @@ public class FormularioRepositorioTest {
     modeloSalvo.setQuestoes(questoes);
 
     Unidade unidade = Unidade.builder()
-        .id(0)
+        .id(UUID.fromString("38c7b15b-82cf-4606-8789-3be6336606f8"))
         .nome("Unidade 01")
         .endereco("Rua das Neves")
         .tipo("Tratamento de Esgoto")
         .build();
     unidadeSalva = unidadeRepositorio.save(unidade);
-    usuarioSalvo = usuarioRepositorio.findById(1).orElse(null);
+    usuarioSalvo = usuarioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(usuarioSalvo);
 
-    modeloSalvo = modeloRepositorio.findById(1).orElse(null);
+    modeloSalvo = modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(modeloSalvo);
 
-    unidadeSalva = unidadeRepositorio.findById(1).orElse(null);
+    unidadeSalva = unidadeRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(unidadeSalva);
 
     formulario =
@@ -539,9 +539,9 @@ public class FormularioRepositorioTest {
     assertNotNull(formularioSalvo);
     assertNotNull(formularioSalvo.getId());
     formulario.setId(formularioSalvo.getId());
-    Unidade unidadeSalvaNova = unidadeRepositorio.findById(1).orElse(null);
+    Unidade unidadeSalvaNova = unidadeRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(unidadeSalvaNova);
-    Formulario formulario = formularioRepositorio.findById(1).orElse(null);
+    Formulario formulario = formularioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(formulario);
     formulario.setUnidade(unidadeSalvaNova);
 
@@ -641,19 +641,19 @@ public class FormularioRepositorioTest {
     modeloSalvo.setQuestoes(questoes);
 
     Unidade unidade = Unidade.builder()
-        .id(0)
+        .id(UUID.fromString("38c7b15b-82cf-4606-8789-3be6336606f8"))
         .nome("Unidade 01")
         .endereco("Rua das Neves")
         .tipo("Tratamento de Esgoto")
         .build();
     unidadeSalva = unidadeRepositorio.save(unidade);
-    usuarioSalvo = usuarioRepositorio.findById(1).orElse(null);
+    usuarioSalvo = usuarioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(usuarioSalvo);
 
-    modeloSalvo = modeloRepositorio.findById(1).orElse(null);
+    modeloSalvo = modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(modeloSalvo);
 
-    unidadeSalva = unidadeRepositorio.findById(1).orElse(null);
+    unidadeSalva = unidadeRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(unidadeSalva);
 
     formulario =
@@ -668,7 +668,7 @@ public class FormularioRepositorioTest {
     assertNotNull(formularioSalvo);
     assertNotNull(formularioSalvo.getId());
     formulario.setId(formularioSalvo.getId());
-    Formulario formulario = formularioRepositorio.findById(1).orElse(null);
+    Formulario formulario = formularioRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058")).orElse(null);
     assertNotNull(formulario);
     formularioRepositorio.delete(formularioSalvo);
     Formulario formularioDeletado = formularioRepositorio

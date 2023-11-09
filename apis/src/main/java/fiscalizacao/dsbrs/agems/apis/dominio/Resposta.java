@@ -3,7 +3,6 @@ package fiscalizacao.dsbrs.agems.apis.dominio;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import fiscalizacao.dsbrs.agems.apis.dominio.chaves.RespostaKey;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -28,7 +26,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@IdClass(RespostaKey.class)
 @Table(name = "resposta")
 public class Resposta {
 
@@ -49,7 +46,6 @@ public class Resposta {
     required = true,
     implementation = Questao.class
   )
-  @Id
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "idQuestao", nullable = false)
   private Questao questao;
@@ -61,7 +57,6 @@ public class Resposta {
     format = "number",
     type = "integer"
   )
-  @Id
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "idFormulario", nullable = false)
   private Formulario formulario;

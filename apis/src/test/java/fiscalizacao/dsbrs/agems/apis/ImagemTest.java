@@ -3,6 +3,7 @@ package fiscalizacao.dsbrs.agems.apis;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ public class ImagemTest {
     imagem =
       Imagem
         .builder()
-        .id(1)
+        .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
         .formulario(formulario)
         .imagem(imageBytes)
         .dataCriacao(currentDate)

@@ -26,7 +26,7 @@ public class AlternativaRespostaResponse {
     format = "string",
     type = "UUID"
   )
-  @JsonProperty("id")
+  @JsonProperty("uuid")
   private UUID id;
 
   @Schema(

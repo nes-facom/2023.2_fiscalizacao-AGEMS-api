@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +18,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UnidadeRequest {
 
+  @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  private UUID uuidLocal;
+  
   @Schema(
     title = "Nome",
     description = "Nome da unidade",
