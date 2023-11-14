@@ -426,8 +426,8 @@ public class ModeloServiceTest {
 
         assertTrue(modeloResponse.getQuestoes().isEmpty());
     }
-        @Test
-        public void testEditaModeloDeleteAlternativaResposta() {
+      @Test
+      public void testEditaModeloDeleteAlternativaResposta() {
         // Mock data
         UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         UUID questaoId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
@@ -547,5 +547,26 @@ public class ModeloServiceTest {
       modeloService.deletaModelo(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
       
       verify(questaoRepositorio, times(1)).delete(any(Questao.class));
+    }
+
+    @Test
+    public void testDeletarModeloQuestaoComRelacionamento() {
+      Questao questao = new Questao();
+      questao.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      questao.setAlternativasResposta(Collections.emptyList());
+      Modelo modelo = new Modelo();
+      modelo.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      QuestaoModelo questaoModelo = new QuestaoModelo();
+      questaoModelo.setModelo(modelo);
+      questaoModelo.setQuestao(questao);
+      List<QuestaoModelo> questoes = new ArrayList<>();
+      questoes.add(questaoModelo);
+      modelo.setQuestoes(questoes);
+      when(questaoModeloRepositorio.findByQuestao(any(Questao.class))).thenReturn(questoes);
+      when(modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))).thenReturn(Optional.of(modelo));
+
+      modeloService.deletaModelo(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      
+      verify(questaoRepositorio, times(0)).delete(any(Questao.class));
     }
 }
