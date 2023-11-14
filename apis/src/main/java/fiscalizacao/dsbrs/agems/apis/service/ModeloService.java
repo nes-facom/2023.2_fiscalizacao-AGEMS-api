@@ -55,7 +55,6 @@ public class ModeloService {
     Modelo newModelo = MODELO_REPOSITORIO.save(modelo);
 
     for (QuestaoRegisterRequest questaoRegister : novoModelo.getQuestoes()) {
-      //-----------------------------------------------------
       Questao questao = new Questao();
       questao.setPergunta(questaoRegister.getPergunta());
       questao.setPortaria(questaoRegister.getPortaria());

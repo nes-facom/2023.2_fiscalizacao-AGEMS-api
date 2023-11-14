@@ -125,21 +125,6 @@ public class UnidadeServiceTest {
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
 
-//  Desativado após a migração de IDs incrementais para UUID
-//  @Test
-//  public void testVerUnidadeIdInvalido() {
-//    UUID id = null;
-//    Response response = unidadeService.verUnidade(id);
-//
-//    assertTrue(response instanceof ErroResponse);
-//    ErroResponse erroResponse = (ErroResponse) response;
-//    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
-//    assertEquals(
-//      "Envie o id Num\u00E9rico da Unidade!",
-//      erroResponse.getErro()
-//    );
-//  }
-
   @Test
   public void testVerUnidadeNaoExiste() {
     UUID idUnidade = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
@@ -174,21 +159,6 @@ public class UnidadeServiceTest {
     assertEquals(unidade.getTipo(), unidadeResponse.getTipo());
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
-
-//  Desativado após a migração de IDs incrementais para UUID
-//  @Test
-//  public void testDeleteUnidadeIdInvalido() {
-//    UUID id = null;
-//    Response response = unidadeService.deletarUnidade(id);
-//
-//    assertTrue(response instanceof ErroResponse);
-//    ErroResponse erroResponse = (ErroResponse) response;
-//    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
-//    assertEquals(
-//      "Envie o id Num\u00E9rico da Unidade!",
-//      erroResponse.getErro()
-//    );
-//  }
 
   @Test
   public void testDeleteUnidadeNaoExiste() {

@@ -3,7 +3,6 @@ package fiscalizacao.dsbrs.agems.apis.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-//import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -73,18 +72,6 @@ public class UnidadeService {
 
   public Response verUnidade(UUID id) {
     
-//    if (!NumberUtils.isParsable(id)) {
-//      ErroResponse erroResponse = ErroResponse
-//        .builder()
-//        .status(400)
-//        .erro("Envie o id Numérico da Unidade!")
-//        .build();
-//
-//      return erroResponse;
-//    }
-    
-//    UUID idNum = Integer.parseInt(id);
-    
     Unidade unidade = UNIDADE_REPOSITORIO.findById(id).orElse(null);
     if (unidade != null) {
       UnidadeResponse unidadeResponse = UnidadeResponse
@@ -107,16 +94,6 @@ public class UnidadeService {
   }
 
   public Response deletarUnidade(UUID id) {
-//    if (!NumberUtils.isParsable(id)) {
-//      ErroResponse erroResponse = ErroResponse
-//        .builder()
-//        .status(400)
-//        .erro("Envie o id Numérico da Unidade!")
-//        .build();
-//
-//      return erroResponse;
-//    }
-//    int idNum = Integer.parseInt(id);
     
     Unidade unidade = UNIDADE_REPOSITORIO.findById(id).orElse(null);
     if (unidade != null) {
@@ -141,16 +118,6 @@ public class UnidadeService {
   }
 
   public Response editarUnidade(UUID id, UnidadeRequest unidadeRequest) {
-//    if (!NumberUtils.isParsable(id)) {
-//      ErroResponse erroResponse = ErroResponse
-//        .builder()
-//        .status(400)
-//        .erro("Envie o id Numérico da Unidade!")
-//        .build();
-//
-//      return erroResponse;
-//    }
-//    int idNum = Integer.parseInt(id);
     
     Unidade unidade = UNIDADE_REPOSITORIO.findById(id).orElse(null);
     if (unidade != null) {
