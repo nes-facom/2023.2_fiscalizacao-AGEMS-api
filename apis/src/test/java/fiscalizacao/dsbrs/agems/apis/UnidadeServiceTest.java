@@ -45,12 +45,14 @@ public class UnidadeServiceTest {
     request.setEndereco("Sample Address");
     request.setTipo("Tratamento de Esgoto");
 
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+    
     when(unidadeRepositorio.findByNome("123"))
       .thenReturn(java.util.Optional.empty());
     when(unidadeRepositorio.save(any(Unidade.class)))
       .thenReturn(
           Unidade.builder()
-          .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
+          .id(id)
           .nome("123")
           .endereco("Sample Address")
           .tipo("Tratamento de Esgoto")
@@ -61,7 +63,7 @@ public class UnidadeServiceTest {
 
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
-    assertEquals(1, unidadeResponse.getId());
+    assertEquals(id, unidadeResponse.getId());
     assertEquals("123", unidadeResponse.getNome());
     assertEquals("Sample Address", unidadeResponse.getEndereco());
   }
@@ -123,19 +125,20 @@ public class UnidadeServiceTest {
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
 
-  @Test
-  public void testVerUnidadeIdInvalido() {
-    UUID id = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
-    Response response = unidadeService.verUnidade(id);
-
-    assertTrue(response instanceof ErroResponse);
-    ErroResponse erroResponse = (ErroResponse) response;
-    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
-    assertEquals(
-      "Envie o id Num\u00E9rico da Unidade!",
-      erroResponse.getErro()
-    );
-  }
+//  Desativado após a migração de IDs incrementais para UUID
+//  @Test
+//  public void testVerUnidadeIdInvalido() {
+//    UUID id = null;
+//    Response response = unidadeService.verUnidade(id);
+//
+//    assertTrue(response instanceof ErroResponse);
+//    ErroResponse erroResponse = (ErroResponse) response;
+//    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
+//    assertEquals(
+//      "Envie o id Num\u00E9rico da Unidade!",
+//      erroResponse.getErro()
+//    );
+//  }
 
   @Test
   public void testVerUnidadeNaoExiste() {
@@ -172,19 +175,20 @@ public class UnidadeServiceTest {
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
 
-  @Test
-  public void testDeleteUnidadeIdInvalido() {
-    UUID id = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
-    Response response = unidadeService.deletarUnidade(id);
-
-    assertTrue(response instanceof ErroResponse);
-    ErroResponse erroResponse = (ErroResponse) response;
-    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
-    assertEquals(
-      "Envie o id Num\u00E9rico da Unidade!",
-      erroResponse.getErro()
-    );
-  }
+//  Desativado após a migração de IDs incrementais para UUID
+//  @Test
+//  public void testDeleteUnidadeIdInvalido() {
+//    UUID id = null;
+//    Response response = unidadeService.deletarUnidade(id);
+//
+//    assertTrue(response instanceof ErroResponse);
+//    ErroResponse erroResponse = (ErroResponse) response;
+//    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
+//    assertEquals(
+//      "Envie o id Num\u00E9rico da Unidade!",
+//      erroResponse.getErro()
+//    );
+//  }
 
   @Test
   public void testDeleteUnidadeNaoExiste() {
@@ -197,21 +201,6 @@ public class UnidadeServiceTest {
     ErroResponse erroResponse = (ErroResponse) response;
     assertEquals(HttpStatus.NOT_FOUND.value(), erroResponse.getStatus());
     assertEquals("Unidade n\u00E3o existe", erroResponse.getErro());
-  }
-
-  @Test
-  public void testEditUnidadeIdInvalido() {
-    UUID id = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
-    UnidadeRequest unidade = new UnidadeRequest();
-    Response response = unidadeService.editarUnidade(id, unidade);
-
-    assertTrue(response instanceof ErroResponse);
-    ErroResponse erroResponse = (ErroResponse) response;
-    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
-    assertEquals(
-      "Envie o id Num\u00E9rico da Unidade!",
-      erroResponse.getErro()
-    );
   }
 
   @Test
@@ -409,14 +398,16 @@ public class UnidadeServiceTest {
   @Test
   public void testListarUnidades_ReturnsListOfUnidadeResponses() {
     // Arrange
+    UUID id1 = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     List<Unidade> unidades = new ArrayList<>();
     Unidade unidade1 = new Unidade();
-    unidade1.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+    unidade1.setId(id1);
     unidade1.setEndereco("Address 1");
     unidade1.setTipo("Type 1");
     unidades.add(unidade1);
+    UUID id2 = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
     Unidade unidade2 = new Unidade();
-    unidade2.setId(UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c"));
+    unidade2.setId(id2);
     unidade2.setEndereco("Address 2");
     unidade2.setTipo("Type 2");
     unidades.add(unidade2);
@@ -429,11 +420,11 @@ public class UnidadeServiceTest {
     // Assert
     assertEquals(2, unidadeResponses.size());
     UnidadeResponse response1 = unidadeResponses.get(0);
-    assertEquals(1, response1.getId());
+    assertEquals(id1, response1.getId());
     assertEquals("Address 1", response1.getEndereco());
     assertEquals("Type 1", response1.getTipo());
     UnidadeResponse response2 = unidadeResponses.get(1);
-    assertEquals(2, response2.getId());
+    assertEquals(id2, response2.getId());
     assertEquals("Address 2", response2.getEndereco());
     assertEquals("Type 2", response2.getTipo());
 

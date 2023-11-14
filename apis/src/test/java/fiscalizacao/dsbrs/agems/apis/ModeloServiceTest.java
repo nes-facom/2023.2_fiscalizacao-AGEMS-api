@@ -140,7 +140,8 @@ public class ModeloServiceTest {
     public void testVerModelo() {
         // Mock the Modelo object
         Modelo modelo = new Modelo();
-        modelo.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        modelo.setId(modeloId);
         List<QuestaoModelo> questoes = new ArrayList<>();
         modelo.setQuestoes(questoes);
         when(modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))).thenReturn(Optional.of(modelo));
@@ -190,10 +191,10 @@ public class ModeloServiceTest {
         questao2.setAlternativasResposta(tipoRespostas2);
 
         // Perform the method invocation
-        ModeloResponse response = modeloService.verModelo(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+        ModeloResponse response = modeloService.verModelo(modeloId);
 
         // Verify the expected behavior
-        assertEquals(1, response.getId());
+        assertEquals(modeloId, response.getId());
         assertEquals(2, response.getQuestoes().size());
         assertEquals("Answer 1", response.getQuestoes().get(0).getRespostas().get(0).getDescricao());
         assertEquals("Answer 2", response.getQuestoes().get(0).getRespostas().get(1).getDescricao());

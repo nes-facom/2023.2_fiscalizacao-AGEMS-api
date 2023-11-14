@@ -155,6 +155,8 @@ public class FormularioServiceTest {
     when(repositorioModelo.findById(any(UUID.class))).thenReturn(Optional.of(modelo));
     when(repositorioUsuario.findByEmail("user@example.com"))
       .thenReturn(Optional.of(usuario));
+    UUID modeloUUID = UUID.randomUUID();
+    when(formularioRegisterRequest.getModelo()).thenReturn(modeloUUID);
     when(request.getAttribute("EMAIL_USUARIO")).thenReturn("user@example.com");
     Response response = formularioService.cadastraFormulario(
       request,
@@ -174,6 +176,7 @@ public class FormularioServiceTest {
     );
     Unidade unidade = mock(Unidade.class);
     Modelo modelo = mock(Modelo.class);
+    UUID uuid = mock(UUID.class);
     Usuario usuario = mock(Usuario.class);
     when(repositorioUsuario.findByEmail("user@example.com"))
       .thenReturn(Optional.of(usuario));
@@ -186,6 +189,8 @@ public class FormularioServiceTest {
       .thenReturn(Optional.of(unidade));
     when(repositorioModelo.findById(any(UUID.class))).thenReturn(Optional.of(modelo));
     when(modelo.getQuestoes()).thenReturn(questoes);
+    when(formularioRegisterRequest.getModelo()).thenReturn(uuid);
+    when(formularioRegisterRequest.getUnidade()).thenReturn(uuid);
     when(formularioRegisterRequest.getImagens())
       .thenReturn(
         Arrays.asList(

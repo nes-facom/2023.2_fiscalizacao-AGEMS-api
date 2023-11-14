@@ -110,7 +110,7 @@ class ModeloControllerTest {
 
   @Test
   public void testVerModeloIdInvalido() {
-    UUID modelId = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
+    UUID modelId = null;
     ModeloController controller = new ModeloController(mock(ModeloService.class));
 
     ResponseEntity<?> response = controller.verModelo(modelId);
