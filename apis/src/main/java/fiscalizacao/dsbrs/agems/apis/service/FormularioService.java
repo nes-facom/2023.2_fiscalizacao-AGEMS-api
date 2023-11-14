@@ -35,6 +35,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioBuscaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.FormularioListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResumoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ImagemResponse;
@@ -270,8 +271,57 @@ public class FormularioService {
 
     return formularioResponse;
   }
+  
+  public FormularioListResponse listaTodosFormularios() {
+    List<FormularioResponse> formulariosResponse = new ArrayList<>();
+    List<Formulario> formularios = FORMULARIO_REPOSITORIO.findAll();
+    for(Formulario form : formularios) {
+      List<ImagemResponse> imagens = form.getImagens().stream()
+          .map(imagem -> ImagemResponse.builder()
+              .formulario(form.getId())
+              .id(imagem.getId())
+              .imagem(imagem.getImagem())
+              .build())
+          .collect(Collectors.toList());
+      
+      List<RespostaResponse> respostas = form.getRespostas().stream()
+          .map(resposta -> RespostaResponse.builder()
+              .questao(resposta.getQuestao().getId())
+              .resposta(resposta.getResposta())
+              .obs(resposta.getObservacao())
+              .build())
+          .collect(Collectors.toList());
+      
+      Unidade unidadeForm = form.getUnidade();
+      UnidadeResponse unidadeResp = UnidadeResponse.builder()
+          .endereco(unidadeForm.getEndereco())
+          .id(unidadeForm.getId())
+          .nome(unidadeForm.getNome())
+          .tipo(unidadeForm.getTipo())
+          .build();
+      
+      Usuario usuarioForm = form.getUsuarioCriacao();
+      UsuarioFormResponse usuarioResp = UsuarioFormResponse.builder()
+          .nome(usuarioForm.getNome())
+          .build();
+      
+      formulariosResponse.add(FormularioResponse.builder()
+          .dataCriacao(form.getDataCriacao())
+          .id(form.getId())
+          .imagens(imagens)
+          .observacao(form.getObservacao())
+          .respostas(respostas)
+          .unidade(unidadeResp)
+          .usuario(usuarioResp)
+          .build());
+    }
+    FormularioListResponse response = FormularioListResponse.builder()
+        .data(formulariosResponse)
+        .build();
+    return response;
+  }
 
-  public FormularioBuscaResponse listaTodosFormularios(
+  public FormularioBuscaResponse listaTodosFormulariosResumidos(
     HttpServletRequest request,
     int pagina,
     int quantidade
