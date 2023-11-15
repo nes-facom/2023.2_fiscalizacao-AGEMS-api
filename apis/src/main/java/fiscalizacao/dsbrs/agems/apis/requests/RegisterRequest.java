@@ -3,10 +3,8 @@ package fiscalizacao.dsbrs.agems.apis.requests;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeDeserializer;
 import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeSerializer;

@@ -1,6 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 
@@ -34,13 +35,12 @@ public class Imagem {
     title = "Id da imagem",
     description = "Identificador da Imagem, autogerável no banco",
     required = true,
-    format = "number",
-    type = "integer",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Schema(
     title = "Formulário",

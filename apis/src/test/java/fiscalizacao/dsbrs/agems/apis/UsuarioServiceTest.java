@@ -18,6 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -119,7 +121,7 @@ public class UsuarioServiceTest {
 
     String userEmail = "juliaacorazza@gmail.com";
     Usuario usuario = new Usuario();
-    usuario.setId(1);
+    usuario.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
     usuario.setNome("Júlia Alves Corazza");
     usuario.setEmail(userEmail);
     usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
@@ -184,7 +186,7 @@ public class UsuarioServiceTest {
 
     String userEmail = "juliaacorazza@gmail.com";
     Usuario usuario = new Usuario();
-    usuario.setId(1);
+    usuario.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
     usuario.setNome("Júlia Alves Corazza");
     usuario.setEmail(userEmail);
     usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
@@ -236,7 +238,7 @@ public class UsuarioServiceTest {
 
     String userEmail = "juliaacorazza@gmail.com";
     Usuario usuario = new Usuario();
-    usuario.setId(1);
+    usuario.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
     usuario.setNome("Júlia Alves Corazza");
     usuario.setEmail(userEmail);
     usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
@@ -389,7 +391,7 @@ public class UsuarioServiceTest {
 
     
      Usuario usuario = new Usuario();
-    usuario.setId(1);
+    usuario.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
     usuario.setNome("Júlia Alves Corazza");
      usuario.setEmail("example@example.com");
     usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);

@@ -1,6 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
 import java.util.List;
+import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -102,7 +103,7 @@ public class ModeloController {
   @SecurityRequirement(name = "BEARER")
   @DeleteMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<?> deletaModelo(
-      @PathVariable(value = "id") int modelo) {
+      @PathVariable(value = "id") UUID modelo) {
     try {
       ModeloAcaoResponse modeloResponse = SERVICO_MODELO.deletaModelo(modelo);
       if (modeloResponse == null) {
@@ -255,9 +256,9 @@ public class ModeloController {
   @Operation(summary = "Listar um modelo")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/{id}", produces = "application/json")
-  public ResponseEntity<?> verModelo(@PathVariable(name = "id") int id) {
+  public ResponseEntity<?> verModelo(@PathVariable(name = "id") UUID id) {
     try {
-      if (id >= 0) {
+      if (id != null) {
         ModeloResponse modeloResponse = SERVICO_MODELO.verModelo(id);
         if (modeloResponse == null) {
           return ResponseEntity

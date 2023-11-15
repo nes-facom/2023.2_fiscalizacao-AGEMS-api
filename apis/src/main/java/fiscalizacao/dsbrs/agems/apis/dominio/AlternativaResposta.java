@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,14 +22,14 @@ public class AlternativaResposta {
 
   @Schema(
     title = "Id",
-    description = "Id da alternativa da Resposta, autogerável no banco",
+    description = "uuid da alternativa da Resposta, autogerável no banco",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Schema(
     title = "Decrição da alternativa",

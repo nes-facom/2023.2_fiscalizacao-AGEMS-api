@@ -2,7 +2,9 @@ package fiscalizacao.dsbrs.agems.apis.requests;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -35,21 +37,28 @@ public class FormularioRegisterRequest {
     title = "Modelo",
     description = "Modelo que se refere o Formulário",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int modelo;
+  private UUID modelo;
+  
+  @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  private UUID uuidLocal;
 
   @Schema(
     title = "Unidade",
     description = "Unidade analisada pelo Formulário",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int unidade;
+  private UUID unidade;
 
   @Schema(
     title = "Respostas",

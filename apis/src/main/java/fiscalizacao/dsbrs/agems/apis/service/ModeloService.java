@@ -1,8 +1,8 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -32,12 +32,10 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ModeloService {
 
   private final ModeloRepositorio MODELO_REPOSITORIO;
@@ -57,18 +55,18 @@ public class ModeloService {
     Modelo newModelo = MODELO_REPOSITORIO.save(modelo);
 
     for (QuestaoRegisterRequest questaoRegister : novoModelo.getQuestoes()) {
-      //-----------------------------------------------------
       Questao questao = new Questao();
       questao.setPergunta(questaoRegister.getPergunta());
       questao.setPortaria(questaoRegister.getPortaria());
       questao.setObjetiva(questaoRegister.getObjetiva());
       
       Questao newQuestao = QUESTAO_REPOSITORIO.save(questao);
+
       QuestaoModelo modeloQuestao = new QuestaoModelo();
       modeloQuestao.setModelo(newModelo);
       modeloQuestao.setQuestao(newQuestao);
       
-      QuestaoModelo newQuestaoModelo = QUESTAO_MODELO_REPOSITORIO.save(modeloQuestao);
+      QUESTAO_MODELO_REPOSITORIO.save(modeloQuestao);
       
       List<AlternativaRespostaResponse> responsesAlternativaRespostas = new ArrayList<>();
       for (AlternativaRespostaRegisterRequest alternativaRespostaRegister : questaoRegister.getAlternativaRespostas()) {
@@ -94,6 +92,7 @@ public class ModeloService {
       QuestaoResponse questaoResponse = QuestaoResponse
         .builder()
         .id(questao.getId())
+        .uuidLocal(questaoRegister.getUuidLocal())
         .pergunta(questao.getPergunta())
         .portaria(questao.getPortaria())
         .objetiva(questao.isObjetiva())
@@ -107,6 +106,7 @@ public class ModeloService {
       ModeloResponse
         .builder()
         .id(newModelo.getId())
+        .uuidLocal(novoModelo.getUuidLocal())
         .nome(newModelo.getNome())
         .questoes(responsesQuestao)
         .build();
@@ -114,7 +114,7 @@ public class ModeloService {
     return modeloResponse;
   }
 
-  public ModeloAcaoResponse deletaModelo(int pedido) {
+  public ModeloAcaoResponse deletaModelo(UUID pedido) {
     Modelo modelo = MODELO_REPOSITORIO.findById(pedido).orElse(null);
     if (modelo != null) {
       List<Questao> questoes = modelo.getQuestoes().stream()
@@ -144,7 +144,7 @@ public class ModeloService {
     }
     return null;
   }
-
+  
   public ModeloBuscaResponse listaTodosModelosResumido(int pagina, int quantidade) {
     ModeloBuscaResponse response = new ModeloBuscaResponse();
     Page<Modelo> modelos = MODELO_REPOSITORIO.findAll(PageRequest.of(pagina, quantidade));
@@ -214,7 +214,7 @@ public class ModeloService {
         .build();
   }
 
-  public ModeloResponse verModelo(int idModelo) {
+  public ModeloResponse verModelo(UUID idModelo) {
 	  
     Modelo modelo = MODELO_REPOSITORIO.findById(idModelo).orElse(null);
 
@@ -229,9 +229,7 @@ public class ModeloService {
     	Questao questao = questaoModelo.getQuestao();
     			
         List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
-        
-        Questao questaoAux = new Questao();
-        
+                
         List<AlternativaResposta> alternativaRespostas = questao.getAlternativasResposta();
 
         for (AlternativaResposta tipoRes : alternativaRespostas) {

@@ -1,5 +1,11 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
@@ -7,14 +13,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
 import jakarta.transaction.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +53,7 @@ public class UnidadeService {
       UnidadeResponse unidadeResponse = UnidadeResponse
         .builder()
         .id(unidadeSalva.getId())
+        .uuidLocal(unidadeRegisterRequest.getUuidLocal())
         .nome(unidadeSalva.getNome())
         .endereco(unidadeSalva.getEndereco())
         .tipo(unidadeSalva.getTipo())
@@ -70,18 +70,9 @@ public class UnidadeService {
     return erroResponse;
   }
 
-  public Response verUnidade(String id) {
-    if (!NumberUtils.isParsable(id)) {
-      ErroResponse erroResponse = ErroResponse
-        .builder()
-        .status(400)
-        .erro("Envie o id Numérico da Unidade!")
-        .build();
-
-      return erroResponse;
-    }
-    int idNum = Integer.parseInt(id);
-    Unidade unidade = UNIDADE_REPOSITORIO.findById(idNum).orElse(null);
+  public Response verUnidade(UUID id) {
+    
+    Unidade unidade = UNIDADE_REPOSITORIO.findById(id).orElse(null);
     if (unidade != null) {
       UnidadeResponse unidadeResponse = UnidadeResponse
         .builder()
@@ -102,20 +93,11 @@ public class UnidadeService {
     return erroResponse;
   }
 
-  public Response deletarUnidade(String id) {
-    if (!NumberUtils.isParsable(id)) {
-      ErroResponse erroResponse = ErroResponse
-        .builder()
-        .status(400)
-        .erro("Envie o id Numérico da Unidade!")
-        .build();
-
-      return erroResponse;
-    }
-    int idNum = Integer.parseInt(id);
-    Unidade unidade = UNIDADE_REPOSITORIO.findById(idNum).orElse(null);
+  public Response deletarUnidade(UUID id) {
+    
+    Unidade unidade = UNIDADE_REPOSITORIO.findById(id).orElse(null);
     if (unidade != null) {
-      UNIDADE_REPOSITORIO.deleteById(idNum);
+      UNIDADE_REPOSITORIO.deleteById(id);
       UnidadeResponse unidadeResponse = UnidadeResponse
         .builder()
         .id(unidade.getId())
@@ -135,18 +117,9 @@ public class UnidadeService {
     return erroResponse;
   }
 
-  public Response editarUnidade(String id, UnidadeRequest unidadeRequest) {
-    if (!NumberUtils.isParsable(id)) {
-      ErroResponse erroResponse = ErroResponse
-        .builder()
-        .status(400)
-        .erro("Envie o id Numérico da Unidade!")
-        .build();
-
-      return erroResponse;
-    }
-    int idNum = Integer.parseInt(id);
-    Unidade unidade = UNIDADE_REPOSITORIO.findById(idNum).orElse(null);
+  public Response editarUnidade(UUID id, UnidadeRequest unidadeRequest) {
+    
+    Unidade unidade = UNIDADE_REPOSITORIO.findById(id).orElse(null);
     if (unidade != null) {
       if (
         (

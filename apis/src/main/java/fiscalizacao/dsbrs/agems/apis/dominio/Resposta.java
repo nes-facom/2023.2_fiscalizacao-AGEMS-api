@@ -1,7 +1,8 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
 import java.time.LocalDateTime;
-import fiscalizacao.dsbrs.agems.apis.dominio.chaves.RespostaKey;
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,7 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -26,7 +26,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@IdClass(RespostaKey.class)
 @Table(name = "resposta")
 public class Resposta {
 
@@ -34,12 +33,12 @@ public class Resposta {
     title = "Id",
     description = "Id de resposta, autogerável no banco",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Schema(
     title = "Questão",
@@ -47,7 +46,6 @@ public class Resposta {
     required = true,
     implementation = Questao.class
   )
-  @Id
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "idQuestao", nullable = false)
   private Questao questao;
@@ -59,7 +57,6 @@ public class Resposta {
     format = "number",
     type = "integer"
   )
-  @Id
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "idFormulario", nullable = false)
   private Formulario formulario;

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,7 +72,7 @@ class ModeloControllerTest {
   @Test
   public void testDeletaModeloRetornaNotFound() {
 
-    int modeloId = 1;
+    UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     ResponseEntity<?> response = modeloController.deletaModelo(modeloId);
 
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -82,7 +83,7 @@ class ModeloControllerTest {
   @Test
   public void testVerModeloReturnModelo() {
 
-    int modelId = 1;
+    UUID modelId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     ModeloService mockService = mock(ModeloService.class);
     ModeloResponse expectedResponse = new ModeloResponse();
     when(mockService.verModelo(modelId)).thenReturn(expectedResponse);
@@ -96,7 +97,7 @@ class ModeloControllerTest {
 
   @Test
   public void testVerModeloNotFound() {
-    int modelId = 10;
+    UUID modelId = UUID.fromString("7dde8f7f-e50b-4ccd-8682-b34feee52206");
     ModeloService mockService = mock(ModeloService.class);
     when(mockService.verModelo(modelId)).thenReturn(null);
     ModeloController controller = new ModeloController(mockService);
@@ -109,7 +110,7 @@ class ModeloControllerTest {
 
   @Test
   public void testVerModeloIdInvalido() {
-    int modelId = -1;
+    UUID modelId = null;
     ModeloController controller = new ModeloController(mock(ModeloService.class));
 
     ResponseEntity<?> response = controller.verModelo(modelId);

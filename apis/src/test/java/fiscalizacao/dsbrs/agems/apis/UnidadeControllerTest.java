@@ -7,6 +7,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fiscalizacao.dsbrs.agems.apis.controller.UnidadeController;
 import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
@@ -46,11 +48,11 @@ class UnidadeControllerTest {
   @Test
   void adicionaUnidadeShouldReturnCreated() throws Exception {
    
-    UnidadeRequest request = new UnidadeRequest("Unidade 03", "Endereco 03", "Tratamento");
+    UnidadeRequest request = new UnidadeRequest(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"), "Unidade 03", "Endereco 03", "Tratamento");
 
     UnidadeResponse expectedResponse = UnidadeResponse
       .builder()
-      .id(1)
+      .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
       .nome("Unidade 03")
       .endereco("Endereco 03")
       .build();
@@ -70,7 +72,7 @@ class UnidadeControllerTest {
   @Test
   void adicionaUnidadeShouldReturnBadRequest() throws Exception {
 
-    UnidadeRequest request = new UnidadeRequest("Unidade 03", null, null);
+    UnidadeRequest request = new UnidadeRequest(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"), "Unidade 03", null, null);
     ErroResponse erroResponse = ErroResponse
       .builder()
       .status(HttpStatus.BAD_REQUEST.value())
@@ -92,7 +94,7 @@ class UnidadeControllerTest {
   @Test
   void adicionaUnidadeShouldReturnConflict() throws Exception {
 
-    UnidadeRequest request = new UnidadeRequest("Unidade 03", "Endereço 03","Tratamento");
+    UnidadeRequest request = new UnidadeRequest(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"), "Unidade 03", "Endereço 03","Tratamento");
 
     ErroResponse erroResponse = ErroResponse
       .builder()

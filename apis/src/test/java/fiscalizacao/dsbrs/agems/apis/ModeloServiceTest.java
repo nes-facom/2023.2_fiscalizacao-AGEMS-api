@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +111,7 @@ public class ModeloServiceTest {
     @Test
     public void testVerModeloPorId() {
 
-        int modeloId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         Modelo foundModelo = new Modelo();
         foundModelo.setId(modeloId);
         foundModelo.setNome("Test Modelo");
@@ -127,7 +128,7 @@ public class ModeloServiceTest {
     @Test
     public void testVerModeloRetornaNull() {
 
-        int modeloId = 999;
+        UUID modeloId = UUID.fromString("7dde8f7f-e50b-4ccd-8682-b34feee52206");
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.empty());
 
         assertNull(modeloService.verModelo(modeloId));
@@ -139,20 +140,21 @@ public class ModeloServiceTest {
     public void testVerModelo() {
         // Mock the Modelo object
         Modelo modelo = new Modelo();
-        modelo.setId(1);
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        modelo.setId(modeloId);
         List<QuestaoModelo> questoes = new ArrayList<>();
         modelo.setQuestoes(questoes);
-        when(modeloRepositorio.findById(1)).thenReturn(Optional.of(modelo));
+        when(modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))).thenReturn(Optional.of(modelo));
 
         // Mock the Questao objects
         Questao questao1 = new Questao();
-        questao1.setId(1);
+        questao1.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
         QuestaoModelo questao1Modelo = new QuestaoModelo();
         questao1Modelo.setModelo(modelo);
         questao1Modelo.setQuestao(questao1);
         questao1.setModelos(Collections.singletonList(questao1Modelo));
         Questao questao2 = new Questao();
-        questao2.setId(1);
+        questao2.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
         QuestaoModelo questao2Modelo = new QuestaoModelo();
         questao2.setModelos(Collections.singletonList(questao2Modelo));
         questao2Modelo.setQuestao(questao2);
@@ -162,11 +164,11 @@ public class ModeloServiceTest {
 
         // Mock the AlternativaResposta objects
         AlternativaResposta tipoResposta1 = new AlternativaResposta();
-        tipoResposta1.setId(1);
+        tipoResposta1.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
         tipoResposta1.setDescricao("Answer 1");
         tipoResposta1.setQuestao(questao1);
         AlternativaResposta tipoResposta2 = new AlternativaResposta();
-        tipoResposta2.setId(2);
+        tipoResposta2.setId(UUID.fromString("7dde8f7f-e50b-4ccd-8682-b34feee52206"));
         tipoResposta2.setDescricao("Answer 2");
         tipoResposta2.setQuestao(questao1);
         List<AlternativaResposta> tipoRespostas = new ArrayList<>();
@@ -174,11 +176,11 @@ public class ModeloServiceTest {
         tipoRespostas.add(tipoResposta2);
 
         AlternativaResposta tipoResposta3 = new AlternativaResposta();
-        tipoResposta3.setId(3);
+        tipoResposta3.setId(UUID.fromString("38c7b15b-82cf-4606-8789-3be6336606f8"));
         tipoResposta3.setDescricao("Answer 3");
         tipoResposta3.setQuestao(questao2);
         AlternativaResposta tipoResposta4 = new AlternativaResposta();
-        tipoResposta4.setId(4);
+        tipoResposta4.setId(UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c"));
         tipoResposta4.setDescricao("Answer 4");
         tipoResposta4.setQuestao(questao2);
         List<AlternativaResposta> tipoRespostas2 = new ArrayList<>();
@@ -189,16 +191,16 @@ public class ModeloServiceTest {
         questao2.setAlternativasResposta(tipoRespostas2);
 
         // Perform the method invocation
-        ModeloResponse response = modeloService.verModelo(1);
+        ModeloResponse response = modeloService.verModelo(modeloId);
 
         // Verify the expected behavior
-        assertEquals(1, response.getId());
+        assertEquals(modeloId, response.getId());
         assertEquals(2, response.getQuestoes().size());
         assertEquals("Answer 1", response.getQuestoes().get(0).getRespostas().get(0).getDescricao());
         assertEquals("Answer 2", response.getQuestoes().get(0).getRespostas().get(1).getDescricao());
 
         // Verify the interactions with mocked repositories
-        verify(modeloRepositorio, times(1)).findById(1);
+        verify(modeloRepositorio, times(1)).findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
         verifyNoMoreInteractions(modeloRepositorio);
     }
 
@@ -211,7 +213,7 @@ public class ModeloServiceTest {
         modelos.add(modelo1);
 
         Modelo modelo2 = new Modelo();
-        modelo2.setId(2);
+        modelo2.setId(UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c"));
         modelo2.setNome("Modelo 2");
         modelos.add(modelo2);
         
@@ -231,7 +233,7 @@ public class ModeloServiceTest {
     @Test
     public void testdeletaModelo() {
         // Mock input data
-        int modeloId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         Modelo modelo1 = new Modelo();
         modelo1.setId(modeloId);
         modelo1.setNome("modelo 1");
@@ -256,7 +258,7 @@ public class ModeloServiceTest {
     @Test
     public void testDeletaModeloRetornaNull() {
 
-        int modeloId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.empty());
 
         ModeloAcaoResponse response = modeloService.deletaModelo(modeloId);
@@ -266,9 +268,9 @@ public class ModeloServiceTest {
     @Test
     public void testEditaModelo() {
         // Mock data
-        int modeloId = 1;
-        int questaoId = 1;
-        int tipoRespostaId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID questaoId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID tipoRespostaId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         String novoModeloNome = "Updated Model";
         String novaPergunta = "Updated Question";
         String novaResposta = "Updated Answer";
@@ -359,9 +361,9 @@ public class ModeloServiceTest {
     @Test
     public void testEditaModeloDeletaQuestao() {
         // Mock data
-        int modeloId = 1;
-        int questaoId = 1;
-        int tipoRespostaId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID questaoId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID tipoRespostaId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         String novoModeloNome = "Updated Model";
 
         // Cria modelo
@@ -424,12 +426,12 @@ public class ModeloServiceTest {
 
         assertTrue(modeloResponse.getQuestoes().isEmpty());
     }
-        @Test
-        public void testEditaModeloDeleteAlternativaResposta() {
+      @Test
+      public void testEditaModeloDeleteAlternativaResposta() {
         // Mock data
-        int modeloId = 1;
-        int questaoId = 1;
-        int tipoRespostaId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID questaoId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID tipoRespostaId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         String novoModeloNome = "Updated Model";
 
         // Cria modelo
@@ -514,7 +516,7 @@ public class ModeloServiceTest {
 
     @Test
     public void testEditaModeloReturnNull(){
-        int modeloId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
 
         ModeloEditRequest modeloEdit = new ModeloEditRequest();
         modeloEdit.setId(modeloId);
@@ -528,10 +530,10 @@ public class ModeloServiceTest {
     @Test
     public void testDeletarModeloQuestaoSemRelacionamento() {
       Questao questao = new Questao();
-      questao.setId(1);
+      questao.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
       questao.setAlternativasResposta(Collections.emptyList());
       Modelo modelo = new Modelo();
-      modelo.setId(1);
+      modelo.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
       QuestaoModelo questaoModelo = new QuestaoModelo();
       questaoModelo.setModelo(modelo);
       questaoModelo.setQuestao(questao);
@@ -540,10 +542,31 @@ public class ModeloServiceTest {
       modelo.setQuestoes(questoes);
       when(questaoModeloRepositorio.findByModelo(any(Modelo.class))).thenReturn(Collections.emptyList());
       when(questaoModeloRepositorio.findByQuestao(any(Questao.class))).thenReturn(Collections.emptyList());
-      when(modeloRepositorio.findById(1)).thenReturn(Optional.of(modelo));
+      when(modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))).thenReturn(Optional.of(modelo));
       
-      modeloService.deletaModelo(1);
+      modeloService.deletaModelo(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
       
       verify(questaoRepositorio, times(1)).delete(any(Questao.class));
+    }
+
+    @Test
+    public void testDeletarModeloQuestaoComRelacionamento() {
+      Questao questao = new Questao();
+      questao.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      questao.setAlternativasResposta(Collections.emptyList());
+      Modelo modelo = new Modelo();
+      modelo.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      QuestaoModelo questaoModelo = new QuestaoModelo();
+      questaoModelo.setModelo(modelo);
+      questaoModelo.setQuestao(questao);
+      List<QuestaoModelo> questoes = new ArrayList<>();
+      questoes.add(questaoModelo);
+      modelo.setQuestoes(questoes);
+      when(questaoModeloRepositorio.findByQuestao(any(Questao.class))).thenReturn(questoes);
+      when(modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))).thenReturn(Optional.of(modelo));
+
+      modeloService.deletaModelo(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      
+      verify(questaoRepositorio, times(0)).delete(any(Questao.class));
     }
 }

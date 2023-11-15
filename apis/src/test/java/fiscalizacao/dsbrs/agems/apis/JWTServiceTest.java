@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ public class JWTServiceTest {
 
     Usuario savedUsuario = Usuario
       .builder()
-      .id(1)
+      .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
       .nome(registerRequest.getNome())
       .email(registerRequest.getEmail())
       .senha("$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6")
@@ -120,7 +121,7 @@ public class JWTServiceTest {
 
     Usuario usuarioEncontrado = Usuario
       .builder()
-      .id(1)
+      .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
       .nome(registerRequest.getNome())
       .email(registerRequest.getEmail())
       .senha("$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6")
@@ -147,7 +148,7 @@ public class JWTServiceTest {
 
     UserDetails userDetails = Usuario
       .builder()
-      .id(1)
+      .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
       .nome("Julia Alves Corazza")
       .email("juliaacorazza@gmail.com")
       .senha("$2a$10$TzZ2hgNnjdUW13juIwr/Xu/vKc.PoONxvSI.ljWJYBuKX7UVfd4Yy")
