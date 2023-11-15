@@ -40,8 +40,8 @@ public class Questao {
     title = "Id do usuário de criação",
     description = "Id de usuário reponsável pela inserção da questão",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioCriacao")
@@ -50,9 +50,9 @@ public class Questao {
   @Schema(
     title = "Id do usuário de alteração",
     description = "Id de usuário reponsável pela última alteração da questão",
-    required = true,	
-    format = "number",
-    type = "integer"
+    required = true,
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioAlteracao")

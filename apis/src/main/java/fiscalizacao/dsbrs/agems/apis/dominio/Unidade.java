@@ -46,8 +46,8 @@ public class Unidade {
     title = "Id do usuário de criação",
     description = "Id de usuário reponsável pela inserção da unidade",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioCriacao")
@@ -56,9 +56,9 @@ public class Unidade {
   @Schema(
     title = "Id do usuário de alteração",
     description = "Id de usuário reponsável pela última alteração da unidade",
-    required = true,	
-    format = "number",
-    type = "integer"
+    required = true,
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioAlteracao")

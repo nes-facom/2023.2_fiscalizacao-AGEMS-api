@@ -56,8 +56,8 @@ public class Imagem {
     title = "Id do usuário de criação",
     description = "Id de usuário reponsável pela inserção da imagem",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioCriacao")
@@ -66,9 +66,9 @@ public class Imagem {
   @Schema(
     title = "Id do usuário de alteração",
     description = "Id de usuário reponsável pela última alteração da imagem",
-    required = true,	
-    format = "number",
-    type = "integer"
+    required = true,
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioAlteracao")
