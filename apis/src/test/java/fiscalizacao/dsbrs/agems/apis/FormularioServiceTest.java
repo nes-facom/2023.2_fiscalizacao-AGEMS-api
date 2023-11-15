@@ -450,7 +450,7 @@ public class FormularioServiceTest {
   @Test
   public void testListaFormulariosOK() {
     Formulario form = Formulario.builder()
-        .id(1)
+        .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
         .imagens(Collections.emptyList())
         .questoes(Collections.emptyList())
         .respostas(Collections.emptyList())

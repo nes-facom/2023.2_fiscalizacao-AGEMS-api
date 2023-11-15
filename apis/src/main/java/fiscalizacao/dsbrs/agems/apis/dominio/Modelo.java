@@ -40,8 +40,8 @@ public class Modelo {
     title = "Id do usuário de criação",
     description = "Id de usuário reponsável pela inserção do modelo",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioCriacao")
@@ -51,8 +51,8 @@ public class Modelo {
     title = "Id do usuário de alteração",
     description = "Id de usuário reponsável pela última alteração do modelo",
     required = true,	
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioAlteracao")

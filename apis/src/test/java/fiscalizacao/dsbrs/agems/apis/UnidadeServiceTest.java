@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,6 +29,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
 import fiscalizacao.dsbrs.agems.apis.service.UnidadeService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @ExtendWith(MockitoExtension.class)
 public class UnidadeServiceTest {
@@ -40,10 +42,14 @@ public class UnidadeServiceTest {
 
   @Test
   public void adicionaUnidadeShouldReturnCreated() {
-    UnidadeRequest request = new UnidadeRequest();
-    request.setNome("123");
-    request.setEndereco("Sample Address");
-    request.setTipo("Tratamento de Esgoto");
+    
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    UnidadeRequest unidadeRequest = new UnidadeRequest();
+    
+    unidadeRequest.setNome("123");
+    unidadeRequest.setEndereco("Sample Address");
+    unidadeRequest.setTipo("Tratamento de Esgoto");
 
     UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     
@@ -59,7 +65,7 @@ public class UnidadeServiceTest {
           .build()
       );
 
-    Response response = unidadeService.cadastraUnidade(request);
+    Response response = unidadeService.cadastraUnidade(request, unidadeRequest);
 
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
@@ -70,10 +76,14 @@ public class UnidadeServiceTest {
 
   @Test
   public void adicionaUnidadeShouldReturnConflict() {
-    UnidadeRequest request = new UnidadeRequest();
-    request.setNome("123");
-    request.setEndereco("Sample Address");
-    request.setTipo("Tratamento de Esgoto");
+    
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    UnidadeRequest unidadeRequest = new UnidadeRequest();
+    
+    unidadeRequest.setNome("123");
+    unidadeRequest.setEndereco("Sample Address");
+    unidadeRequest.setTipo("Tratamento de Esgoto");
 
     Unidade existingUnidade = new Unidade();
     existingUnidade.setNome("123");
@@ -81,7 +91,7 @@ public class UnidadeServiceTest {
     when(unidadeRepositorio.findByNome("123"))
       .thenReturn(java.util.Optional.of(existingUnidade));
 
-    Response response = unidadeService.cadastraUnidade(request);
+    Response response = unidadeService.cadastraUnidade(request, unidadeRequest);
 
     assertTrue(response instanceof ErroResponse);
     ErroResponse erroResponse = (ErroResponse) response;
@@ -91,8 +101,12 @@ public class UnidadeServiceTest {
 
   @Test
   public void testAdicionaUnidadeReturnBadRequest() {
-    UnidadeRequest request = new UnidadeRequest();
-    Response response = unidadeService.cadastraUnidade(request);
+    
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    
+    UnidadeRequest unidadeRequest = new UnidadeRequest();
+    
+    Response response = unidadeService.cadastraUnidade(request, unidadeRequest);
 
     assertTrue(response instanceof ErroResponse);
     ErroResponse erroResponse = (ErroResponse) response;

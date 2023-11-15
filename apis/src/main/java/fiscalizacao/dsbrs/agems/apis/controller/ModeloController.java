@@ -1,7 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
-import java.util.List;
 import java.util.UUID;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -23,6 +23,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,6 +32,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Modelo", description = "APIs de Gerenciamento dos Modelos")
@@ -52,6 +54,7 @@ public class ModeloController {
   @SecurityRequirement(name = "BEARER")
   @PostMapping(path = "/add", produces = "application/json", consumes = "application/json")
   public ResponseEntity<?> adicionaModelo(
+      HttpServletRequest request,
       @RequestBody ModeloRegisterRequest novoModelo) {
     try {
       if (novoModelo.getNome().length() == 0) {
@@ -65,7 +68,7 @@ public class ModeloController {
                     .build());
       }
 
-      ModeloResponse modeloResponse = SERVICO_MODELO.cadastraModelo(novoModelo);
+      Response modeloResponse = SERVICO_MODELO.cadastraModelo(request, novoModelo);
       return ResponseEntity.status(201).body(modeloResponse);
     } catch (
         DataIntegrityViolationException

@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Unidade", description = "APIs de Gerenciamento dos Unidades")
@@ -85,9 +86,11 @@ public class UnidadeController {
     consumes = "application/json"
   )
   public ResponseEntity<Response> adicionaUnidade(
+    HttpServletRequest request,
     @RequestBody UnidadeRequest unidadeRegisterRequest
   ) {
     Response unidadeResponse = SERVICO_UNIDADE.cadastraUnidade(
+      request,
       unidadeRegisterRequest
     );
     if (unidadeResponse instanceof ErroResponse) {

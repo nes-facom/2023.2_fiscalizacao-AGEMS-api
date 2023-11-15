@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -48,7 +49,9 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -72,8 +75,9 @@ public class ModeloServiceTest {
 
     @Test
     public void testCadastraModelo() {
-        ModeloRegisterRequest request = new ModeloRegisterRequest();
-        request.setNome("Modelo Teste");
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        ModeloRegisterRequest modeloRegisterRequest = new ModeloRegisterRequest();
+        modeloRegisterRequest.setNome("Modelo Teste");
 
         QuestaoRegisterRequest questaoRequest1 = new QuestaoRegisterRequest();
         questaoRequest1.setPergunta("Questao Teste 1");
@@ -96,14 +100,14 @@ public class ModeloServiceTest {
         List<QuestaoRegisterRequest> questoes = new ArrayList<>();
         questoes.add(questaoRequest1);
 
-        request.setQuestoes(questoes);
+        modeloRegisterRequest.setQuestoes(questoes);
 
         when(questaoRepositorio.save(any(Questao.class))).thenReturn(new Questao());
         when(tipoRespostaRepositorio.save(any(AlternativaResposta.class))).thenReturn(new AlternativaResposta());
         when(modeloRepositorio.save(any(Modelo.class))).thenReturn(new Modelo());
         when(questaoModeloRepositorio.save(any(QuestaoModelo.class))).thenReturn(new QuestaoModelo());
 
-        ModeloResponse response = modeloService.cadastraModelo(request);
+        Response response = modeloService.cadastraModelo(request, modeloRegisterRequest);
 
         assertNotNull(response);
     }
