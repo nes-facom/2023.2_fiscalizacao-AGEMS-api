@@ -4,16 +4,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,13 +24,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
 import fiscalizacao.dsbrs.agems.apis.service.UnidadeService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @ExtendWith(MockitoExtension.class)
 public class UnidadeServiceTest {
@@ -35,15 +43,43 @@ public class UnidadeServiceTest {
   @Mock
   private UnidadeRepositorio unidadeRepositorio;
 
+  @Mock
+  private UsuarioRepositorio usuarioRepositorio;
+
   @InjectMocks
   private UnidadeService unidadeService;
+  
+  private Usuario usuario;
 
+  @BeforeEach
+  public void beforeEach() {
+    LocalDateTime now = LocalDateTime.now();
+    usuario = new Usuario();
+    usuario.setNome("J\u00FAlia Alves Corazza");
+    usuario.setEmail("juliaacorazza@gmail.com");
+    usuario.setSenha(
+      "$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu"
+    );
+    usuario.setDataCriacao(now);
+    usuario.setFuncao(Papel.USER);
+    usuario.setCargo(Cargo.COORDENADOR);
+  }
+  
   @Test
   public void adicionaUnidadeShouldReturnCreated() {
-    UnidadeRequest request = new UnidadeRequest();
-    request.setNome("123");
-    request.setEndereco("Sample Address");
-    request.setTipo("Tratamento de Esgoto");
+    
+    HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+    when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
+    
+    UnidadeRequest unidadeRequest = new UnidadeRequest();
+    
+    unidadeRequest.setNome("123");
+    unidadeRequest.setEndereco("Sample Address");
+    unidadeRequest.setTipo("Tratamento de Esgoto");
 
     UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     
@@ -59,7 +95,7 @@ public class UnidadeServiceTest {
           .build()
       );
 
-    Response response = unidadeService.cadastraUnidade(request);
+    Response response = unidadeService.cadastraUnidade(request, unidadeRequest);
 
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
@@ -70,10 +106,19 @@ public class UnidadeServiceTest {
 
   @Test
   public void adicionaUnidadeShouldReturnConflict() {
-    UnidadeRequest request = new UnidadeRequest();
-    request.setNome("123");
-    request.setEndereco("Sample Address");
-    request.setTipo("Tratamento de Esgoto");
+    
+    HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+    when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
+    
+    UnidadeRequest unidadeRequest = new UnidadeRequest();
+    
+    unidadeRequest.setNome("123");
+    unidadeRequest.setEndereco("Sample Address");
+    unidadeRequest.setTipo("Tratamento de Esgoto");
 
     Unidade existingUnidade = new Unidade();
     existingUnidade.setNome("123");
@@ -81,7 +126,7 @@ public class UnidadeServiceTest {
     when(unidadeRepositorio.findByNome("123"))
       .thenReturn(java.util.Optional.of(existingUnidade));
 
-    Response response = unidadeService.cadastraUnidade(request);
+    Response response = unidadeService.cadastraUnidade(request, unidadeRequest);
 
     assertTrue(response instanceof ErroResponse);
     ErroResponse erroResponse = (ErroResponse) response;
@@ -91,8 +136,17 @@ public class UnidadeServiceTest {
 
   @Test
   public void testAdicionaUnidadeReturnBadRequest() {
-    UnidadeRequest request = new UnidadeRequest();
-    Response response = unidadeService.cadastraUnidade(request);
+    
+    HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+    when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
+    
+    UnidadeRequest unidadeRequest = new UnidadeRequest();
+    
+    Response response = unidadeService.cadastraUnidade(request, unidadeRequest);
 
     assertTrue(response instanceof ErroResponse);
     ErroResponse erroResponse = (ErroResponse) response;

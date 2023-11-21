@@ -173,6 +173,7 @@ public class FormularioService {
 	  imagem.setFormulario(formulario);
 	  imagem.setImagem(novoFormulario.getImagens().get(numImagem).getImagem());
 	  imagem.setDataCriacao(novoFormulario.getDataCriacao());
+	  imagem.setUsuarioCriacao(usuario);
 	  Imagem novaImagem = IMAGEM_REPOSITORIO.save(imagem);
 	  
 	  imagemResponse =

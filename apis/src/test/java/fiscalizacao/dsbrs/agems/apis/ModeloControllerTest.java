@@ -30,6 +30,7 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
+import jakarta.servlet.http.HttpServletRequest;
 
 class ModeloControllerTest {
 
@@ -41,10 +42,13 @@ class ModeloControllerTest {
 
   @InjectMocks
   private ModeloController modeloController;
+  
+  private HttpServletRequest request;
 
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
+    request = mock(HttpServletRequest.class);
   }
 
   @Test
@@ -52,10 +56,10 @@ class ModeloControllerTest {
 
     ModeloRegisterRequest novoModelo = new ModeloRegisterRequest();
     novoModelo.setNome("Modelo 01");
-    ResponseEntity<?> response = modeloController.adicionaModelo(novoModelo);
+    ResponseEntity<?> response = modeloController.adicionaModelo(request, novoModelo);
 
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    verify(modeloService, times(1)).cadastraModelo(novoModelo);
+    verify(modeloService, times(1)).cadastraModelo(request, novoModelo);
 
   }
 
@@ -63,7 +67,7 @@ class ModeloControllerTest {
   public void testAdicionaModeloRetornaErroNomeNull() {
 
     ModeloRegisterRequest novoModelo = new ModeloRegisterRequest();
-    ResponseEntity<?> response = modeloController.adicionaModelo(novoModelo);
+    ResponseEntity<?> response = modeloController.adicionaModelo(request, novoModelo);
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertNotNull(response.getBody());

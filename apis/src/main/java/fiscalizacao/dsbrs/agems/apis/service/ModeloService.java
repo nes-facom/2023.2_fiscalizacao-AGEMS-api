@@ -1,5 +1,6 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,11 +15,13 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoFormulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
 import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
@@ -26,12 +29,15 @@ import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -43,15 +49,42 @@ public class ModeloService {
   private final QuestaoModeloRepositorio QUESTAO_MODELO_REPOSITORIO;
   private final QuestaoFormularioRepositorio QUESTAO_FORMULARIO_REPOSITORIO;
   private final AlternativaRespostaRepositorio ALTERNATIVA_RESPOSTA_REPOSITORIO;
+  private final UsuarioRepositorio USUARIO_REPOSITORIO;
 
   private ModeloResponse modeloResponse;
-
-  public ModeloResponse cadastraModelo(ModeloRegisterRequest novoModelo) {
+  
+  private Usuario extrairUsuarioEmailHeader(HttpServletRequest request) {
+    final String EMAIL_HEADER = (String) request.getAttribute("EMAIL_USUARIO");
+    final String EMAIL_USUARIO = EMAIL_HEADER
+      .substring(EMAIL_HEADER.indexOf(":") + 1)
+      .trim();
+    Usuario usuario = USUARIO_REPOSITORIO
+      .findByEmail(EMAIL_USUARIO)
+      .orElse(null);
+    return usuario;
+  }
+  
+  public Response cadastraModelo(HttpServletRequest request, ModeloRegisterRequest novoModelo) {
+    
+    Usuario usuario = extrairUsuarioEmailHeader(request);
+    
+    if (usuario == null) {
+      return ErroResponse
+        .builder()
+        .status(404)
+        .erro("Usuário não existe")
+        .build();
+    }
+    
     List<QuestaoResponse> responsesQuestao = new ArrayList<>();
 
     Modelo modelo = new Modelo();
-
+    LocalDateTime dataCriacao = LocalDateTime.now();
+    
     modelo.setNome(novoModelo.getNome());
+    modelo.setDataCriacao(dataCriacao);
+    modelo.setUsuarioCriacao(usuario);
+    
     Modelo newModelo = MODELO_REPOSITORIO.save(modelo);
 
     for (QuestaoRegisterRequest questaoRegister : novoModelo.getQuestoes()) {
@@ -59,6 +92,8 @@ public class ModeloService {
       questao.setPergunta(questaoRegister.getPergunta());
       questao.setPortaria(questaoRegister.getPortaria());
       questao.setObjetiva(questaoRegister.getObjetiva());
+      questao.setDataCriacao(dataCriacao);
+      questao.setUsuarioCriacao(usuario);
       
       Questao newQuestao = QUESTAO_REPOSITORIO.save(questao);
 

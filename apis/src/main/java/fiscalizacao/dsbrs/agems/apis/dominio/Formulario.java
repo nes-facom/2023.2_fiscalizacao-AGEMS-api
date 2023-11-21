@@ -47,8 +47,8 @@ public class Formulario {
     title = "Id do usuário de criação",
     description = "Id de usuário reponsável pela inserção do formulário",
     required = true,
-    format = "number",
-    type = "integer"
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioCriacao")
@@ -57,9 +57,9 @@ public class Formulario {
   @Schema(
     title = "Id do usuário de alteração",
     description = "Id de usuário reponsável pela última alteração do formulário",
-    required = true,	
-    format = "number",
-    type = "integer"
+    required = true,
+    format = "string",
+    type = "UUID"
   )
   @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
   @JoinColumn(name = "idUsuarioAlteracao")

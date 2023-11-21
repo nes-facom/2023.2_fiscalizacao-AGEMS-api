@@ -1,17 +1,23 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -19,11 +25,35 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 public class UnidadeService {
-
+  
   @Autowired
   private final UnidadeRepositorio UNIDADE_REPOSITORIO;
-
-  public Response cadastraUnidade(UnidadeRequest unidadeRegisterRequest) {
+  
+  private final UsuarioRepositorio USUARIO_REPOSITORIO;
+  
+  private Usuario extrairUsuarioEmailHeader(HttpServletRequest request) {
+    final String EMAIL_HEADER = (String) request.getAttribute("EMAIL_USUARIO");
+    final String EMAIL_USUARIO = EMAIL_HEADER
+      .substring(EMAIL_HEADER.indexOf(":") + 1)
+      .trim();
+    Usuario usuario = USUARIO_REPOSITORIO
+      .findByEmail(EMAIL_USUARIO)
+      .orElse(null);
+    return usuario;
+  }
+  
+  public Response cadastraUnidade(HttpServletRequest request, UnidadeRequest unidadeRegisterRequest) {
+    
+    Usuario usuario = extrairUsuarioEmailHeader(request);
+    
+    if (usuario == null) {
+      return ErroResponse
+        .builder()
+        .status(404)
+        .erro("Usuário não existe")
+        .build();
+    }
+    
     if (
       unidadeRegisterRequest.getNome() == null ||
       unidadeRegisterRequest.getEndereco() == null ||
@@ -43,6 +73,8 @@ public class UnidadeService {
       unidade =
         Unidade
           .builder()
+          .dataCriacao(LocalDateTime.now())
+          .usuarioCriacao(usuario)
           .nome(unidadeRegisterRequest.getNome())
           .endereco(unidadeRegisterRequest.getEndereco())
           .tipo(unidadeRegisterRequest.getTipo())

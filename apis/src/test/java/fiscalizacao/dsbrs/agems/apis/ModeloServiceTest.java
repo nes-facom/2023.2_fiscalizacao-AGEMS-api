@@ -5,11 +5,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,13 +32,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
@@ -48,7 +54,9 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -66,14 +74,33 @@ public class ModeloServiceTest {
     private QuestaoModeloRepositorio questaoModeloRepositorio;
     @Mock
     private QuestaoFormularioRepositorio questaoFormularioRepositorio;
+    @Mock
+    private UsuarioRepositorio usuarioRepositorio;
 
     @InjectMocks
     private ModeloService modeloService;
 
     @Test
     public void testCadastraModelo() {
-        ModeloRegisterRequest request = new ModeloRegisterRequest();
-        request.setNome("Modelo Teste");
+        LocalDateTime now = LocalDateTime.now();
+        Usuario usuario = new Usuario();
+        usuario.setNome("J\u00FAlia Alves Corazza");
+        usuario.setEmail("juliaacorazza@gmail.com");
+        usuario.setSenha(
+          "$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu"
+        );
+        usuario.setDataCriacao(now);
+        usuario.setFuncao(Papel.USER);
+        usuario.setCargo(Cargo.COORDENADOR);
+      
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getAttribute("EMAIL_USUARIO"))
+          .thenReturn("juliaacorazza@gmail.com");
+        when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+          .thenReturn(Optional.of(usuario));
+        
+        ModeloRegisterRequest modeloRegisterRequest = new ModeloRegisterRequest();
+        modeloRegisterRequest.setNome("Modelo Teste");
 
         QuestaoRegisterRequest questaoRequest1 = new QuestaoRegisterRequest();
         questaoRequest1.setPergunta("Questao Teste 1");
@@ -96,14 +123,14 @@ public class ModeloServiceTest {
         List<QuestaoRegisterRequest> questoes = new ArrayList<>();
         questoes.add(questaoRequest1);
 
-        request.setQuestoes(questoes);
+        modeloRegisterRequest.setQuestoes(questoes);
 
         when(questaoRepositorio.save(any(Questao.class))).thenReturn(new Questao());
         when(tipoRespostaRepositorio.save(any(AlternativaResposta.class))).thenReturn(new AlternativaResposta());
         when(modeloRepositorio.save(any(Modelo.class))).thenReturn(new Modelo());
         when(questaoModeloRepositorio.save(any(QuestaoModelo.class))).thenReturn(new QuestaoModelo());
 
-        ModeloResponse response = modeloService.cadastraModelo(request);
+        Response response = modeloService.cadastraModelo(request, modeloRegisterRequest);
 
         assertNotNull(response);
     }
