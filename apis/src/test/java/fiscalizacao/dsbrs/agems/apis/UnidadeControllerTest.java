@@ -61,7 +61,7 @@ class UnidadeControllerTest {
       .nome("Unidade 03")
       .endereco("Endereco 03")
       .build();
-    when(unidadeService.cadastraUnidade(request, any(UnidadeRequest.class)))
+    when(unidadeService.cadastraUnidade(any(HttpServletRequest.class), any(UnidadeRequest.class)))
       .thenReturn(expectedResponse);
     mockMvc
       .perform(

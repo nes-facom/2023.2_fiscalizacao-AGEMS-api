@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,13 +32,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
 import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
@@ -69,13 +74,31 @@ public class ModeloServiceTest {
     private QuestaoModeloRepositorio questaoModeloRepositorio;
     @Mock
     private QuestaoFormularioRepositorio questaoFormularioRepositorio;
+    @Mock
+    private UsuarioRepositorio usuarioRepositorio;
 
     @InjectMocks
     private ModeloService modeloService;
 
     @Test
     public void testCadastraModelo() {
+        LocalDateTime now = LocalDateTime.now();
+        Usuario usuario = new Usuario();
+        usuario.setNome("J\u00FAlia Alves Corazza");
+        usuario.setEmail("juliaacorazza@gmail.com");
+        usuario.setSenha(
+          "$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu"
+        );
+        usuario.setDataCriacao(now);
+        usuario.setFuncao(Papel.USER);
+        usuario.setCargo(Cargo.COORDENADOR);
+      
         HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getAttribute("EMAIL_USUARIO"))
+          .thenReturn("juliaacorazza@gmail.com");
+        when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+          .thenReturn(Optional.of(usuario));
+        
         ModeloRegisterRequest modeloRegisterRequest = new ModeloRegisterRequest();
         modeloRegisterRequest.setNome("Modelo Teste");
 

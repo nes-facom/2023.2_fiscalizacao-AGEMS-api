@@ -28,6 +28,7 @@ public class UnidadeService {
   
   @Autowired
   private final UnidadeRepositorio UNIDADE_REPOSITORIO;
+  
   private final UsuarioRepositorio USUARIO_REPOSITORIO;
   
   private Usuario extrairUsuarioEmailHeader(HttpServletRequest request) {

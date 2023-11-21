@@ -10,11 +10,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,8 +24,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
@@ -37,13 +43,37 @@ public class UnidadeServiceTest {
   @Mock
   private UnidadeRepositorio unidadeRepositorio;
 
+  @Mock
+  private UsuarioRepositorio usuarioRepositorio;
+
   @InjectMocks
   private UnidadeService unidadeService;
+  
+  private Usuario usuario;
 
+  @BeforeEach
+  public void beforeEach() {
+    LocalDateTime now = LocalDateTime.now();
+    usuario = new Usuario();
+    usuario.setNome("J\u00FAlia Alves Corazza");
+    usuario.setEmail("juliaacorazza@gmail.com");
+    usuario.setSenha(
+      "$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu"
+    );
+    usuario.setDataCriacao(now);
+    usuario.setFuncao(Papel.USER);
+    usuario.setCargo(Cargo.COORDENADOR);
+  }
+  
   @Test
   public void adicionaUnidadeShouldReturnCreated() {
     
     HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+    when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
     
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     
@@ -78,6 +108,11 @@ public class UnidadeServiceTest {
   public void adicionaUnidadeShouldReturnConflict() {
     
     HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+    when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
     
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     
@@ -103,6 +138,11 @@ public class UnidadeServiceTest {
   public void testAdicionaUnidadeReturnBadRequest() {
     
     HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+    when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
     
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     
