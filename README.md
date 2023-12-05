@@ -65,11 +65,6 @@ Este sistema foi desenvolvido e amplamente testado em ambientes Unix e Windows.
 
 A API REST foi desenvolvida na linguagem [Java](https://www.java.com/pt-BR/) (Versão 20), com uso do framework [Spring](https://spring.io/) e a ferramenta de gerenciamento, construção e implantação de projetos [Maven](https://maven.apache.org/) (Versão 3.8.7). Foi documentada com o apoio do [Swagger](https://swagger.io/), encriptada com Tokens [JWT](https://jwt.io/) e conteinerizada com Docker. O armazenamento dos dados é feito em um banco [PostgreSQL](https://www.postgresql.org/), também conteinerizado em um Docker.
 
-### Versão hospedada em nuvem:
-
-Há uma versão disponível para testes hospedada em nuvem. O hub de documentação da API pode ser acessado via:
-[http://54.210.245.243:8080/swagger-ui/index.html#/](http://54.210.245.243:8080/swagger-ui/index.html#/)
-
 ### Versão local:
 Para ter uma versão local da API:
 
@@ -89,6 +84,39 @@ docker compose up -d
 A API estará disponível na porta 8080, com o hub de documentação acessível pelo endereço:
 [http://localhost:8080/swagger-ui/index.html#/](http://localhost:8080/swagger-ui/index.html#/)
 
+### Desenvolvimento local:
+
+O projeto em 2023.1 e 2023.2 foi feito através do uso da IDE Eclipse para o Java.
+Caso haja a intenção de executar o projeto via Eclipse para evitar a reconstrução do projeto via Docker, é importante alterar o arquivo `src/main/resources/application.properties`
+Alterando a linha
+```
+spring.datasource.url = jdbc:postgresql://apis-postgres-1:5432/fiscalizacao-agems
+```
+Para
+```
+spring.datasource.url = jdbc:postgresql://localhost:5432/fiscalizacao-agems
+```
+(Essa alteração serve apenas para o desenvolvimento e não deve ser enviada em nenhum commit)
+
+Além disso, também é necessário vincular o Lombok ao Eclipse instalado, para isso, basta navegar até o diretório do Lombok (visível nas Dependências Externas na árvore de projeto do Eclipse).
+
+Por padrão, no Windows fica em
+```
+%USERPROFILE/.m2/repository/org/projectlombok/lombok/1.18.26/
+```
+E no Linux em
+```
+~/.m2/repository/org/projectlombok/lombok/1.18.26/
+``` 
+
+Com um terminal/prompt de comando dentro da pasta em questão, basta executar
+```
+java -jar lombok-1.18.26.jar
+```
+Na interface gráfica, basta clicar no botão "Specify Location..." e navegar até a raíz do Eclipse onde o executável está presente.
+Reinicie o Eclipse e o projeto será compilável.
+
+Com o container do Postgres ativo, basta executar o software a partir da classe principal `src/main/java/fiscalizacao/dsbrs/agems/apis/ApisApplication.java`.
 
 ## Autores e histórico
 
@@ -96,7 +124,9 @@ Os serviços foram desenvolvido pela seguinte equipe:
 
 - [Júlia Alves Corazza](https://github.com/j-alves-c) (j.alves@ufms.br)
 - [Luiz Alexandre Felipe de Oliveira](https://github.com/luizAlexandre-ops) (felipe_luiz@ufms.br) 
+- [Igor Alessandro da Cunha Coelho](https://github.com/zoaklen) (igor.coelho@ufms.br)
+- [Gustavo Victor Vespero Ojeda](https://github.com/gustavovesperoojeda) (gustavo.victor@ufms.br) 
 
-Orientado pelo professor [Hudson Silva Borges](https://github.com/hsborges) (hudson.borges@ufms.br) e proposto por João Lucas Alves da Silva.
+Orientado pelos professores [Hudson Silva Borges](https://github.com/hsborges) (hudson.borges@ufms.br) e [Awdren de Lima Fontão](https://github.com/Awdren) (awdren.fontao@ufms.br) e proposto por João Lucas Alves da Silva.
 
 
