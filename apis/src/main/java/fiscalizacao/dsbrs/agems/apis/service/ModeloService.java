@@ -306,7 +306,7 @@ public class ModeloService {
     
     if (modelo != null) {
     	
-      modelo.setNome(modeloEditRequest.getModeloNome());
+      modelo.setNome(modeloEditRequest.getNome());
 
       List<QuestaoEditRequest> questaoEditRequests = modeloEditRequest.getQuestoes();
       List<QuestaoResponse> responsesQuestao = new ArrayList<>();

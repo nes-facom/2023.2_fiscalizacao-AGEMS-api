@@ -33,5 +33,5 @@ public class ModeloRequest {
     type = "string",
     example = "Modelo 01"
   )
-  private String modeloNome;
+  private String nome;
 }
