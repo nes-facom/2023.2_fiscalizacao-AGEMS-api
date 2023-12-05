@@ -6,12 +6,14 @@ import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.InfoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UsuarioService {
 
   private final PasswordEncoder CODIFICADOR_SENHA;
@@ -66,7 +68,7 @@ public class UsuarioService {
           .id(usuario.getId())
           .nome(usuario.getNome())
           .email(usuario.getEmail())
-          .cargo(usuario.getCargo())
+          .cargo(usuario.getCargo().getDescricao())
           .senha(usuario.getSenha())
           .build();
       } else {
@@ -87,7 +89,7 @@ public class UsuarioService {
         .id(usuario.getId())
         .nome(usuario.getNome())
         .email(usuario.getEmail())
-        .cargo(usuario.getCargo())
+        .cargo(usuario.getCargo().getDescricao())
         .senha(usuario.getSenha())
         .build();
     } else {
@@ -115,7 +117,7 @@ public class UsuarioService {
           .id(usuario.getId())
           .nome(usuario.getNome())
           .email(usuario.getEmail())
-          .cargo(usuario.getCargo())
+          .cargo(usuario.getCargo().getDescricao())
           .senha(usuario.getSenha())
           .build();
       } else {
@@ -142,8 +144,9 @@ public class UsuarioService {
         .id(usuario.getId())
         .nome(usuario.getNome())
         .email(usuario.getEmail())
-        .cargo(usuario.getCargo())
+        .cargo(usuario.getCargo().getDescricao())
         .senha(usuario.getSenha())
+        .dataCriacao(usuario.getDataCriacao())
         .build();
     }
     return ErroResponse

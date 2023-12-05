@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Tag(name = "Interface Repositório de Imagem")
 public interface ImagemRepositorio extends CrudRepository<Imagem, Integer> {
-   @Operation(summary = "Encontra Imagens por Formul\u00E1rio")
+   @Operation(summary = "Encontra imagens por formulário")
   public List<Imagem> findByFormulario(Formulario formulario);
 }

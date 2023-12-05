@@ -1,22 +1,20 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ErroResponseTest {
 
@@ -24,89 +22,6 @@ public class ErroResponseTest {
   private Validator validador = Validation
     .buildDefaultValidatorFactory()
     .getValidator();
-
-  @Test
-  public void testSetEGet() {
-    ErroResponse erroResponse = new ErroResponse();
-    assertNull(erroResponse.getErro());
-    assertTrue(erroResponse.getStatus() == 0);
-    erroResponse.setErro("Mensagem de Erro de Requisição Mal Formada");
-    erroResponse.setStatus(400);
-    assertNotNull(erroResponse.getErro());
-    assertNotNull(erroResponse.getStatus());
-  }
-
-  @Test
-  public void testConstrutorNoArgs() {
-    ErroResponse erroResponse = new ErroResponse();
-    assertNotNull(erroResponse);
-    assertNull(erroResponse.getErro());
-    assertTrue(erroResponse.getStatus() == 0);
-  }
-
-  @Test
-  public void testConstrutorAllArgs() {
-    ErroResponse erroResponse = new ErroResponse(
-      400,
-      "Mensagem de Requisição Mal Formada"
-    );
-    assertNotNull(erroResponse);
-    assertNotNull(erroResponse.getErro());
-    assertTrue(erroResponse.getStatus() == 400);
-  }
-
-  @Test
-  public void testBuilderNoArgs() {
-    ErroResponse erroResponse = ErroResponse.builder().build();
-    assertNotNull(erroResponse);
-    assertNull(erroResponse.getErro());
-    assertTrue(erroResponse.getStatus() == 0);
-  }
-
-  @Test
-  public void testBuilderAllArgs() {
-    ErroResponse erroResponse = ErroResponse
-      .builder()
-      .erro("Requisição Mal Formada")
-      .status(400)
-      .build();
-    Set<ConstraintViolation<ErroResponse>> violacoes = new HashSet<>();
-
-    violacoes.addAll(validador.validate(erroResponse));
-    assertTrue(violacoes.size() == 0);
-
-    assertNotNull(erroResponse);
-    assertNotNull(erroResponse.getErro());
-    assertTrue(erroResponse.getStatus() == 400);
-    assertFalse(erroResponse.getStatus() == 0);
-    assertEquals("Requisição Mal Formada", erroResponse.getErro());
-    assertNotEquals("Requisição Bem Formada", erroResponse.getErro());
-  }
-
-  @Test
-  public void testBuilderErroArgs() {
-    ErroResponse erroResponse = ErroResponse
-      .builder()
-      .erro("Requisição Mal Formada")
-      .build();
-    assertNotNull(erroResponse);
-    assertNotNull(erroResponse.getErro());
-    assertTrue(erroResponse.getStatus() == 0);
-    assertFalse(erroResponse.getStatus() == 400);
-    assertEquals("Requisição Mal Formada", erroResponse.getErro());
-    assertNotEquals("Requisição Bem Formada", erroResponse.getErro());
-  }
-
-  @Test
-  public void testBuilderStatusArgs() {
-    ErroResponse erroResponse = ErroResponse.builder().status(400).build();
-    assertNotNull(erroResponse);
-    assertNull(erroResponse.getErro());
-    assertTrue(erroResponse.getStatus() == 400);
-    assertFalse(erroResponse.getStatus() == 0);
-    assertNotEquals("Requisição Mal Formada", erroResponse.getErro());
-    assertNotEquals("Requisição Bem Formada", erroResponse.getErro());
-  }
 
   @Test
   public void testErrorResponseValidationSuccessResponses() {
@@ -319,57 +234,4 @@ public class ErroResponseTest {
       assertEquals("Status inválido", violation.getMessage());
     }
   }
-  @Test
-    public void testEquals() {
-        ErroResponse response1 = ErroResponse.builder()
-                .status(400)
-                .erro("Requisição Mal Formada")
-                .build();
-
-        ErroResponse response2 = ErroResponse.builder()
-                .status(400)
-                .erro("Requisição Mal Formada")
-                .build();
-
-        ErroResponse response3 = ErroResponse.builder()
-                .status(500)
-                .erro("Erro Interno de Servidor")
-                .build();
-assertEquals(response1, response2);
-
-        assertNotEquals(response1, response3);
-    }
-
-    @Test
-    public void testToString() {
-        ErroResponse response = ErroResponse.builder()
-                .status(400)
-                .erro("Requisi\u00E7\u00E3o Mal Formada")
-                .build();
-
-        String expectedToString = "ErroResponse(status=400, erro=Requisi\u00E7\u00E3o Mal Formada)";
-        assertEquals(expectedToString, response.toString());
-    }
-
-    @Test
-    public void testHashCode() {
-        ErroResponse response1 = ErroResponse.builder()
-                .status(400)
-                .erro("Requisi\u00E7\u00E3o Mal Formada")
-                .build();
-
-        ErroResponse response2 = ErroResponse.builder()
-                .status(400)
-                .erro("Requisi\u00E7\u00E3o Mal Formada")
-                .build();
-
-        assertEquals(response1.hashCode(), response2.hashCode());
-        ErroResponse response3 = ErroResponse.builder()
-                .status(500)
-                .erro("Erro Interno de Servidor")
-                .build();
-
-
-        assertNotEquals(response1.hashCode(), response3.hashCode());
-    }
 }

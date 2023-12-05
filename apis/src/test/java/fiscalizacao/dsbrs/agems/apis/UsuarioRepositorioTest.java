@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
@@ -34,12 +37,13 @@ public class UsuarioRepositorioTest {
   @Order(1)
   public void testSave() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("Exemplo Exemplificado Exemplificando");
     usuario.setEmail("exemplo@exemplo.com");
     usuario.setSenha("exemplinho");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.ADMIN);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
 
     Usuario usuarioSalvo = usuarioRepositorio.save(usuario);
     assertNotNull(usuarioSalvo.getId());
@@ -54,12 +58,13 @@ public class UsuarioRepositorioTest {
   @Order(2)
   public void testFindById() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("J\u00FAlia Alves Corazza");
     usuario.setEmail("alvesju@gmail.com");
     usuario.setSenha("$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.USER);
-    usuario.setCargo("Analista de Regula\u00E7\u00E3o");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     Usuario usuarioSalvo = usuarioRepositorio.save(usuario);
     assertNotNull(usuarioSalvo.getId());
     Optional<Usuario> usuarioEncontrado = usuarioRepositorio.findById(usuarioSalvo.getId());
@@ -70,20 +75,21 @@ public class UsuarioRepositorioTest {
       "$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu",
       usuarioEncontrado.get().getSenha()
     );
-    assertEquals("Analista de Regulação", usuarioEncontrado.get().getCargo());
+    assertEquals("Analista de Regulação", usuarioEncontrado.get().getCargo().getDescricao());
     assertEquals(Papel.USER, usuarioEncontrado.get().getFuncao());
   }
 
   @Test
   @Order(4)
   public void testFindByNome() {
+    LocalDateTime now = LocalDateTime.now();
     Usuario usuario = new Usuario();
     usuario.setNome("Exemplo Exemplificado Exemplificando");
     usuario.setEmail("exemplo@exemplo.com");
     usuario.setSenha("exemplinho");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.ADMIN);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
     usuarioRepositorio.save(usuario);
     Optional<Usuario> usuarioEncontrado = usuarioRepositorio.findByNome(
       "Exemplo Exemplificado Exemplificando"
@@ -95,20 +101,21 @@ public class UsuarioRepositorioTest {
   @Order(5)
   public void testFindAllByNome() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("Lu\u00EDza Alves Corazza");
     usuario.setEmail("lanvels@gmail.com");
     usuario.setSenha("$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.USER);
-    usuario.setCargo("Analista de Regula\u00E7\u00E3o");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuarioRepositorio.save(usuario);
     Usuario usuario2 = new Usuario();
     usuario2.setNome("Lu\u00EDza Alves Corazza");
     usuario2.setEmail("l.alves@gmail.com");
     usuario2.setSenha("$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu");
-    usuario2.setDate();
+    usuario2.setDataCriacao(now);
     usuario2.setFuncao(Papel.USER);
-    usuario2.setCargo("Analista de Regula\u00E7\u00E3o");
+    usuario2.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuarioRepositorio.save(usuario2);
     List<Usuario> usuariosEncontrado = usuarioRepositorio.findAllByNome(
       "Lu\u00EDza Alves Corazza"
@@ -121,12 +128,13 @@ public class UsuarioRepositorioTest {
   @Order(6)
   public void testFindByEmail() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("J\u00FAlia Alves Corazza");
     usuario.setEmail("juahdsj@gmail.com");
     usuario.setSenha("$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.USER);
-    usuario.setCargo("Analista de Regula\u00E7\u00E3o");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuarioRepositorio.save(usuario);
     Optional<Usuario> usuarioEncontrado = usuarioRepositorio.findByEmail(
       "juahdsj@gmail.com"
@@ -138,12 +146,13 @@ public class UsuarioRepositorioTest {
   @Order(3)
   public void testDelete() {
     Usuario usuario = new Usuario();
+    LocalDateTime now = LocalDateTime.now();
     usuario.setNome("Exemplo Exemplificado Exemplificando");
     usuario.setEmail("exemplo@exemplo.com");
     usuario.setSenha("exemplinho");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.ADMIN);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
     usuarioRepositorio.save(usuario);
     Optional<Usuario> usuarioEncontrado = usuarioRepositorio.findByEmail(
       "exemplo@exemplo.com"

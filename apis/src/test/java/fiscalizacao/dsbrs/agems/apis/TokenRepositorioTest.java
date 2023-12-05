@@ -7,8 +7,11 @@ import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Token;
 import fiscalizacao.dsbrs.agems.apis.dominio.TokenType;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.TokenRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
@@ -32,15 +35,18 @@ public class TokenRepositorioTest {
 
   private Usuario usuarioSalvo;
 
+  private LocalDateTime now;
+  
   @Before
   public void setup() {
+    now = LocalDateTime.now();
     Usuario usuario = new Usuario();
     usuario.setNome("Exemplo Exemplificado Exemplificando");
     usuario.setEmail("exemplo@exemplo.com");
     usuario.setSenha("exemplinho");
-    usuario.setDate();
+    usuario.setDataCriacao(now);
     usuario.setFuncao(Papel.ADMIN);
-    usuario.setCargo("Coordenador");
+    usuario.setCargo(Cargo.COORDENADOR);
     usuarioSalvo = usuarioRepositorio.save(usuario);
   }
 

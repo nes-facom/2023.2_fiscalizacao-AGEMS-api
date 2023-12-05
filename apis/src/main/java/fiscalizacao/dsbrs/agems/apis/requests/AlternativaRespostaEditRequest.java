@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TipoRespostaEditRequest {
+public class AlternativaRespostaEditRequest {
 
   @Schema(
     title = "Ação",
@@ -31,11 +33,10 @@ public class TipoRespostaEditRequest {
     title = "Id",
     description = "Id do Tipo de Resposta",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int id;
+  private UUID id;
 
   @Schema(title = "Resposta",
     description = "Um tipo de resposta da questão em questão",

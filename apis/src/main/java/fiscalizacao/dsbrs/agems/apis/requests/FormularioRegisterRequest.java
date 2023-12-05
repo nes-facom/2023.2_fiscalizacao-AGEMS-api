@@ -1,7 +1,15 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeDeserializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,26 +22,43 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FormularioRegisterRequest {
 
+  @Schema(
+    title = "Data de criação",
+    description = "Data de criação do formulário",
+    required = true,
+    type = "number",
+    example = "1692840670072"
+    )
+  @JsonProperty("data_criacao")
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  private LocalDateTime dataCriacao;
 
   @Schema(
     title = "Modelo",
     description = "Modelo que se refere o Formulário",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int modelo;
+  private UUID modelo;
+  
+  @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  private UUID uuidLocal;
 
   @Schema(
     title = "Unidade",
     description = "Unidade analisada pelo Formulário",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int unidade;
+  private UUID unidade;
 
   @Schema(
     title = "Respostas",

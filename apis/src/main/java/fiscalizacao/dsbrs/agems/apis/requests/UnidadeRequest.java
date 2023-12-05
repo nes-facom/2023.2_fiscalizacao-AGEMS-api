@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,13 +19,22 @@ import lombok.NoArgsConstructor;
 public class UnidadeRequest {
 
   @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  private UUID uuidLocal;
+  
+  @Schema(
     title = "Nome",
     description = "Nome da unidade",
     required = true,
     type = "string",
     example = "Unidade 1 de Tratamento de Esgoto de Dourados"
   )
-  private String idUnidade;
+  private String nome;
 
   @Schema(
     title = "Endereço",

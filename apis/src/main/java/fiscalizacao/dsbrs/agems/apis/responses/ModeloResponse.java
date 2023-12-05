@@ -1,11 +1,16 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Schema(
@@ -16,18 +21,29 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ModeloResponse {
+@EqualsAndHashCode(callSuper = false)
+public class ModeloResponse extends Response {
 
   @Schema(
     title = "Id",
     description = "id do modelo",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  @JsonProperty("id")
-  private int id;
+  @JsonProperty("uuid")
+  private UUID id;
+  
+  @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  @JsonProperty("uuid_local")
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private UUID uuidLocal;
 
   @Schema(
     title = "Nome de Modelo",

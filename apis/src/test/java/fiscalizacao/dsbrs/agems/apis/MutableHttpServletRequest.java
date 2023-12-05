@@ -1,13 +1,14 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 public class MutableHttpServletRequest extends HttpServletRequestWrapper {
   private final String SERVLET_PATH;
@@ -51,7 +52,6 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
   public Enumeration<String> getHeaderNames() {
     Set<String> set = new HashSet<String>(CUSTOM_HEADERS.keySet());
 
-    @SuppressWarnings("unchecked")
     Enumeration<String> e =
       ((HttpServletRequest) getRequest()).getHeaderNames();
     while (e.hasMoreElements()) {

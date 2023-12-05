@@ -1,15 +1,13 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.UsuarioEditRequest;
-import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.InfoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.Response;
+import java.time.LocalDateTime;
 import java.util.Collections;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -27,10 +25,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
+import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.UsuarioEditRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.InfoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class IntegrationTestApi {
 
   @LocalServerPort
@@ -66,11 +76,12 @@ public class IntegrationTestApi {
   public void testCadastraUsuario201() {
     String url = "http://localhost:" + port + "/usuarios/cadastro";
     RegisterRequest request = new RegisterRequest(
-      "Ronaldo Silva da Sousa",
-      "rss@smail.com",
-      "rss1234%",
-      "Assessor Técnico"
-    );
+	  LocalDateTime.parse("2007-12-03T10:15:30"),
+	  "Ronaldo Silva da Sousa",
+	  "rss@smail.com",
+	  "rss1234%",
+	  Cargo.ASSESSOR_TECNICO
+	);
     ResponseEntity<AuthenticationResponse> response = restTemplate.postForEntity(
       url,
       request,
@@ -92,10 +103,11 @@ public class IntegrationTestApi {
   public void testInfoUsuario200() {
     String url = "http://localhost:" + port + "/usuarios/cadastro";
     RegisterRequest request = new RegisterRequest(
+      LocalDateTime.parse("2007-12-03T10:15:30"),
       "Ronaldo Silva da Sousa",
       "ronaldinho.silva@smail.com",
       "rss1234%",
-      "Assessor Técnico"
+      Cargo.ASSESSOR_TECNICO
     );
     ResponseEntity<AuthenticationResponse> responseRegister = restTemplate.postForEntity(
       url,
@@ -143,10 +155,11 @@ public class IntegrationTestApi {
   public void testEditUsuario200Nome() {
     String url = "http://localhost:" + port + "/usuarios/cadastro";
     RegisterRequest request = new RegisterRequest(
+      LocalDateTime.parse("2007-12-03T10:15:30"),
       "Binho Silva da Sousa",
       "binho.silva@smail.com",
       "binho1234%",
-      "Assessor Técnico"
+      Cargo.ASSESSOR_TECNICO
     );
     ResponseEntity<AuthenticationResponse> responseRegister = restTemplate.postForEntity(
       url,
@@ -202,10 +215,11 @@ public class IntegrationTestApi {
   public void testEditUsuario200Senha() {
     String url = "http://localhost:" + port + "/usuarios/cadastro";
     RegisterRequest request = new RegisterRequest(
+      LocalDateTime.parse("2007-12-03T10:15:30"),
       "Wendy Silva da Sousa",
       "wendy.silva@smail.com",
       "binho1234%",
-      "Assessor Técnico"
+      Cargo.ASSESSOR_TECNICO
     );
     ResponseEntity<AuthenticationResponse> responseRegister = restTemplate.postForEntity(
       url,
@@ -259,10 +273,11 @@ public class IntegrationTestApi {
   public void testCadastraUsuario409() {
     String url = "http://localhost:" + port + "/usuarios/cadastro";
     RegisterRequest request = new RegisterRequest(
+      LocalDateTime.parse("2007-12-03T10:15:30"),
       "Ronaldo Silva da Sousa",
       "rss@smail.com",
       "rss1234%",
-      "Assessor Técnico"
+      Cargo.ASSESSOR_TECNICO
     );
     ResponseEntity<ErroResponse> response = restTemplate.postForEntity(
       url,
@@ -288,10 +303,11 @@ public class IntegrationTestApi {
   public void testCadastraUsuarioEmail400() {
     String url = "http://localhost:" + port + "/usuarios/cadastro";
     RegisterRequest request = new RegisterRequest(
+      LocalDateTime.parse("2007-12-03T10:15:30"),
       "Ronaldo Silva da Sousa",
       "Ronaldo Silva da Sousa",
       "rss1234%",
-      "Assessor Técnico"
+      Cargo.ASSESSOR_TECNICO
     );
     ResponseEntity<ErroResponse> response = restTemplate.postForEntity(
       url,
@@ -314,10 +330,11 @@ public class IntegrationTestApi {
   public void testCadastraUsuarioSenha400() {
     String url = "http://localhost:" + port + "/usuarios/cadastro";
     RegisterRequest request = new RegisterRequest(
+      LocalDateTime.parse("2007-12-03T10:15:30"),
       "Ronaldo Silva da Sousa",
       "rss@smail.com",
       "rss",
-      "Assessor Técnico"
+      Cargo.ASSESSOR_TECNICO
     );
     ResponseEntity<ErroResponse> response = restTemplate.postForEntity(
       url,

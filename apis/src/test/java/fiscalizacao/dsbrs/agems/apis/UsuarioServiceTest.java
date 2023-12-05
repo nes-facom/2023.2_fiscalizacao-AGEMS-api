@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 
 import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.InfoResponse;
@@ -17,6 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -51,7 +54,7 @@ public class UsuarioServiceTest {
     Usuario usuario = new Usuario();
     usuario.setNome("Julia Alves Corazza");
     usuario.setEmail(userEmail);
-    usuario.setCargo("Analista de Regulação");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuario.setSenha(
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
     );
@@ -84,7 +87,7 @@ public class UsuarioServiceTest {
     Usuario usuario = new Usuario();
     usuario.setNome("Júlia Alves Corazza");
     usuario.setEmail(userEmail);
-    usuario.setCargo("Analista de Regulação");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuario.setSenha(
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
     );
@@ -118,10 +121,10 @@ public class UsuarioServiceTest {
 
     String userEmail = "juliaacorazza@gmail.com";
     Usuario usuario = new Usuario();
-    usuario.setId(1);
+    usuario.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
     usuario.setNome("Júlia Alves Corazza");
     usuario.setEmail(userEmail);
-    usuario.setCargo("Analista de Regulação");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuario.setSenha(
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
     );
@@ -183,10 +186,10 @@ public class UsuarioServiceTest {
 
     String userEmail = "juliaacorazza@gmail.com";
     Usuario usuario = new Usuario();
-    usuario.setId(1);
+    usuario.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
     usuario.setNome("Júlia Alves Corazza");
     usuario.setEmail(userEmail);
-    usuario.setCargo("Analista de Regulação");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuario.setSenha(
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
     );
@@ -235,10 +238,10 @@ public class UsuarioServiceTest {
 
     String userEmail = "juliaacorazza@gmail.com";
     Usuario usuario = new Usuario();
-    usuario.setId(1);
+    usuario.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
     usuario.setNome("Júlia Alves Corazza");
     usuario.setEmail(userEmail);
-    usuario.setCargo("Analista de Regulação");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuario.setSenha(
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
     );
@@ -315,7 +318,7 @@ public class UsuarioServiceTest {
     Usuario usuario = new Usuario();
     usuario.setNome("Julia Alves Corazza");
     usuario.setEmail(userEmail);
-    usuario.setCargo("Analista de Regulação");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuario.setSenha(
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
     );
@@ -388,10 +391,10 @@ public class UsuarioServiceTest {
 
     
      Usuario usuario = new Usuario();
-    usuario.setId(1);
+    usuario.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
     usuario.setNome("Júlia Alves Corazza");
      usuario.setEmail("example@example.com");
-    usuario.setCargo("Analista de Regulação");
+    usuario.setCargo(Cargo.ANALISTA_DE_REGULACAO);
     usuario.setSenha(
       "$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6"
     );
@@ -423,7 +426,7 @@ public class UsuarioServiceTest {
       .id(usuario.getId())
       .nome(usuario.getNome())
       .email(usuario.getEmail())
-      .cargo(usuario.getCargo())
+      .cargo(usuario.getCargo().getDescricao())
       .senha("$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar2wd3")
       .build();
     assertEquals(expectedResponse, response);

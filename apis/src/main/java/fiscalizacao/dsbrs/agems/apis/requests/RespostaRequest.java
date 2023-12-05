@@ -1,5 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,14 +19,22 @@ import lombok.NoArgsConstructor;
 public class RespostaRequest {
 
   @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  private UUID uuidLocal;
+  
+  @Schema(
     title = "Questão",
     description = "Id da Questão que se refere a Resposta",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int questao;
+  private UUID questao;
 
   @Schema(
     title = "Resposta",
@@ -41,5 +51,5 @@ public class RespostaRequest {
     type = "string",
     example = "Em conformidade."
   )
-  private String obs;
+  private String observacao;
 }

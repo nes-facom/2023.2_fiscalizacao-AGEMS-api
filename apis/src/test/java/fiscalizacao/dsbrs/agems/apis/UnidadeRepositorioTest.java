@@ -29,18 +29,18 @@ public class UnidadeRepositorioTest {
   @Order(5)
   public void testFindByIdUnidade() {
     Unidade unidade = new Unidade();
-    unidade.setIdUnidade("Unidade 1 de Tratamento de Esgoto de Dourados");
+    unidade.setNome("Unidade 1 de Tratamento de Esgoto de Dourados");
     unidade.setEndereco("Rua das Neves, 114");
     unidadeRepositorio.save(unidade);
 
-    Optional<Unidade> foundUnidade = unidadeRepositorio.findByIdUnidade(
+    Optional<Unidade> foundUnidade = unidadeRepositorio.findByNome(
       "Unidade 1 de Tratamento de Esgoto de Dourados"
     );
 
     assertTrue(foundUnidade.isPresent());
     assertEquals(
       "Unidade 1 de Tratamento de Esgoto de Dourados",
-      foundUnidade.get().getIdUnidade()
+      foundUnidade.get().getNome()
     );
     assertEquals("Rua das Neves, 114", foundUnidade.get().getEndereco());
   }
@@ -48,10 +48,10 @@ public class UnidadeRepositorioTest {
   @Test
   @Order(1)
   public void testSave() {
-    Unidade unidade = new Unidade(
-      "Unidade 1 de Tratamento de Esgoto de Dourados",
-      "Rua das Neves, 114"
-    );
+    Unidade unidade = Unidade.builder()
+        .nome("Unidade 1 de Tratamento de Esgoto de Dourados")
+        .endereco("Rua das Neves, 114")
+        .build();
     Unidade savedUnidade = unidadeRepositorio.save(unidade);
     assertNotNull(savedUnidade.getId());
   }
@@ -59,10 +59,10 @@ public class UnidadeRepositorioTest {
   @Test
   @Order(3)
   public void testFindById() {
-    Unidade unidade = new Unidade(
-      "Unidade 5 de Tratamento de Esgoto de Dourados",
-      "Rua das Neves, 114"
-    );
+    Unidade unidade = Unidade.builder()
+        .nome("Unidade 1 de Tratamento de Esgoto de Dourados")
+        .endereco("Rua das Neves, 114")
+        .build();
     Unidade savedUnidade = unidadeRepositorio.save(unidade);
 
     Unidade foundUnidade = unidadeRepositorio
@@ -70,20 +70,20 @@ public class UnidadeRepositorioTest {
       .orElse(null);
     assertNotNull(foundUnidade);
     assertEquals(savedUnidade.getId(), foundUnidade.getId());
-    assertEquals(savedUnidade.getIdUnidade(), foundUnidade.getIdUnidade());
+    assertEquals(savedUnidade.getNome(), foundUnidade.getNome());
   }
 
   @Test
   @Order(2)
   public void testFindAll() {
-    Unidade unidade1 = new Unidade(
-      "Unidade 3 de Tratamento de Esgoto de Dourados",
-      "Rua das Constelações, 112"
-    );
-    Unidade unidade2 = new Unidade(
-      "Unidade 2 de Tratamento de Esgoto de Dourados",
-      "Rua das Pedras, 111"
-    );
+    Unidade unidade1 = Unidade.builder()
+        .nome("Unidade 1 de Tratamento de Esgoto de Dourados")
+        .endereco("Rua das Constelações, 112")
+        .build();
+    Unidade unidade2 = Unidade.builder()
+        .nome("Unidade 2 de Tratamento de Esgoto de Dourados")
+        .endereco("Rua das Pedras, 111")
+        .build();
     unidadeRepositorio.save(unidade1);
     unidadeRepositorio.save(unidade2);
 
@@ -94,30 +94,30 @@ public class UnidadeRepositorioTest {
   @Test
   @Order(3)
   public void testUpdate() {
-    Unidade unidade = new Unidade(
-      "Unidade 1 de Tratamento de Esgoto de Caxias",
-      "Rua das Neves 114"
-    );
+    Unidade unidade = Unidade.builder()
+        .nome("Unidade 1 de Tratamento de Esgoto de Dourados")
+        .endereco("Rua das Neves, 114")
+        .build();
     Unidade savedUnidade = unidadeRepositorio.save(unidade);
 
-    savedUnidade.setIdUnidade(
+    savedUnidade.setNome(
       "Unidade 1 de Tratamento de Esgoto de Pixinguinha"
     );
     Unidade updatedUnidade = unidadeRepositorio.save(savedUnidade);
 
     assertEquals(
       "Unidade 1 de Tratamento de Esgoto de Pixinguinha",
-      updatedUnidade.getIdUnidade()
+      updatedUnidade.getNome()
     );
   }
 
   @Test
   @Order(4)
   public void testDelete() {
-    Unidade unidade = new Unidade(
-      "Unidade 1 de Tratamento de Esgoto de Dourados",
-      "Rua das Neves, 114"
-    );
+    Unidade unidade = Unidade.builder()
+        .nome("Unidade 1 de Tratamento de Esgoto de Dourados")
+        .endereco("Rua das Neves, 114")
+        .build();
     Unidade savedUnidade = unidadeRepositorio.save(unidade);
 
     unidadeRepositorio.deleteById(savedUnidade.getId());

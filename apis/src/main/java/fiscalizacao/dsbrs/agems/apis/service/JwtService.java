@@ -1,7 +1,22 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
+
 import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Token;
 import fiscalizacao.dsbrs.agems.apis.dominio.TokenType;
@@ -21,23 +36,12 @@ import io.jsonwebtoken.io.IOException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.security.Key;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class JwtService {
 
   private final UsuarioRepositorio REPOSITORIO_USUARIO;
@@ -125,7 +129,8 @@ public class JwtService {
       request.getCargo() == null ||
       request.getEmail() == null ||
       request.getNome() == null ||
-      request.getSenha() == null
+      request.getSenha() == null ||
+      request.getDataCriacao() == null
     ) {
       return ErroResponse.builder().status(400).erro("Faltam dados.").build();
     }
@@ -145,9 +150,9 @@ public class JwtService {
       .nome(request.getNome())
       .email(request.getEmail())
       .senha(CODIFICADOR_SENHA.encode(request.getSenha()))
-      .cargo(request.getCARGOS(request.getCargo()))
+      .cargo(request.getCargo())
       .funcao(Papel.USER)
-      .dataCriacao(LocalDate.now())
+      .dataCriacao(request.getDataCriacao())
       .build();
 
     Usuario usuarioSalvo = REPOSITORIO_USUARIO.save(usuario);

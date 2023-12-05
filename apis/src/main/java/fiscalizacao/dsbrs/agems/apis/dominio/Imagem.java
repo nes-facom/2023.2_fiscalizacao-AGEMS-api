@@ -1,5 +1,10 @@
 package fiscalizacao.dsbrs.agems.apis.dominio;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.apache.tomcat.util.codec.binary.Base64;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,10 +15,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
-
-import org.apache.tomcat.util.codec.binary.Base64;
-
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,15 +33,14 @@ public class Imagem {
 
   @Schema(
     title = "Id da imagem",
-    description = "Identificador da Imagem",
+    description = "Identificador da Imagem, autogerável no banco",
     required = true,
-    format = "number",
-    type = "integer",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Schema(
     title = "Formulário",
@@ -51,14 +53,26 @@ public class Imagem {
   private Formulario formulario;
 
   @Schema(
-    title = "Questão",
+    title = "Id do usuário de criação",
+    description = "Id de usuário reponsável pela inserção da imagem",
     required = true,
-    implementation = Questao.class,
-    description = "Questão a qual a imagem pertence"
+    format = "string",
+    type = "UUID"
   )
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "id_questao")
-  private Questao questao;
+  @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
+  @JoinColumn(name = "idUsuarioCriacao")
+  private Usuario usuarioCriacao;
+
+  @Schema(
+    title = "Id do usuário de alteração",
+    description = "Id de usuário reponsável pela última alteração da imagem",
+    required = true,
+    format = "string",
+    type = "UUID"
+  )
+  @ManyToOne(fetch = FetchType.LAZY, targetEntity = Usuario.class)
+  @JoinColumn(name = "idUsuarioAlteracao")
+  private Usuario usuarioAlteracao;
 
   @Schema(
     title = "Imagem (Base64)",
@@ -73,24 +87,34 @@ public class Imagem {
   private byte[] imagem;
 
   @Schema(
-    title = "Data de Criação",
+    title = "Data de criação",
     description = "Data de criação da imagem",
     required = true,
-    implementation = LocalDate.class
+    implementation = LocalDateTime.class
   )
-  @Column
-  private LocalDate dataCriacao;
+  @Column(name = "dataCriacao")
+  @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime dataCriacao;
 
-  public void setDate() {
-    this.dataCriacao = LocalDate.now();
-  }
-
+  @Schema(
+    title = "Data de alteração",
+    description = "Data de alteração da imagem",
+    required = true,
+    implementation = LocalDateTime.class
+  )
+  @Column(name = "dataAlteracao")
+  @Temporal(TemporalType.TIMESTAMP)
+  private LocalDateTime dataAlteracao;
+  
   public void setImagem(String base64Image) {
     this.imagem = Base64.decodeBase64(base64Image);
   }
 
   public String getImagem() {
-    
     return Base64.encodeBase64String(this.imagem);
+  }
+  
+  public byte[] getImagemBytes() {
+    return this.imagem;
   }
 }

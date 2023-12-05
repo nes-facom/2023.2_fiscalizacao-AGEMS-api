@@ -1,6 +1,10 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,12 +27,22 @@ public class UnidadeResponse extends Response {
     title = "Id",
     description = "Id da Unidade",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  @JsonProperty("id")
-  private int id;
+  @JsonProperty("uuid")
+  private UUID id;
+  
+  @Schema(
+      title = "UUID gerado no app",
+      description = "Código UUID gerado no banco local do aplicativo",
+      required = false,
+      format = "string",
+      type = "UUID"
+    )
+    @JsonProperty("uuid_local")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private UUID uuidLocal;
 
   @Schema(
     title = "Id Unidade",
@@ -37,8 +51,8 @@ public class UnidadeResponse extends Response {
     type = "String",
     example = "Unidade 1 de Tratamento de Esgoto de Dourados"
   )
-  @JsonProperty("idUnidade")
-  private String idUnidade;
+  @JsonProperty("nome")
+  private String nome;
 
   @Schema(
     title = "Endere\u00E7o",

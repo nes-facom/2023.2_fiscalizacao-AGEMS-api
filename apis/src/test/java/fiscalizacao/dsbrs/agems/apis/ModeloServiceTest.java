@@ -3,18 +3,20 @@ package fiscalizacao.dsbrs.agems.apis;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,27 +24,39 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
-import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
+import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
+import fiscalizacao.dsbrs.agems.apis.repositorio.AlternativaRespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.TipoRespostaRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.AlternativaRespostaRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoEditRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.QuestaoRegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaEditRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.TipoRespostaRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.TipoRespostaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -53,46 +67,70 @@ public class ModeloServiceTest {
     @Mock
     private ModeloRepositorio modeloRepositorio;
     @Mock
-    private TipoRespostaRepositorio tipoRespostaRepositorio;
+    private AlternativaRespostaRepositorio tipoRespostaRepositorio;
     @Mock
     private QuestaoRepositorio questaoRepositorio;
+    @Mock
+    private QuestaoModeloRepositorio questaoModeloRepositorio;
+    @Mock
+    private QuestaoFormularioRepositorio questaoFormularioRepositorio;
+    @Mock
+    private UsuarioRepositorio usuarioRepositorio;
 
     @InjectMocks
     private ModeloService modeloService;
 
     @Test
     public void testCadastraModelo() {
-        ModeloRegisterRequest request = new ModeloRegisterRequest();
-        request.setNome("Modelo Teste");
+        LocalDateTime now = LocalDateTime.now();
+        Usuario usuario = new Usuario();
+        usuario.setNome("J\u00FAlia Alves Corazza");
+        usuario.setEmail("juliaacorazza@gmail.com");
+        usuario.setSenha(
+          "$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu"
+        );
+        usuario.setDataCriacao(now);
+        usuario.setFuncao(Papel.USER);
+        usuario.setCargo(Cargo.COORDENADOR);
+      
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getAttribute("EMAIL_USUARIO"))
+          .thenReturn("juliaacorazza@gmail.com");
+        when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+          .thenReturn(Optional.of(usuario));
+        
+        ModeloRegisterRequest modeloRegisterRequest = new ModeloRegisterRequest();
+        modeloRegisterRequest.setNome("Modelo Teste");
 
         QuestaoRegisterRequest questaoRequest1 = new QuestaoRegisterRequest();
         questaoRequest1.setPergunta("Questao Teste 1");
         questaoRequest1.setObjetiva(true);
         questaoRequest1.setPortaria("Portaria1");
 
-        TipoRespostaRegisterRequest Tiporequest1 = new TipoRespostaRegisterRequest();
-        Tiporequest1.setResposta("SIM");
-        TipoRespostaRegisterRequest Tiporequest2 = new TipoRespostaRegisterRequest();
-        Tiporequest2.setResposta("NÃO");
-        TipoRespostaRegisterRequest Tiporequest3 = new TipoRespostaRegisterRequest();
-        Tiporequest3.setResposta("NAO SE APLICA");
+        AlternativaRespostaRegisterRequest Tiporequest1 = new AlternativaRespostaRegisterRequest();
+        Tiporequest1.setDescricao("SIM");
+        AlternativaRespostaRegisterRequest Tiporequest2 = new AlternativaRespostaRegisterRequest();
+        Tiporequest2.setDescricao("NÃO");
+        AlternativaRespostaRegisterRequest Tiporequest3 = new AlternativaRespostaRegisterRequest();
+        Tiporequest3.setDescricao("NAO SE APLICA");
 
-        List<TipoRespostaRegisterRequest> respostas1 = new ArrayList<>();
+        List<AlternativaRespostaRegisterRequest> respostas1 = new ArrayList<>();
         respostas1.add(Tiporequest1);
         respostas1.add(Tiporequest2);
         respostas1.add(Tiporequest3);
-        questaoRequest1.setTipoRespostas(respostas1);
+        questaoRequest1.setAlternativaRespostas(respostas1);
 
         List<QuestaoRegisterRequest> questoes = new ArrayList<>();
         questoes.add(questaoRequest1);
 
-        request.setQuestoes(questoes);
+        modeloRegisterRequest.setQuestoes(questoes);
 
         when(questaoRepositorio.save(any(Questao.class))).thenReturn(new Questao());
-        when(tipoRespostaRepositorio.save(any(TipoResposta.class))).thenReturn(new TipoResposta());
+        when(tipoRespostaRepositorio.save(any(AlternativaResposta.class))).thenReturn(new AlternativaResposta());
         when(modeloRepositorio.save(any(Modelo.class))).thenReturn(new Modelo());
+        when(questaoModeloRepositorio.save(any(QuestaoModelo.class))).thenReturn(new QuestaoModelo());
 
-        ModeloResponse response = modeloService.cadastraModelo(request);
+        Response response = modeloService.cadastraModelo(request, modeloRegisterRequest);
 
         assertNotNull(response);
     }
@@ -100,24 +138,24 @@ public class ModeloServiceTest {
     @Test
     public void testVerModeloPorId() {
 
-        int modeloId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         Modelo foundModelo = new Modelo();
         foundModelo.setId(modeloId);
-        foundModelo.setModeloNome("Test Modelo");
-        foundModelo.setPerguntas(new ArrayList<>());
+        foundModelo.setNome("Test Modelo");
+        foundModelo.setQuestoes(new ArrayList<>());
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(foundModelo));
         ModeloResponse modeloResponse = modeloService.verModelo(modeloId);
 
         assertEquals(foundModelo.getId(), modeloResponse.getId());
-        assertEquals(foundModelo.getModeloNome(), modeloResponse.getNome());
+        assertEquals(foundModelo.getNome(), modeloResponse.getNome());
         verify(modeloRepositorio, times(1)).findById(modeloId);
     }
 
     @Test
     public void testVerModeloRetornaNull() {
 
-        int modeloId = 999;
+        UUID modeloId = UUID.fromString("7dde8f7f-e50b-4ccd-8682-b34feee52206");
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.empty());
 
         assertNull(modeloService.verModelo(modeloId));
@@ -129,89 +167,104 @@ public class ModeloServiceTest {
     public void testVerModelo() {
         // Mock the Modelo object
         Modelo modelo = new Modelo();
-        modelo.setId(1);
-        List<Questao> questoes = new ArrayList<>();
-        modelo.setPerguntas(questoes);
-        when(modeloRepositorio.findById(1)).thenReturn(Optional.of(modelo));
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        modelo.setId(modeloId);
+        List<QuestaoModelo> questoes = new ArrayList<>();
+        modelo.setQuestoes(questoes);
+        when(modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))).thenReturn(Optional.of(modelo));
 
         // Mock the Questao objects
-        Questao questao1 = new Questao(1);
-        questao1.setModelo(modelo);
-        Questao questao2 = new Questao(1);
-        questao2.setModelo(modelo);
-        questoes.add(questao1);
-        questoes.add(questao2);
+        Questao questao1 = new Questao();
+        questao1.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+        QuestaoModelo questao1Modelo = new QuestaoModelo();
+        questao1Modelo.setModelo(modelo);
+        questao1Modelo.setQuestao(questao1);
+        questao1.setModelos(Collections.singletonList(questao1Modelo));
+        Questao questao2 = new Questao();
+        questao2.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+        QuestaoModelo questao2Modelo = new QuestaoModelo();
+        questao2.setModelos(Collections.singletonList(questao2Modelo));
+        questao2Modelo.setQuestao(questao2);
+        questao2Modelo.setModelo(modelo);
+        questoes.add(questao1Modelo);
+        questoes.add(questao2Modelo);
 
-        // Mock the TipoResposta objects
-        TipoResposta tipoResposta1 = new TipoResposta(1);
-        tipoResposta1.setResposta("Answer 1");
+        // Mock the AlternativaResposta objects
+        AlternativaResposta tipoResposta1 = new AlternativaResposta();
+        tipoResposta1.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+        tipoResposta1.setDescricao("Answer 1");
         tipoResposta1.setQuestao(questao1);
-        TipoResposta tipoResposta2 = new TipoResposta(2);
-        tipoResposta2.setResposta("Answer 2");
+        AlternativaResposta tipoResposta2 = new AlternativaResposta();
+        tipoResposta2.setId(UUID.fromString("7dde8f7f-e50b-4ccd-8682-b34feee52206"));
+        tipoResposta2.setDescricao("Answer 2");
         tipoResposta2.setQuestao(questao1);
-        List<TipoResposta> tipoRespostas = new ArrayList<>();
+        List<AlternativaResposta> tipoRespostas = new ArrayList<>();
         tipoRespostas.add(tipoResposta1);
         tipoRespostas.add(tipoResposta2);
 
-        TipoResposta tipoResposta3 = new TipoResposta(3);
-        tipoResposta3.setResposta("Answer 3");
+        AlternativaResposta tipoResposta3 = new AlternativaResposta();
+        tipoResposta3.setId(UUID.fromString("38c7b15b-82cf-4606-8789-3be6336606f8"));
+        tipoResposta3.setDescricao("Answer 3");
         tipoResposta3.setQuestao(questao2);
-        TipoResposta tipoResposta4 = new TipoResposta(4);
-        tipoResposta4.setResposta("Answer 4");
+        AlternativaResposta tipoResposta4 = new AlternativaResposta();
+        tipoResposta4.setId(UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c"));
+        tipoResposta4.setDescricao("Answer 4");
         tipoResposta4.setQuestao(questao2);
-        List<TipoResposta> tipoRespostas2 = new ArrayList<>();
+        List<AlternativaResposta> tipoRespostas2 = new ArrayList<>();
         tipoRespostas2.add(tipoResposta3);
         tipoRespostas2.add(tipoResposta4);
         
-        questao1.setRespostas(tipoRespostas);
-        questao2.setRespostas(tipoRespostas2);
+        questao1.setAlternativasResposta(tipoRespostas);
+        questao2.setAlternativasResposta(tipoRespostas2);
 
         // Perform the method invocation
-        ModeloResponse response = modeloService.verModelo(1);
+        ModeloResponse response = modeloService.verModelo(modeloId);
 
         // Verify the expected behavior
-        assertEquals(1, response.getId());
+        assertEquals(modeloId, response.getId());
         assertEquals(2, response.getQuestoes().size());
-        assertEquals("Answer 1", response.getQuestoes().get(0).getRespostas().get(0).getResposta());
-        assertEquals("Answer 2", response.getQuestoes().get(0).getRespostas().get(1).getResposta());
+        assertEquals("Answer 1", response.getQuestoes().get(0).getRespostas().get(0).getDescricao());
+        assertEquals("Answer 2", response.getQuestoes().get(0).getRespostas().get(1).getDescricao());
 
         // Verify the interactions with mocked repositories
-        verify(modeloRepositorio, times(1)).findById(1);
+        verify(modeloRepositorio, times(1)).findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
         verifyNoMoreInteractions(modeloRepositorio);
     }
 
     @Test
     public void testListaTodosModelos() {
-
         List<Modelo> modelos = new ArrayList<>();
         Modelo modelo1 = new Modelo();
 
-        modelo1.setModeloNome("Modelo 1");
+        modelo1.setNome("Modelo 1");
         modelos.add(modelo1);
 
         Modelo modelo2 = new Modelo();
-        modelo2.setId(2);
-        modelo2.setModeloNome("Modelo 2");
+        modelo2.setId(UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c"));
+        modelo2.setNome("Modelo 2");
         modelos.add(modelo2);
+        
+        Page<Modelo> modelosPage = new PageImpl<>(modelos);
 
-        when(modeloRepositorio.findAll()).thenReturn(modelos);
-        List<ModeloListResponse> modeloResponses = modeloService.listaTodosModelos();
+        when(modeloRepositorio.findAll(PageRequest.of(1, 15))).thenReturn(modelosPage);
+        ModeloBuscaResponse modeloResponses = modeloService.listaTodosModelosResumido(1, 15);
 
-        assertEquals(modelos.size(), modeloResponses.size());
-        assertEquals(modelo1.getId(), modeloResponses.get(0).getId());
-        assertEquals(modelo1.getModeloNome(), modeloResponses.get(0).getNome());
-        assertEquals(modelo2.getId(), modeloResponses.get(1).getId());
-        assertEquals(modelo2.getModeloNome(), modeloResponses.get(1).getNome());
-        verify(modeloRepositorio, times(1)).findAll();
+        assertEquals(modelos.size(), modeloResponses.getData().size());
+        assertEquals(modelo1.getId(), modeloResponses.getData().get(0).getId());
+        assertEquals(modelo1.getNome(), modeloResponses.getData().get(0).getNome());
+        assertEquals(modelo2.getId(), modeloResponses.getData().get(1).getId());
+        assertEquals(modelo2.getNome(), modeloResponses.getData().get(1).getNome());
+        verify(modeloRepositorio, times(1)).findAll(PageRequest.of(1, 15));
     }
 
     @Test
     public void testdeletaModelo() {
         // Mock input data
-        int modeloId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         Modelo modelo1 = new Modelo();
         modelo1.setId(modeloId);
-        modelo1.setModeloNome("modelo 1");
+        modelo1.setNome("modelo 1");
+        modelo1.setQuestoes(Collections.emptyList());
 
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.of(modelo1));
 
@@ -232,7 +285,7 @@ public class ModeloServiceTest {
     @Test
     public void testDeletaModeloRetornaNull() {
 
-        int modeloId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         when(modeloRepositorio.findById(modeloId)).thenReturn(Optional.empty());
 
         ModeloAcaoResponse response = modeloService.deletaModelo(modeloId);
@@ -242,9 +295,9 @@ public class ModeloServiceTest {
     @Test
     public void testEditaModelo() {
         // Mock data
-        int modeloId = 1;
-        int questaoId = 1;
-        int tipoRespostaId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID questaoId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID tipoRespostaId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         String novoModeloNome = "Updated Model";
         String novaPergunta = "Updated Question";
         String novaResposta = "Updated Answer";
@@ -252,27 +305,32 @@ public class ModeloServiceTest {
         // Cria modelo
         Modelo modelo = new Modelo();
         modelo.setId(modeloId);
-        modelo.setModeloNome("Old Model");
+        modelo.setNome("Old Model");
 
         // Cria questão
-        Questao questao = new Questao(questaoId);
+        Questao questao = new Questao();
+        questao.setId(questaoId);
         questao.setPergunta("Old Question");
-        questao.setModelo(modelo);
+        QuestaoModelo questaoModelo = new QuestaoModelo();
+        questaoModelo.setQuestao(questao);
+        questaoModelo.setModelo(modelo);
+        questao.setModelos(Collections.singletonList(questaoModelo));
 
         // Cria tipo Resposta
-        TipoResposta tipoResposta = new TipoResposta(tipoRespostaId);
-        tipoResposta.setResposta("Old Answer");
+        AlternativaResposta tipoResposta = new AlternativaResposta();
+        tipoResposta.setId(tipoRespostaId);
+        tipoResposta.setDescricao("Old Answer");
         tipoResposta.setQuestao(questao);
 
         // Adiciona tipoResposta a questão
-        List<TipoResposta> respostas = new ArrayList<>();
+        List<AlternativaResposta> respostas = new ArrayList<>();
         respostas.add(tipoResposta);
-        questao.setRespostas(respostas);
+        questao.setAlternativasResposta(respostas);
 
         // Adiciona questão ao modelo
-        List<Questao> questoes = new ArrayList<>();
-        questoes.add(questao);
-        modelo.setPerguntas(questoes);
+        List<QuestaoModelo> questoes = new ArrayList<>();
+        questoes.add(questaoModelo);
+        modelo.setQuestoes(questoes);
 
         // Create the edit request
         List<QuestaoEditRequest> questaoEditRequests = new ArrayList<>();
@@ -282,13 +340,13 @@ public class ModeloServiceTest {
         questaoEditRequest.setPergunta(novaPergunta);
         questaoEditRequest.setObjetiva(true);
 
-        List<TipoRespostaEditRequest> tipoRespostaEditRequests = new ArrayList<>();
-        TipoRespostaEditRequest tipoRespostaEditRequest = new TipoRespostaEditRequest();
+        List<AlternativaRespostaEditRequest> tipoRespostaEditRequests = new ArrayList<>();
+        AlternativaRespostaEditRequest tipoRespostaEditRequest = new AlternativaRespostaEditRequest();
         tipoRespostaEditRequest.setId(tipoRespostaId);
         tipoRespostaEditRequest.setAcao("edit");
         tipoRespostaEditRequest.setResposta(novaResposta);
         tipoRespostaEditRequests.add(tipoRespostaEditRequest);
-        questaoEditRequest.setTipoRespostas(tipoRespostaEditRequests);
+        questaoEditRequest.setAlternativasResposta(tipoRespostaEditRequests);
 
         questaoEditRequests.add(questaoEditRequest);
 
@@ -301,7 +359,7 @@ public class ModeloServiceTest {
         when(questaoRepositorio.findById(questaoId)).thenReturn(Optional.of(questao));
         when(tipoRespostaRepositorio.findById(tipoRespostaId)).thenReturn(Optional.of(tipoResposta));
         when(questaoRepositorio.save(any(Questao.class))).thenReturn(questao);
-        when(tipoRespostaRepositorio.save(any(TipoResposta.class))).thenReturn(tipoResposta);
+        when(tipoRespostaRepositorio.save(any(AlternativaResposta.class))).thenReturn(tipoResposta);
         when(modeloRepositorio.save(any(Modelo.class))).thenReturn(modelo);
 
         ModeloAcaoResponse response = modeloService.editaModelo(modeloEditRequest);
@@ -310,7 +368,7 @@ public class ModeloServiceTest {
         verify(questaoRepositorio).findById(questaoId);
         verify(tipoRespostaRepositorio).findById(tipoRespostaId);
         verify(questaoRepositorio).save(any(Questao.class));
-        verify(tipoRespostaRepositorio).save(any(TipoResposta.class));
+        verify(tipoRespostaRepositorio).save(any(AlternativaResposta.class));
         verify(modeloRepositorio).save(any(Modelo.class));
 
         ModeloResponse modeloResponse = response.getModelo();
@@ -322,43 +380,48 @@ public class ModeloServiceTest {
         assertEquals(questaoId, questaoResponse.getId());
         assertEquals(novaPergunta, questaoResponse.getPergunta());
 
-        TipoRespostaResponse tipoRespostaResponse = questaoResponse.getRespostas().get(0);
+        AlternativaRespostaResponse tipoRespostaResponse = questaoResponse.getRespostas().get(0);
         assertEquals(tipoRespostaId, tipoRespostaResponse.getId());
-        assertEquals(novaResposta, tipoRespostaResponse.getResposta());
+        assertEquals(novaResposta, tipoRespostaResponse.getDescricao());
     }
 
     @Test
     public void testEditaModeloDeletaQuestao() {
         // Mock data
-        int modeloId = 1;
-        int questaoId = 1;
-        int tipoRespostaId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID questaoId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID tipoRespostaId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         String novoModeloNome = "Updated Model";
 
         // Cria modelo
         Modelo modelo = new Modelo();
         modelo.setId(modeloId);
-        modelo.setModeloNome("Old Model");
+        modelo.setNome("Old Model");
 
         // Cria questão
-        Questao questao = new Questao(questaoId);
+        Questao questao = new Questao();
+        questao.setId(questaoId);
+        QuestaoModelo questaoModelo = new QuestaoModelo();
+        questaoModelo.setQuestao(questao);
+        questaoModelo.setModelo(modelo);
         questao.setPergunta("Old Question");
-        questao.setModelo(modelo);
+        questao.setModelos(Collections.singletonList(questaoModelo));
 
         // Cria tipo Resposta
-        TipoResposta tipoResposta = new TipoResposta(tipoRespostaId);
-        tipoResposta.setResposta("Old Answer");
+        AlternativaResposta tipoResposta = new AlternativaResposta();
+        tipoResposta.setId(tipoRespostaId);
+        tipoResposta.setDescricao("Old Answer");
         tipoResposta.setQuestao(questao);
 
         // Adiciona tipoResposta a questão
-        List<TipoResposta> respostas = new ArrayList<>();
+        List<AlternativaResposta> respostas = new ArrayList<>();
         respostas.add(tipoResposta);
-        questao.setRespostas(respostas);
+        questao.setAlternativasResposta(respostas);
 
         // Adiciona questão ao modelo
-        List<Questao> questoes = new ArrayList<>();
-        questoes.add(questao);
-        modelo.setPerguntas(questoes);
+        List<QuestaoModelo> questoes = new ArrayList<>();
+        questoes.add(questaoModelo);
+        modelo.setQuestoes(questoes);
 
         // Cria edit request
         List<QuestaoEditRequest> questaoEditRequests = new ArrayList<>();
@@ -390,39 +453,43 @@ public class ModeloServiceTest {
 
         assertTrue(modeloResponse.getQuestoes().isEmpty());
     }
-        @Test
-        public void testEditaModeloDeleteTipoResposta() {
+      @Test
+      public void testEditaModeloDeleteAlternativaResposta() {
         // Mock data
-        int modeloId = 1;
-        int questaoId = 1;
-        int tipoRespostaId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID questaoId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+        UUID tipoRespostaId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
         String novoModeloNome = "Updated Model";
 
         // Cria modelo
         Modelo modelo = new Modelo();
         modelo.setId(modeloId);
-        modelo.setModeloNome("Old Model");
+        modelo.setNome("Old Model");
 
         // Cria questão
-        Questao questao = new Questao(questaoId);
+        Questao questao = new Questao();
+        questao.setId(questaoId);
+        QuestaoModelo questaoModelo = new QuestaoModelo();
+        questaoModelo.setQuestao(questao);
+        questaoModelo.setModelo(modelo);
         questao.setPergunta("Old Question");
-        questao.setModelo(modelo);
-        questao.setObjetiva(false);
+        questao.setModelos(Collections.singletonList(questaoModelo));
 
         // Cria tipo Resposta
-        TipoResposta tipoResposta = new TipoResposta(tipoRespostaId);
-        tipoResposta.setResposta("Old Answer");
+        AlternativaResposta tipoResposta = new AlternativaResposta();
+        tipoResposta.setId(tipoRespostaId);
+        tipoResposta.setDescricao("Old Answer");
         tipoResposta.setQuestao(questao);
 
         // Adiciona tipoResposta a questão
-        List<TipoResposta> respostas = new ArrayList<>();
+        List<AlternativaResposta> respostas = new ArrayList<>();
         respostas.add(tipoResposta);
-        questao.setRespostas(respostas);
+        questao.setAlternativasResposta(respostas);
 
         // Adiciona questão ao modelo
-        List<Questao> questoes = new ArrayList<>();
-        questoes.add(questao);
-        modelo.setPerguntas(questoes);
+        List<QuestaoModelo> questoes = new ArrayList<>();
+        questoes.add(questaoModelo);
+        modelo.setQuestoes(questoes);
 
         // Create the edit request
         List<QuestaoEditRequest> questaoEditRequests = new ArrayList<>();
@@ -432,13 +499,13 @@ public class ModeloServiceTest {
         questaoEditRequest.setObjetiva(false);
         questaoEditRequests.add(questaoEditRequest);
 
-        List<TipoRespostaEditRequest> tipoRespostaEditRequests = new ArrayList<>();
-        TipoRespostaEditRequest tipoRespostaEditRequest = new TipoRespostaEditRequest();
+        List<AlternativaRespostaEditRequest> tipoRespostaEditRequests = new ArrayList<>();
+        AlternativaRespostaEditRequest tipoRespostaEditRequest = new AlternativaRespostaEditRequest();
         tipoRespostaEditRequest.setId(tipoRespostaId);
         tipoRespostaEditRequest.setAcao("delete");
         tipoRespostaEditRequests.add(tipoRespostaEditRequest);
 
-        questaoEditRequest.setTipoRespostas(tipoRespostaEditRequests);
+        questaoEditRequest.setAlternativasResposta(tipoRespostaEditRequests);
         questaoEditRequests.add(questaoEditRequest);
 
         ModeloEditRequest modeloEditRequest = new ModeloEditRequest();
@@ -451,7 +518,7 @@ public class ModeloServiceTest {
         when(questaoRepositorio.findById(questaoId)).thenReturn(Optional.of(questao));
         when(tipoRespostaRepositorio.findById(tipoRespostaId)).thenReturn(Optional.of(tipoResposta));
         when(questaoRepositorio.save(any(Questao.class))).thenReturn(questao);
-        when(tipoRespostaRepositorio.save(any(TipoResposta.class))).thenReturn(tipoResposta);
+        when(tipoRespostaRepositorio.save(any(AlternativaResposta.class))).thenReturn(tipoResposta);
         when(modeloRepositorio.save(any(Modelo.class))).thenReturn(modelo);
 
         // Perform the edit operation
@@ -476,7 +543,7 @@ public class ModeloServiceTest {
 
     @Test
     public void testEditaModeloReturnNull(){
-        int modeloId = 1;
+        UUID modeloId = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
 
         ModeloEditRequest modeloEdit = new ModeloEditRequest();
         modeloEdit.setId(modeloId);
@@ -487,6 +554,46 @@ public class ModeloServiceTest {
         assertNull(acao);
     }
 
+    @Test
+    public void testDeletarModeloQuestaoSemRelacionamento() {
+      Questao questao = new Questao();
+      questao.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      questao.setAlternativasResposta(Collections.emptyList());
+      Modelo modelo = new Modelo();
+      modelo.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      QuestaoModelo questaoModelo = new QuestaoModelo();
+      questaoModelo.setModelo(modelo);
+      questaoModelo.setQuestao(questao);
+      List<QuestaoModelo> questoes = new ArrayList<>();
+      questoes.add(questaoModelo);
+      modelo.setQuestoes(questoes);
+      when(questaoModeloRepositorio.findByModelo(any(Modelo.class))).thenReturn(Collections.emptyList());
+      when(questaoModeloRepositorio.findByQuestao(any(Questao.class))).thenReturn(Collections.emptyList());
+      when(modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))).thenReturn(Optional.of(modelo));
+      
+      modeloService.deletaModelo(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      
+      verify(questaoRepositorio, times(1)).delete(any(Questao.class));
+    }
 
+    @Test
+    public void testDeletarModeloQuestaoComRelacionamento() {
+      Questao questao = new Questao();
+      questao.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      questao.setAlternativasResposta(Collections.emptyList());
+      Modelo modelo = new Modelo();
+      modelo.setId(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      QuestaoModelo questaoModelo = new QuestaoModelo();
+      questaoModelo.setModelo(modelo);
+      questaoModelo.setQuestao(questao);
+      List<QuestaoModelo> questoes = new ArrayList<>();
+      questoes.add(questaoModelo);
+      modelo.setQuestoes(questoes);
+      when(questaoModeloRepositorio.findByQuestao(any(Questao.class))).thenReturn(questoes);
+      when(modeloRepositorio.findById(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))).thenReturn(Optional.of(modelo));
 
+      modeloService.deletaModelo(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"));
+      
+      verify(questaoRepositorio, times(0)).delete(any(Questao.class));
+    }
 }

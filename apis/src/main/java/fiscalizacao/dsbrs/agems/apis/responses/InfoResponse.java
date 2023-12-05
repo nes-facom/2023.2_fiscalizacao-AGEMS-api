@@ -1,7 +1,14 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeDeserializer;
+import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -23,11 +30,10 @@ public class InfoResponse extends Response {
     title = "Id",
     description = "Id do Usuário",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int id;
+  private UUID id;
 
   @Schema(title = "Nome",
     description = "Nome de Usuário",
@@ -75,4 +81,16 @@ public class InfoResponse extends Response {
   )
   @JsonProperty("cargo")
   private String cargo;
+
+   @Schema(
+    title = "Data de criação",
+    description = "Data de criação do usuário",
+    required = true,
+    type = "number",
+    example = "1692840670072"
+  )
+  @JsonProperty("data_criacao")
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  private LocalDateTime dataCriacao;
 }

@@ -1,21 +1,7 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
-import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
-import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
+import java.util.UUID;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -26,7 +12,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import fiscalizacao.dsbrs.agems.apis.requests.ModeloEditRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.ModeloRegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloAcaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloBuscaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloListResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ModeloResumidoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
+import fiscalizacao.dsbrs.agems.apis.service.ModeloService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @Tag(name = "Modelo", description = "APIs de Gerenciamento dos Modelos")
 @RestController
@@ -47,6 +54,7 @@ public class ModeloController {
   @SecurityRequirement(name = "BEARER")
   @PostMapping(path = "/add", produces = "application/json", consumes = "application/json")
   public ResponseEntity<?> adicionaModelo(
+      HttpServletRequest request,
       @RequestBody ModeloRegisterRequest novoModelo) {
     try {
       if (novoModelo.getNome().length() == 0) {
@@ -60,7 +68,7 @@ public class ModeloController {
                     .build());
       }
 
-      ModeloResponse modeloResponse = SERVICO_MODELO.cadastraModelo(novoModelo);
+      Response modeloResponse = SERVICO_MODELO.cadastraModelo(request, novoModelo);
       return ResponseEntity.status(201).body(modeloResponse);
     } catch (
         DataIntegrityViolationException
@@ -98,7 +106,7 @@ public class ModeloController {
   @SecurityRequirement(name = "BEARER")
   @DeleteMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<?> deletaModelo(
-      @PathVariable(value = "id") int modelo) {
+      @PathVariable(value = "id") UUID modelo) {
     try {
       ModeloAcaoResponse modeloResponse = SERVICO_MODELO.deletaModelo(modelo);
       if (modeloResponse == null) {
@@ -139,20 +147,73 @@ public class ModeloController {
   }
 
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Operação bem sucedida. Retorna um conjunto de Modelos", content = @Content(schema = @Schema(implementation = ModeloListResponse.class))),
+      @ApiResponse(responseCode = "200", description = "Operação bem sucedida. Retorna um conjunto de Modelos", content = @Content(schema = @Schema(implementation = ModeloResponse.class))),
+      @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+      @ApiResponse(responseCode = "500", description = "Erro de Servidor", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+      @ApiResponse(responseCode = "404", description = "Não há modelos cadastrados", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+      @ApiResponse(responseCode = "403", description = "Acesso Negado!", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+      @ApiResponse(responseCode = "401", description = "Não autorizado - Token Expirado ", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
+  })
+  @Operation(summary = "Listar todos os modelos detalhadamente")
+  @SecurityRequirement(name = "BEARER")
+  @GetMapping(path = "/", produces = "application/json")
+  public ResponseEntity<?> listaModelos() {
+    try {
+      ModeloListResponse modeloListResponse = SERVICO_MODELO.listaTodosModelos();
+      if (modeloListResponse.getData().size() == 0) {
+        return ResponseEntity
+            .status(404)
+            .body(
+                ErroResponse
+                    .builder()
+                    .status(404)
+                    .erro("Não há modelos cadastrados")
+                    .build());
+      }
+      return ResponseEntity.status(200).body(modeloListResponse);
+    } catch (
+        DataIntegrityViolationException
+        | IllegalArgumentException
+        | NullPointerException
+        | HttpMessageNotReadableException e) {
+      return ResponseEntity
+          .badRequest()
+          .body(
+              ErroResponse
+                  .builder()
+                  .status(400)
+                  .erro("Bad Request:" + e.getMessage())
+                  .build());
+    } catch (RuntimeException e) {
+      return ResponseEntity
+          .status(500)
+          .body(
+              ErroResponse
+                  .builder()
+                  .status(500)
+                  .erro("Internal Server Error:" + e.getMessage())
+                  .build());
+    }
+  }
+  
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Operação bem sucedida. Retorna um conjunto de Modelos", content = @Content(schema = @Schema(implementation = ModeloResumidoResponse.class))),
       @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "500", description = "Erro de Servidor", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "404", description = "N\u00E3o h\u00E1 modelos cadastrados", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "403", description = "Acesso Negado!", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
       @ApiResponse(responseCode = "401", description = "Não autorizado - Token Expirado ", content = @Content(schema = @Schema(implementation = ErroResponse.class))),
   })
-  @Operation(summary = "Listar todos os modelos")
+  @Operation(summary = "Listar todos os modelos resumidamente")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/todos", produces = "application/json")
-  public ResponseEntity<?> listaModelos() {
+  public ResponseEntity<?> listaModelosResumido(
+      @RequestParam(required = false, defaultValue = "0") int pagina,
+      @RequestParam(required = false, defaultValue = "15") int quantidade
+  ) {
     try {
-      List<ModeloListResponse> modeloListResponse = SERVICO_MODELO.listaTodosModelos();
-      if (modeloListResponse.size() == 0) {
+      ModeloBuscaResponse modeloListResponse = SERVICO_MODELO.listaTodosModelosResumido(pagina, quantidade);
+      if (modeloListResponse.getData().size() == 0) {
         return ResponseEntity
             .status(404)
             .body(
@@ -198,9 +259,9 @@ public class ModeloController {
   @Operation(summary = "Listar um modelo")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/{id}", produces = "application/json")
-  public ResponseEntity<?> verModelo(@PathVariable(name = "id") int id) {
+  public ResponseEntity<?> verModelo(@PathVariable(name = "id") UUID id) {
     try {
-      if (id >= 0) {
+      if (id != null) {
         ModeloResponse modeloResponse = SERVICO_MODELO.verModelo(id);
         if (modeloResponse == null) {
           return ResponseEntity

@@ -2,23 +2,16 @@ package fiscalizacao.dsbrs.agems.apis;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
-import fiscalizacao.dsbrs.agems.apis.dominio.Token;
-import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
-import fiscalizacao.dsbrs.agems.apis.repositorio.TokenRepositorio;
-import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
-import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
-import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
-import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.Response;
-import fiscalizacao.dsbrs.agems.apis.service.JwtService;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -28,7 +21,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
+import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
+import fiscalizacao.dsbrs.agems.apis.dominio.Token;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
+import fiscalizacao.dsbrs.agems.apis.repositorio.TokenRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
+import fiscalizacao.dsbrs.agems.apis.requests.AuthenticationRequest;
+import fiscalizacao.dsbrs.agems.apis.requests.RegisterRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.AuthenticationResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
+import fiscalizacao.dsbrs.agems.apis.service.JwtService;
+
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class JWTServiceTest {
 
   @Mock
@@ -64,17 +73,18 @@ public class JWTServiceTest {
     registerRequest.setNome("Julia Alves Corazza");
     registerRequest.setEmail("juliaacorazza@gmail.com");
     registerRequest.setSenha("fiscaliza-agems");
-    registerRequest.setCargo("Analista de Regulação");
+    registerRequest.setCargo(Cargo.ANALISTA_DE_REGULACAO);
+    registerRequest.setDataCriacao(LocalDateTime.of(2000, 7, 12, 0, 0, 0));
 
     Usuario savedUsuario = Usuario
       .builder()
-      .id(1)
+      .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
       .nome(registerRequest.getNome())
       .email(registerRequest.getEmail())
       .senha("$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6")
       .cargo(registerRequest.getCargo())
       .funcao(Papel.USER)
-      .dataCriacao(LocalDate.now())
+      .dataCriacao(LocalDateTime.now())
       .build();
     when(usuarioRepositorio.findByEmail(registerRequest.getEmail()))
       .thenReturn(java.util.Optional.empty());
@@ -103,20 +113,21 @@ public class JWTServiceTest {
   @Test
   public void testCadastrarShouldReturnConflict() {
     RegisterRequest registerRequest = new RegisterRequest();
+    registerRequest.setDataCriacao(LocalDateTime.now());
     registerRequest.setNome("Julia Alves Corazza");
     registerRequest.setEmail("juliaacorazza@gmail.com");
     registerRequest.setSenha("fiscaliza-agems");
-    registerRequest.setCargo("Analista de Regulação");
+    registerRequest.setCargo(Cargo.ANALISTA_DE_REGULACAO);
 
     Usuario usuarioEncontrado = Usuario
       .builder()
-      .id(1)
+      .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
       .nome(registerRequest.getNome())
       .email(registerRequest.getEmail())
       .senha("$2a$10$3VCBCGty4I1OTx.gzi4c7.0IT0J9S2qZtBRmTyS3kQ8mYabar3Qv6")
       .cargo(registerRequest.getCargo())
       .funcao(Papel.USER)
-      .dataCriacao(LocalDate.now())
+      .dataCriacao(LocalDateTime.now())
       .build();
     when(usuarioRepositorio.findByEmail(registerRequest.getEmail()))
       .thenReturn(java.util.Optional.of(usuarioEncontrado));
@@ -137,13 +148,13 @@ public class JWTServiceTest {
 
     UserDetails userDetails = Usuario
       .builder()
-      .id(1)
+      .id(UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058"))
       .nome("Julia Alves Corazza")
       .email("juliaacorazza@gmail.com")
       .senha("$2a$10$TzZ2hgNnjdUW13juIwr/Xu/vKc.PoONxvSI.ljWJYBuKX7UVfd4Yy")
-      .cargo("Analista de Regulação")
+      .cargo(Cargo.ANALISTA_DE_REGULACAO)
       .funcao(Papel.USER)
-      .dataCriacao(LocalDate.now())
+      .dataCriacao(LocalDateTime.now())
       .build();
 
     when(authenticationManager.authenticate(any())).thenReturn(null);

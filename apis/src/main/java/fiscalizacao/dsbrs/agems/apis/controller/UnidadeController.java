@@ -1,5 +1,21 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
@@ -12,20 +28,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Unidade", description = "APIs de Gerenciamento dos Unidades")
 @RestController
@@ -82,9 +86,11 @@ public class UnidadeController {
     consumes = "application/json"
   )
   public ResponseEntity<Response> adicionaUnidade(
+    HttpServletRequest request,
     @RequestBody UnidadeRequest unidadeRegisterRequest
   ) {
     Response unidadeResponse = SERVICO_UNIDADE.cadastraUnidade(
+      request,
       unidadeRegisterRequest
     );
     if (unidadeResponse instanceof ErroResponse) {
@@ -177,11 +183,11 @@ public class UnidadeController {
       ),
     }
   )
-  @Operation(summary = "Ver uma unidade específica.")
+  @Operation(summary = "Ver uma unidadee específica.")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<Response> verUnidade(
-    @PathVariable(value = "id") String idUnidade
+    @PathVariable(value = "id") UUID idUnidade
   ) {
     Response response = SERVICO_UNIDADE.verUnidade(idUnidade);
     if (response instanceof ErroResponse) {
@@ -227,7 +233,7 @@ public class UnidadeController {
   @SecurityRequirement(name = "BEARER")
   @DeleteMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<?> deletarunidade(
-    @PathVariable(value = "id") String id
+    @PathVariable(value = "id") UUID id
   ) {
     Response response = SERVICO_UNIDADE.deletarUnidade(id);
     if (response instanceof ErroResponse) {
@@ -238,7 +244,7 @@ public class UnidadeController {
     Map<String, Object> responseBody = new HashMap<>();
     responseBody.put("ação", "Unidade deletada com sucesso");
     responseBody.put("id", ((UnidadeResponse) response).getId());
-    responseBody.put("idUnidade", ((UnidadeResponse) response).getIdUnidade());
+    responseBody.put("idUnidade", ((UnidadeResponse) response).getId());
     responseBody.put("endereço", ((UnidadeResponse) response).getEndereco());
     return ResponseEntity.ok().body(responseBody);
   }
@@ -285,7 +291,7 @@ public class UnidadeController {
   @SecurityRequirement(name = "BEARER")
   @PutMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<Response> editarUnidade(
-    @PathVariable(value = "id") String idUnidade,
+    @PathVariable(value = "id") UUID idUnidade,
     @RequestBody UnidadeRequest unidadeRequest
   ) {
     Response response = SERVICO_UNIDADE.editarUnidade(

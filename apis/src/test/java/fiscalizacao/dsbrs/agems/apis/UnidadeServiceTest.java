@@ -1,20 +1,22 @@
 package fiscalizacao.dsbrs.agems.apis;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
-import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
-import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
-import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.Response;
-import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
-import fiscalizacao.dsbrs.agems.apis.service.UnidadeService;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,52 +24,109 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import fiscalizacao.dsbrs.agems.apis.dominio.Papel;
+import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
+import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
+import fiscalizacao.dsbrs.agems.apis.dominio.enums.Cargo;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
+import fiscalizacao.dsbrs.agems.apis.requests.UnidadeRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.Response;
+import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
+import fiscalizacao.dsbrs.agems.apis.service.UnidadeService;
+import jakarta.servlet.http.HttpServletRequest;
+
 @ExtendWith(MockitoExtension.class)
 public class UnidadeServiceTest {
 
   @Mock
   private UnidadeRepositorio unidadeRepositorio;
 
+  @Mock
+  private UsuarioRepositorio usuarioRepositorio;
+
   @InjectMocks
   private UnidadeService unidadeService;
+  
+  private Usuario usuario;
 
+  @BeforeEach
+  public void beforeEach() {
+    LocalDateTime now = LocalDateTime.now();
+    usuario = new Usuario();
+    usuario.setNome("J\u00FAlia Alves Corazza");
+    usuario.setEmail("juliaacorazza@gmail.com");
+    usuario.setSenha(
+      "$2a$10$q/Dxa6TFXHnGBekmlmiW/ujV6HttSt/TlEADmu9Ga6JEm/zhLjiQu"
+    );
+    usuario.setDataCriacao(now);
+    usuario.setFuncao(Papel.USER);
+    usuario.setCargo(Cargo.COORDENADOR);
+  }
+  
   @Test
   public void adicionaUnidadeShouldReturnCreated() {
-    UnidadeRequest request = new UnidadeRequest();
-    request.setIdUnidade("123");
-    request.setEndereco("Sample Address");
-    request.setTipo("Tratamento de Esgoto");
+    
+    HttpServletRequest request = mock(HttpServletRequest.class);
 
-    when(unidadeRepositorio.findByIdUnidade("123"))
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+    when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
+    
+    UnidadeRequest unidadeRequest = new UnidadeRequest();
+    
+    unidadeRequest.setNome("123");
+    unidadeRequest.setEndereco("Sample Address");
+    unidadeRequest.setTipo("Tratamento de Esgoto");
+
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+    
+    when(unidadeRepositorio.findByNome("123"))
       .thenReturn(java.util.Optional.empty());
     when(unidadeRepositorio.save(any(Unidade.class)))
       .thenReturn(
-        new Unidade(1, "123", "Sample Address", "Tratamento de Esgoto")
+          Unidade.builder()
+          .id(id)
+          .nome("123")
+          .endereco("Sample Address")
+          .tipo("Tratamento de Esgoto")
+          .build()
       );
 
-    Response response = unidadeService.cadastraUnidade(request);
+    Response response = unidadeService.cadastraUnidade(request, unidadeRequest);
 
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
-    assertEquals(1, unidadeResponse.getId());
-    assertEquals("123", unidadeResponse.getIdUnidade());
+    assertEquals(id, unidadeResponse.getId());
+    assertEquals("123", unidadeResponse.getNome());
     assertEquals("Sample Address", unidadeResponse.getEndereco());
   }
 
   @Test
   public void adicionaUnidadeShouldReturnConflict() {
-    UnidadeRequest request = new UnidadeRequest();
-    request.setIdUnidade("123");
-    request.setEndereco("Sample Address");
-    request.setTipo("Tratamento de Esgoto");
+    
+    HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+    when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
+    
+    UnidadeRequest unidadeRequest = new UnidadeRequest();
+    
+    unidadeRequest.setNome("123");
+    unidadeRequest.setEndereco("Sample Address");
+    unidadeRequest.setTipo("Tratamento de Esgoto");
 
     Unidade existingUnidade = new Unidade();
-    existingUnidade.setIdUnidade("123");
+    existingUnidade.setNome("123");
 
-    when(unidadeRepositorio.findByIdUnidade("123"))
+    when(unidadeRepositorio.findByNome("123"))
       .thenReturn(java.util.Optional.of(existingUnidade));
 
-    Response response = unidadeService.cadastraUnidade(request);
+    Response response = unidadeService.cadastraUnidade(request, unidadeRequest);
 
     assertTrue(response instanceof ErroResponse);
     ErroResponse erroResponse = (ErroResponse) response;
@@ -77,8 +136,17 @@ public class UnidadeServiceTest {
 
   @Test
   public void testAdicionaUnidadeReturnBadRequest() {
-    UnidadeRequest request = new UnidadeRequest();
-    Response response = unidadeService.cadastraUnidade(request);
+    
+    HttpServletRequest request = mock(HttpServletRequest.class);
+
+    when(request.getAttribute("EMAIL_USUARIO"))
+      .thenReturn("juliaacorazza@gmail.com");
+    when(usuarioRepositorio.findByEmail("juliaacorazza@gmail.com"))
+      .thenReturn(Optional.of(usuario));
+    
+    UnidadeRequest unidadeRequest = new UnidadeRequest();
+    
+    Response response = unidadeService.cadastraUnidade(request, unidadeRequest);
 
     assertTrue(response instanceof ErroResponse);
     ErroResponse erroResponse = (ErroResponse) response;
@@ -91,44 +159,30 @@ public class UnidadeServiceTest {
 
   @Test
   public void testVerUnidade() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
 
-    Response response = unidadeService.verUnidade(unidade.getIdUnidade());
+    Response response = unidadeService.verUnidade(id);
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
     assertEquals(unidade.getId(), unidadeResponse.getId());
-    assertEquals(unidade.getIdUnidade(), unidadeResponse.getIdUnidade());
+    assertEquals(unidade.getNome(), unidadeResponse.getNome());
     assertEquals(unidade.getTipo(), unidadeResponse.getTipo());
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
 
   @Test
-  public void testVerUnidadeIdInvalido() {
-    String id = "invalidId";
-    Response response = unidadeService.verUnidade(id);
-
-    assertTrue(response instanceof ErroResponse);
-    ErroResponse erroResponse = (ErroResponse) response;
-    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
-    assertEquals(
-      "Envie o id Num\u00E9rico da Unidade!",
-      erroResponse.getErro()
-    );
-  }
-
-  @Test
   public void testVerUnidadeNaoExiste() {
-    String idUnidade = "123";
-    when(unidadeRepositorio.findById(Integer.parseInt(idUnidade)))
+    UUID idUnidade = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
+    when(unidadeRepositorio.findById(idUnidade))
       .thenReturn(Optional.empty());
 
     Response response = unidadeService.verUnidade(idUnidade);
@@ -140,44 +194,30 @@ public class UnidadeServiceTest {
 
   @Test
   public void testDeleteUnidade() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
 
-    Response response = unidadeService.deletarUnidade(unidade.getIdUnidade());
+    Response response = unidadeService.deletarUnidade(id);
     assertTrue(response instanceof UnidadeResponse);
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
     assertEquals(unidade.getId(), unidadeResponse.getId());
-    assertEquals(unidade.getIdUnidade(), unidadeResponse.getIdUnidade());
+    assertEquals(unidade.getNome(), unidadeResponse.getNome());
     assertEquals(unidade.getTipo(), unidadeResponse.getTipo());
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
 
   @Test
-  public void testDeleteUnidadeIdInvalido() {
-    String id = "invalidId";
-    Response response = unidadeService.deletarUnidade(id);
-
-    assertTrue(response instanceof ErroResponse);
-    ErroResponse erroResponse = (ErroResponse) response;
-    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
-    assertEquals(
-      "Envie o id Num\u00E9rico da Unidade!",
-      erroResponse.getErro()
-    );
-  }
-
-  @Test
   public void testDeleteUnidadeNaoExiste() {
-    String idUnidade = "123";
-    when(unidadeRepositorio.findById(Integer.parseInt(idUnidade)))
+    UUID idUnidade = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
+    when(unidadeRepositorio.findById(idUnidade))
       .thenReturn(Optional.empty());
 
     Response response = unidadeService.deletarUnidade(idUnidade);
@@ -188,24 +228,9 @@ public class UnidadeServiceTest {
   }
 
   @Test
-  public void testEditUnidadeIdInvalido() {
-    String id = "invalidId";
-    UnidadeRequest unidade = new UnidadeRequest();
-    Response response = unidadeService.editarUnidade(id, unidade);
-
-    assertTrue(response instanceof ErroResponse);
-    ErroResponse erroResponse = (ErroResponse) response;
-    assertEquals(HttpStatus.BAD_REQUEST.value(), erroResponse.getStatus());
-    assertEquals(
-      "Envie o id Num\u00E9rico da Unidade!",
-      erroResponse.getErro()
-    );
-  }
-
-  @Test
   public void testEditUnidadeNaoExiste() {
-    String idUnidade = "123";
-    when(unidadeRepositorio.findById(Integer.parseInt(idUnidade)))
+    UUID idUnidade = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
+    when(unidadeRepositorio.findById(idUnidade))
       .thenReturn(Optional.empty());
 
     UnidadeRequest unidade = new UnidadeRequest();
@@ -219,20 +244,20 @@ public class UnidadeServiceTest {
 
   @Test
   public void testEditUnidadeEmptyRequest() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
     UnidadeRequest unidadeRequest = new UnidadeRequest();
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
 
     Response response = unidadeService.editarUnidade(
-      unidade.getIdUnidade(),
+      id,
       unidadeRequest
     );
     assertTrue(response instanceof ErroResponse);
@@ -246,22 +271,22 @@ public class UnidadeServiceTest {
 
   @Test
   public void testEditUnidadeApenasEndereco() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setEndereco("new Address");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
     when(unidadeRepositorio.save(any(Unidade.class))).thenReturn(unidade);
 
     Response response = unidadeService.editarUnidade(
-      unidade.getIdUnidade(),
+      id,
       unidadeRequest
     );
 
@@ -269,37 +294,37 @@ public class UnidadeServiceTest {
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
     assertEquals(unidade.getId(), unidadeResponse.getId());
-    assertEquals(unidade.getIdUnidade(), unidadeResponse.getIdUnidade());
+    assertEquals(unidade.getNome(), unidadeResponse.getNome());
     assertEquals(unidade.getTipo(), unidadeResponse.getTipo());
     assertEquals(unidadeRequest.getEndereco(), unidadeResponse.getEndereco());
   }
 
   @Test
   public void testEditUnidadeApenasIdUnidadeJaExiste() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
-    int id2 = 2;
+    UUID id2 = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
     Unidade unidade2 = new Unidade();
     unidade.setId(id2);
-    unidade.setIdUnidade("1234");
+    unidade.setNome("1234");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    unidadeRequest.setIdUnidade("1234");
+    unidadeRequest.setNome("1234");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
-    when(unidadeRepositorio.findByIdUnidade(unidadeRequest.getIdUnidade()))
+    when(unidadeRepositorio.findByNome(unidadeRequest.getNome()))
       .thenReturn(Optional.of(unidade2));
 
     Response response = unidadeService.editarUnidade(
-      unidade.getIdUnidade(),
+      id,
       unidadeRequest
     );
 
@@ -314,22 +339,22 @@ public class UnidadeServiceTest {
 
   @Test
   public void testEditUnidadeApenasIdUnidade() {
-    int id = 1;
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     Unidade unidade = new Unidade();
     unidade.setId(id);
-    unidade.setIdUnidade("123");
+    unidade.setNome("123");
     unidade.setEndereco("Sample Address");
     unidade.setTipo("Tratamento de Esgoto");
 
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    unidadeRequest.setIdUnidade("1234");
+    unidadeRequest.setNome("1234");
 
-    when(unidadeRepositorio.findById(Integer.parseInt(unidade.getIdUnidade())))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(unidade));
     when(unidadeRepositorio.save(any(Unidade.class))).thenReturn(unidade);
 
     Response response = unidadeService.editarUnidade(
-      unidade.getIdUnidade(),
+      id,
       unidadeRequest
     );
 
@@ -337,7 +362,7 @@ public class UnidadeServiceTest {
     UnidadeResponse unidadeResponse = (UnidadeResponse) response;
 
     assertEquals(unidade.getId(), unidadeResponse.getId());
-    assertEquals(unidadeRequest.getIdUnidade(), unidadeResponse.getIdUnidade());
+    assertEquals(unidadeRequest.getNome(), unidadeResponse.getNome());
     assertEquals(unidade.getTipo(), unidadeResponse.getTipo());
     assertEquals(unidade.getEndereco(), unidadeResponse.getEndereco());
   }
@@ -345,8 +370,7 @@ public class UnidadeServiceTest {
   @Test
   public void testEditarUnidade_ExistingUnidade_UpdatesFields() {
     // Arrange
-    int id = 1;
-    String idString = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setEndereco("New Address");
 
@@ -360,7 +384,7 @@ public class UnidadeServiceTest {
       .thenReturn(existingUnidade);
 
     // Act
-    Response response = unidadeService.editarUnidade(idString, unidadeRequest);
+    Response response = unidadeService.editarUnidade(id, unidadeRequest);
 
     // Assert
     assertTrue(response instanceof UnidadeResponse);
@@ -376,15 +400,14 @@ public class UnidadeServiceTest {
   @Test
   public void testEditarUnidade_NonExistingUnidade_ReturnsErroResponse() {
     // Arrange
-    int id = 1;
-    String idString = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setEndereco("New Address");
 
     when(unidadeRepositorio.findById(id)).thenReturn(Optional.empty());
 
     // Act
-    Response response = unidadeService.editarUnidade(idString, unidadeRequest);
+    Response response = unidadeService.editarUnidade(id, unidadeRequest);
 
     // Assert
     assertTrue(response instanceof ErroResponse);
@@ -399,14 +422,16 @@ public class UnidadeServiceTest {
   @Test
   public void testListarUnidades_ReturnsListOfUnidadeResponses() {
     // Arrange
+    UUID id1 = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     List<Unidade> unidades = new ArrayList<>();
     Unidade unidade1 = new Unidade();
-    unidade1.setId(1);
+    unidade1.setId(id1);
     unidade1.setEndereco("Address 1");
     unidade1.setTipo("Type 1");
     unidades.add(unidade1);
+    UUID id2 = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
     Unidade unidade2 = new Unidade();
-    unidade2.setId(2);
+    unidade2.setId(id2);
     unidade2.setEndereco("Address 2");
     unidade2.setTipo("Type 2");
     unidades.add(unidade2);
@@ -419,11 +444,11 @@ public class UnidadeServiceTest {
     // Assert
     assertEquals(2, unidadeResponses.size());
     UnidadeResponse response1 = unidadeResponses.get(0);
-    assertEquals(1, response1.getId());
+    assertEquals(id1, response1.getId());
     assertEquals("Address 1", response1.getEndereco());
     assertEquals("Type 1", response1.getTipo());
     UnidadeResponse response2 = unidadeResponses.get(1);
-    assertEquals(2, response2.getId());
+    assertEquals(id2, response2.getId());
     assertEquals("Address 2", response2.getEndereco());
     assertEquals("Type 2", response2.getTipo());
 
@@ -432,9 +457,9 @@ public class UnidadeServiceTest {
 
   @Test
   public void shouldReturnNotFoundWhenUnidadeWithIdDoesNotExist() {
-    String id = "50";
+    UUID id = UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c");
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    when(unidadeRepositorio.findById(Integer.parseInt(id))).thenReturn(Optional.empty());
+    when(unidadeRepositorio.findById(id)).thenReturn(Optional.empty());
 
     Response response = unidadeService.editarUnidade(id, unidadeRequest);
 
@@ -445,8 +470,8 @@ public class UnidadeServiceTest {
   @Test
   public void shouldReturnBadRequestWhenAllFieldsAreEmptyOrBlank() {
     // Arrange
-    String id = "1";
-    UnidadeRequest unidadeRequest = new UnidadeRequest("", "", "");
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
+    UnidadeRequest unidadeRequest = new UnidadeRequest(id, "", "", "");
 
     // Act
     Response response = unidadeService.editarUnidade(id, unidadeRequest);
@@ -461,12 +486,12 @@ public class UnidadeServiceTest {
 
   @Test
   public void shouldUpdateEnderecoWhenOnlyEnderecoFieldIsProvided() {
-    String id = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     String newEndereco = "Novo endereco";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setEndereco(newEndereco);
     Unidade existingUnidade = new Unidade();
-    when(unidadeRepositorio.findById(Integer.parseInt(id)))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(existingUnidade));
       when(unidadeRepositorio.save(any(Unidade.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -476,8 +501,8 @@ public class UnidadeServiceTest {
     assertEquals(newEndereco, ((UnidadeResponse) response).getEndereco());
 
     assertEquals(
-      existingUnidade.getIdUnidade(),
-      ((UnidadeResponse) response).getIdUnidade()
+      existingUnidade.getNome(),
+      ((UnidadeResponse) response).getNome()
     );
     assertEquals(
       existingUnidade.getTipo(),
@@ -487,12 +512,12 @@ public class UnidadeServiceTest {
 
   @Test
   public void shouldUpdateTipoWhenOnlyTipoFieldIsProvided() {
-    String id = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     String newTipo = "Novo tipo";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
     unidadeRequest.setTipo(newTipo);
     Unidade existingUnidade = new Unidade();
-    when(unidadeRepositorio.findById(Integer.parseInt(id)))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(existingUnidade));
  when(unidadeRepositorio.save(any(Unidade.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
@@ -501,8 +526,8 @@ public class UnidadeServiceTest {
     assertEquals(newTipo, ((UnidadeResponse) response).getTipo());
 
     assertEquals(
-      existingUnidade.getIdUnidade(),
-      ((UnidadeResponse) response).getIdUnidade()
+      existingUnidade.getNome(),
+      ((UnidadeResponse) response).getNome()
     );
     assertEquals(
       existingUnidade.getTipo(),
@@ -512,23 +537,23 @@ public class UnidadeServiceTest {
 
   @Test
   public void shouldUpdateIdUnidadeWhenOnlyIdUnidadeFieldIsProvided() {
-    String id = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     String newIdUnidade = "Novo nome";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    unidadeRequest.setIdUnidade(newIdUnidade);
+    unidadeRequest.setNome(newIdUnidade);
     Unidade existingUnidade = new Unidade();
-    when(unidadeRepositorio.findById(Integer.parseInt(id)))
+    when(unidadeRepositorio.findById(id))
       .thenReturn(Optional.of(existingUnidade));
-    when(unidadeRepositorio.findByIdUnidade(newIdUnidade)).thenReturn(Optional.empty());
+    when(unidadeRepositorio.findByNome(newIdUnidade)).thenReturn(Optional.empty());
   when(unidadeRepositorio.save(any(Unidade.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
     Response response = unidadeService.editarUnidade(id, unidadeRequest);
 
-    assertEquals(newIdUnidade, ((UnidadeResponse) response).getIdUnidade());
+    assertEquals(newIdUnidade, ((UnidadeResponse) response).getNome());
 
     assertEquals(
-      existingUnidade.getIdUnidade(),
-      ((UnidadeResponse) response).getIdUnidade()
+      existingUnidade.getNome(),
+      ((UnidadeResponse) response).getNome()
     );
     assertEquals(
       existingUnidade.getTipo(),
@@ -539,17 +564,17 @@ public class UnidadeServiceTest {
  @Test
 public void shouldReturnConflictWhenNewIdUnidadeExistsWithDifferentInformation() {
     // Arrange
-    String id = "1";
+    UUID id = UUID.fromString("82acc4ec-e0f0-4da5-803c-cc3123afe058");
     String newIdUnidade = "Novo nome";
     UnidadeRequest unidadeRequest = new UnidadeRequest();
-    unidadeRequest.setIdUnidade(newIdUnidade);
+    unidadeRequest.setNome(newIdUnidade);
     Unidade existingUnidade = new Unidade();
     Unidade existingUnidade2 = new Unidade();
-    existingUnidade2.setIdUnidade(newIdUnidade);
-    existingUnidade2.setId(3);
-    when(unidadeRepositorio.findById(Integer.parseInt(id)))
+    existingUnidade2.setNome(newIdUnidade);
+    existingUnidade2.setId(UUID.fromString("c361fe25-2ab9-4081-8e64-a20cd0b5860c"));
+    when(unidadeRepositorio.findById(id))
         .thenReturn(Optional.of(existingUnidade));
-    when(unidadeRepositorio.findByIdUnidade(newIdUnidade))
+    when(unidadeRepositorio.findByNome(newIdUnidade))
         .thenReturn(Optional.of(existingUnidade2));
 
    

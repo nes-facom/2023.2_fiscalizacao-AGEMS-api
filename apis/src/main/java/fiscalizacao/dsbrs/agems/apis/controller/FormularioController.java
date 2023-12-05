@@ -1,9 +1,26 @@
 package fiscalizacao.dsbrs.agems.apis.controller;
 
+import java.util.UUID;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import fiscalizacao.dsbrs.agems.apis.requests.FormularioRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.FormularioRequest;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioAcaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.FormularioBuscaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.FormularioListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResumoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
@@ -16,19 +33,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Formulário", description = "APIs de Gerenciamento dos Formulários")
 @RestController
@@ -159,22 +164,91 @@ public class FormularioController {
   @Operation(summary = "Listar todos os formulários")
   @SecurityRequirement(name = "BEARER")
   @GetMapping(path = "/todos/", produces = "application/json")
-  public ResponseEntity<?> listaFormularios(HttpServletRequest request) {
+  public ResponseEntity<?> listaFormulariosResumidos(
+      HttpServletRequest request,
+      @RequestParam(required = false, defaultValue = "0") int pagina,
+      @RequestParam(required = false, defaultValue = "15") int quantidade
+  ) {
     try {
-      List<FormularioResumoResponse> formularioResponse = SERVICO_FORMULARIO.listaTodosFormularios(
-        request
+      FormularioBuscaResponse formularioResponse = SERVICO_FORMULARIO.listaTodosFormulariosResumidos(
+        request,
+        pagina,
+        quantidade
       );
-      if (formularioResponse.size() == 0) {
-        return ResponseEntity
-          .status(404)
-          .body(
-            ErroResponse
-              .builder()
-              .status(404)
-              .erro("Não há formulários cadastrados")
-              .build()
-          );
-      }
+      return ResponseEntity.status(200).body(formularioResponse);
+    } catch (
+      DataIntegrityViolationException
+      | IllegalArgumentException
+      | NullPointerException
+      | HttpMessageNotReadableException e
+    ) {
+      return ResponseEntity
+        .badRequest()
+        .body(
+          ErroResponse
+            .builder()
+            .status(400)
+            .erro("Bad Request:" + e.getMessage())
+            .build()
+        );
+    } catch (RuntimeException e) {
+      return ResponseEntity
+        .status(500)
+        .body(
+          ErroResponse
+            .builder()
+            .status(500)
+            .erro("Internal Server Error:" + e.getMessage())
+            .build()
+        );
+    }
+  }
+  
+  @ApiResponses(
+    value = {
+      @ApiResponse(
+        responseCode = "200",
+        description = "Operação bem sucedida. Retorna um conjunto de Formulários",
+        content = @Content(
+          schema = @Schema(implementation = FormularioResumoResponse.class)
+        )
+      ),
+      @ApiResponse(
+        responseCode = "400",
+        description = "Bad Request.",
+        content = @Content(
+          schema = @Schema(implementation = ErroResponse.class)
+        )
+      ),
+      @ApiResponse(
+        responseCode = "401",
+        description = "Não autorizado.",
+        content = @Content(
+          schema = @Schema(implementation = ErroResponse.class)
+        )
+      ),
+      @ApiResponse(
+        responseCode = "403",
+        description = "Não pode acessar essas informações",
+        content = @Content(
+          schema = @Schema(implementation = ErroResponse.class)
+        )
+      ),
+      @ApiResponse(
+        responseCode = "500",
+        description = "Erro de Servidor",
+        content = @Content(
+          schema = @Schema(implementation = ErroResponse.class)
+        )
+      )
+    }
+  )
+  @Operation(summary = "Listar todos os formulários")
+  @SecurityRequirement(name = "BEARER")
+  @GetMapping(path = "/", produces = "application/json")
+  public ResponseEntity<?> listaFormularios() {
+    try {
+      FormularioListResponse formularioResponse = SERVICO_FORMULARIO.listaTodosFormularios();
       return ResponseEntity.status(200).body(formularioResponse);
     } catch (
       DataIntegrityViolationException
@@ -248,7 +322,7 @@ public class FormularioController {
   @DeleteMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<Response> deletaFormulario(
     HttpServletRequest request,
-    @PathVariable(value = "id") int formulario
+    @PathVariable(value = "id") UUID formulario
   ) {
     try {
       Response formularioResponse = SERVICO_FORMULARIO.deletaFormulario(
@@ -327,7 +401,7 @@ public class FormularioController {
   )
   public ResponseEntity<Response> editaFormulario(
     HttpServletRequest request,
-    @PathVariable(name = "id") int id,
+    @PathVariable(name = "id") UUID id,
     @RequestBody FormularioRequest formulario
   ) {
     try {
@@ -421,7 +495,7 @@ public class FormularioController {
   @GetMapping(path = "/{id}", produces = "application/json")
   public ResponseEntity<Response> verFormulario(
     HttpServletRequest request,
-    @PathVariable(name = "id") int id
+    @PathVariable(name = "id") UUID id
   ) {
     try {
       Response formularioResponse = SERVICO_FORMULARIO.verFormulario(

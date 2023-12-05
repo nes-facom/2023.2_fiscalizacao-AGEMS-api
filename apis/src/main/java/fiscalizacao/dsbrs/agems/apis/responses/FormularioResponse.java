@@ -1,8 +1,15 @@
 package fiscalizacao.dsbrs.agems.apis.responses;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import fiscalizacao.dsbrs.agems.apis.util.LocalDateTimeSerializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,14 +25,36 @@ import lombok.NoArgsConstructor;
 public class FormularioResponse extends Response {
 
   @Schema(
+    title = "Data de criação",
+    description = "Data de criação do formulário",
+    required = true,
+    type = "number",
+    example = "1692840670072"
+  )
+  @JsonProperty("data_criacao")
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  private LocalDateTime dataCriacao;
+	
+  @Schema(
     title = "Id",
     description = "Código do Formulário",
     required = true,
-    format = "number",
-    type = "int",
-    example = "1"
+    format = "string",
+    type = "UUID"
   )
-  private int id;
+  @JsonProperty("uuid")
+  private UUID id;
+  
+  @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  @JsonProperty("uuid_local")
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private UUID uuidLocal;
 
   @Schema(
     title = "Usuário",
@@ -35,15 +64,6 @@ public class FormularioResponse extends Response {
   )
   @JsonProperty("usuario")
   private UsuarioFormResponse usuario;
-
-  @Schema(
-    title = "Modelo",
-    description = "Response de Modelo atrelado ao Formulário",
-    required = true,
-    implementation = ModeloFormResponse.class
-  )
-  @JsonProperty("modelo")
-  private ModeloFormResponse modelo;
 
   @Schema(
     title = "Unidade",

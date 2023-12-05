@@ -1,16 +1,28 @@
 package fiscalizacao.dsbrs.agems.apis.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import fiscalizacao.dsbrs.agems.apis.dominio.AlternativaResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Formulario;
 import fiscalizacao.dsbrs.agems.apis.dominio.Imagem;
 import fiscalizacao.dsbrs.agems.apis.dominio.Modelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Questao;
+import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoFormulario;
+import fiscalizacao.dsbrs.agems.apis.dominio.QuestaoModelo;
 import fiscalizacao.dsbrs.agems.apis.dominio.Resposta;
-import fiscalizacao.dsbrs.agems.apis.dominio.TipoResposta;
 import fiscalizacao.dsbrs.agems.apis.dominio.Unidade;
 import fiscalizacao.dsbrs.agems.apis.dominio.Usuario;
 import fiscalizacao.dsbrs.agems.apis.repositorio.FormularioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ImagemRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.ModeloRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoFormularioRepositorio;
+import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoModeloRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.QuestaoRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.RespostaRepositorio;
 import fiscalizacao.dsbrs.agems.apis.repositorio.UnidadeRepositorio;
@@ -18,8 +30,11 @@ import fiscalizacao.dsbrs.agems.apis.repositorio.UsuarioRepositorio;
 import fiscalizacao.dsbrs.agems.apis.requests.FormularioRegisterRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.FormularioRequest;
 import fiscalizacao.dsbrs.agems.apis.requests.RespostaRequest;
+import fiscalizacao.dsbrs.agems.apis.responses.AlternativaRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ErroResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioAcaoResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.FormularioBuscaResponse;
+import fiscalizacao.dsbrs.agems.apis.responses.FormularioListResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.FormularioResumoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.ImagemResponse;
@@ -27,17 +42,15 @@ import fiscalizacao.dsbrs.agems.apis.responses.ModeloFormResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.QuestaoResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.Response;
 import fiscalizacao.dsbrs.agems.apis.responses.RespostaResponse;
-import fiscalizacao.dsbrs.agems.apis.responses.TipoRespostaResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.UnidadeResponse;
 import fiscalizacao.dsbrs.agems.apis.responses.UsuarioFormResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FormularioService {
 
   private final FormularioRepositorio FORMULARIO_REPOSITORIO;
@@ -47,18 +60,21 @@ public class FormularioService {
   private final ModeloRepositorio MODELO_REPOSITORIO;
 
   private final QuestaoRepositorio QUESTAO_REPOSITORIO;
+  
+  private final QuestaoModeloRepositorio QUESTAO_MODELO_REPOSITORIO;
+  
+  private final QuestaoFormularioRepositorio QUESTAO_FORMULARIO_REPOSITORIO;
 
   private final RespostaRepositorio RESPOSTA_REPOSITORIO;
 
   private final UnidadeRepositorio UNIDADE_REPOSITORIO;
 
   private final ImagemRepositorio IMAGEM_REPOSITORIO;
-  private List<Questao> questoes;
+  
   private List<Imagem> imagens;
   private FormularioResponse formularioResponse;
   private FormularioResumoResponse formularioResumoResponse;
   private UsuarioFormResponse usuarioResponse;
-  private ModeloFormResponse modeloResponse;
   private UnidadeResponse unidadeResponse;
   private RespostaResponse respostaResponse;
   private QuestaoResponse questaoResponse;
@@ -76,13 +92,14 @@ public class FormularioService {
     return usuario;
   }
 
-  public Response cadastraFormulario(
-    HttpServletRequest request,
-    FormularioRegisterRequest novoFormulario
-  ) {
+  public Response cadastraFormulario(HttpServletRequest request, FormularioRegisterRequest novoFormulario)
+  {
+	  
     List<RespostaResponse> responsesResposta = new ArrayList<>();
     List<QuestaoResponse> responsesQuestao = new ArrayList<>();
+    
     Usuario usuario = extrairUsuarioEmailHeader(request);
+    
     if (usuario == null) {
       return ErroResponse
         .builder()
@@ -90,6 +107,7 @@ public class FormularioService {
         .erro("Usuário não existe")
         .build();
     }
+    
     Modelo modelo = MODELO_REPOSITORIO
       .findById(novoFormulario.getModelo())
       .orElse(null);
@@ -111,198 +129,231 @@ public class FormularioService {
         .erro("Unidade não existe")
         .build();
     }
-    if (novoFormulario.getImagens().size() < 4) {
-      return ErroResponse
-        .builder()
-        .status(400)
-        .erro("No mínimo 4 imagens.")
-        .build();
-    }
+
     formulario = new Formulario();
-    formulario.setUsuario(usuario);
-    formulario.setModelo(modelo);
+    formulario.setUsuarioCriacao(usuario);
     formulario.setUnidade(unidade);
-    formulario.setDate();
+    formulario.setDataCriacao(novoFormulario.getDataCriacao());
+
     if (
-      novoFormulario.getObservacao().isEmpty() ||
-      (novoFormulario.getObservacao()).isBlank() ||
-      (novoFormulario.getObservacao()).equals(null)
+      (novoFormulario.getObservacao() == null) ||
+      (novoFormulario.getObservacao()).isEmpty() ||
+      (novoFormulario.getObservacao()).isBlank()
     ) {
       formulario.setObservacao("");
     } else {
       formulario.setObservacao(novoFormulario.getObservacao());
     }
-
-    questoes =
-      MODELO_REPOSITORIO
-        .findById(novoFormulario.getModelo())
-        .get()
-        .getPerguntas();
-    if (questoes.size() != novoFormulario.getRespostas().size()) {
+    
+    List<QuestaoModelo> questoesModelo =
+      QUESTAO_MODELO_REPOSITORIO
+        .findByModelo(modelo);
+    
+    if (questoesModelo.size() != novoFormulario.getRespostas().size()) {
       return ErroResponse
         .builder()
         .status(400)
         .erro("Mande o número correto de respostas.")
         .build();
     }
-    Formulario newForm = FORMULARIO_REPOSITORIO.save(formulario);
-    List<ImagemResponse> imagensResponses = new ArrayList<>();
-    for (
-      int numImagem = 0;
-      numImagem < novoFormulario.getImagens().size();
-      numImagem++
-    ) {
-      if (novoFormulario.getImagens().get(numImagem).getQuestao() == 0) {
-        Imagem imagem = new Imagem();
-        imagem.setFormulario(formulario);
-        imagem.setImagem(
-          novoFormulario.getImagens().get(numImagem).getImagem()
-        );
-        imagem.setDate();
-        Imagem newImagem = IMAGEM_REPOSITORIO.save(imagem);
-        imagemResponse =
-          ImagemResponse
-            .builder()
-            .id(newImagem.getId())
-            .formulario(newForm.getId())
-            .imagem(imagem.getImagem())
-            .questao(0)
-            .build();
-        imagensResponses.add(imagemResponse);
-      } else {
-        for (int questao = 0; questao < questoes.size(); questao++) {
-          if (
-            novoFormulario.getImagens().get(numImagem).getQuestao() != 0 &&
-            novoFormulario.getImagens().get(numImagem).getQuestao() ==
-            questoes.get(questao).getId()
-          ) {
-            Imagem imagem = new Imagem();
-            imagem.setFormulario(formulario);
-            imagem.setImagem(
-              novoFormulario.getImagens().get(numImagem).getImagem()
-            );
-            imagem.setDate();
-            imagem.setQuestao(
-              QUESTAO_REPOSITORIO
-                .findById(
-                  novoFormulario.getImagens().get(numImagem).getQuestao()
-                )
-                .get()
-            );
-            Imagem newImagem = IMAGEM_REPOSITORIO.save(imagem);
-            imagemResponse =
-              ImagemResponse
-                .builder()
-                .id(newImagem.getId())
-                .formulario(newForm.getId())
-                .imagem(imagem.getImagem())
-                .questao(imagem.getQuestao().getId())
-                .build();
-            imagensResponses.add(imagemResponse);
-          }
-        }
-      }
+
+    Formulario novoFormularioAux = FORMULARIO_REPOSITORIO.save(formulario);
+    for(QuestaoModelo questaoModelo : questoesModelo) {
+      QuestaoFormulario questaoFormulario = new QuestaoFormulario();
+      questaoFormulario.setFormulario(formulario);
+      questaoFormulario.setQuestao(questaoModelo.getQuestao());
+      QUESTAO_FORMULARIO_REPOSITORIO.save(questaoFormulario);
     }
-    for (int questao = 0; questao < questoes.size(); questao++) {
-      for (RespostaRequest respostaRequest : novoFormulario.getRespostas()) {
-        if (respostaRequest.getQuestao() == questoes.get(questao).getId()) {
-          Resposta resposta = new Resposta();
-          resposta.setFormulario(formulario);
-          resposta.setQuestao(questoes.get(questao));
-          List<TipoRespostaResponse> responsetipoRespostas = new ArrayList<>();
+    
+    List<ImagemResponse> imagensResponses = new ArrayList<>();
+    
+    for (int numImagem = 0; numImagem < novoFormulario.getImagens().size(); numImagem++)
+    {
+	  Imagem imagem = new Imagem();
+	  imagem.setFormulario(formulario);
+	  imagem.setImagem(novoFormulario.getImagens().get(numImagem).getImagem());
+	  imagem.setDataCriacao(novoFormulario.getDataCriacao());
+	  imagem.setUsuarioCriacao(usuario);
+	  Imagem novaImagem = IMAGEM_REPOSITORIO.save(imagem);
+	  
+	  imagemResponse =
+	      ImagemResponse
+	        .builder()
+	        .id(novaImagem.getId())
+	        .formulario(novoFormularioAux.getId())
+	        .imagem(imagem.getImagem())
+	        .build();
+	  
+	  imagensResponses.add(imagemResponse);
+    }
+    
+    Map<UUID, QuestaoModelo> questaoMap = questoesModelo.stream().collect(Collectors.toMap(el -> el.getQuestao().getId(), el -> el));
+    for (RespostaRequest respostaRequest : novoFormulario.getRespostas()) {
+  	  QuestaoModelo questaoModelo = questaoMap.get(respostaRequest.getQuestao());
+      if (questaoModelo != null) {
+        Questao questao = questaoModelo.getQuestao();
+        Resposta resposta = new Resposta();
+        resposta.setFormulario(formulario);
+        resposta.setQuestao(questao);
+        List<AlternativaRespostaResponse> responseAlternativasResposta = new ArrayList<>();
 
-          List<TipoResposta> tipoRespostas = questoes
-            .get(questao)
-            .getRespostas();
+        List<AlternativaResposta> alternativasResposta = questao.getAlternativasResposta();
 
-          for (TipoResposta tipoRes : tipoRespostas) {
-            TipoRespostaResponse responseTipo = TipoRespostaResponse
-              .builder()
-              .id(tipoRes.getId())
-              .resposta(tipoRes.getResposta())
-              .idQuestao(tipoRes.getQuestao().getId())
-              .build();
+        for (AlternativaResposta alternativa : alternativasResposta) {
+          AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
+            .builder()
+            .id(alternativa.getId())
+            .descricao(alternativa.getDescricao())
+            .idQuestao(alternativa.getQuestao().getId())
+            .build();
 
-            responsetipoRespostas.add(responseTipo);
-          }
-          questaoResponse =
-            QuestaoResponse
-              .builder()
-              .id(questoes.get(questao).getId())
-              .pergunta(questoes.get(questao).getPergunta())
-              .idModelo(questoes.get(questao).getModelo().getId())
-              .portaria(questoes.get(questao).getPortaria())
-              .objetiva(questoes.get(questao).isObjetiva())
-              .respostas(responsetipoRespostas)
-              .build();
-          responsesQuestao.add(questaoResponse);
-          resposta.setResposta(
-            novoFormulario.getRespostas().get(questao).getResposta()
-          );
-          resposta.setObs(novoFormulario.getRespostas().get(questao).getObs());
-          RESPOSTA_REPOSITORIO.save(resposta);
-          respostaResponse =
-            RespostaResponse
-              .builder()
-              .questao(resposta.getQuestao().getId())
-              .resposta(resposta.getResposta())
-              .obs(resposta.getObs())
-              .build();
-          responsesResposta.add(respostaResponse);
+          responseAlternativasResposta.add(responseTipo);
         }
+        
+        questaoResponse =
+          QuestaoResponse
+            .builder()
+            .id(questao.getId())
+            .pergunta(questao.getPergunta())
+            .portaria(questao.getPortaria())
+            .objetiva(questao.isObjetiva())
+            .respostas(responseAlternativasResposta)
+            .build();
+        
+        responsesQuestao.add(questaoResponse);
+        
+        resposta.setResposta(respostaRequest.getResposta());
+        
+        resposta.setObservacao(respostaRequest.getObservacao());
+        
+        resposta.setUsuarioCriacao(usuario);
+        
+        resposta.setDataCriacao(novoFormulario.getDataCriacao());
+        
+        RESPOSTA_REPOSITORIO.save(resposta);
+        
+        respostaResponse =
+          RespostaResponse
+            .builder()
+            .id(resposta.getId())
+            .uuidLocal(respostaRequest.getUuidLocal())
+            .resposta(resposta.getResposta())
+            .obs(resposta.getObservacao())
+            .questao(resposta.getQuestao().getId())
+            .build();
+        responsesResposta.add(respostaResponse);
       }
     }
     usuarioResponse =
       UsuarioFormResponse
         .builder()
-        .nome(formulario.getUsuario().getNome())
+        .nome(formulario.getUsuarioCriacao().getNome())
         .build();
-    modeloResponse =
-      ModeloFormResponse
-        .builder()
-        .nome(formulario.getModelo().getModeloNome())
-        .questoes(responsesQuestao)
-        .build();
+
     unidadeResponse =
       UnidadeResponse
         .builder()
         .id(formulario.getUnidade().getId())
         .endereco(formulario.getUnidade().getEndereco())
-        .idUnidade(formulario.getUnidade().getIdUnidade())
+        .nome(formulario.getUnidade().getNome())
         .build();
+
     formularioResponse =
       FormularioResponse
         .builder()
-        .id(newForm.getId())
+        .id(novoFormularioAux.getId())
+        .uuidLocal(novoFormulario.getUuidLocal())
         .usuario(usuarioResponse)
         .unidade(unidadeResponse)
-        .modelo(modeloResponse)
         .respostas(responsesResposta)
         .imagens(imagensResponses)
-        .observacao(newForm.getObservacao())
+        .observacao(novoFormularioAux.getObservacao())
+        .dataCriacao(formulario.getDataCriacao())
         .build();
 
     return formularioResponse;
   }
-
-  public List<FormularioResumoResponse> listaTodosFormularios(
-    HttpServletRequest request
-  ) {
-    Usuario usuario = extrairUsuarioEmailHeader(request);
-    List<FormularioResumoResponse> responsesFormulario = new ArrayList<>();
-    List<Formulario> formularios = FORMULARIO_REPOSITORIO.findByUsuario(
-      usuario
-    );
-    for (Formulario formulario : formularios) {
-      formularioResumoResponse =
-        FormularioResumoResponse.builder().id(formulario.getId()).build();
-      responsesFormulario.add(formularioResumoResponse);
+  
+  public FormularioListResponse listaTodosFormularios() {
+    List<FormularioResponse> formulariosResponse = new ArrayList<>();
+    List<Formulario> formularios = FORMULARIO_REPOSITORIO.findAll();
+    for(Formulario form : formularios) {
+      List<ImagemResponse> imagens = form.getImagens().stream()
+          .map(imagem -> ImagemResponse.builder()
+              .formulario(form.getId())
+              .id(imagem.getId())
+              .imagem(imagem.getImagem())
+              .build())
+          .collect(Collectors.toList());
+      
+      List<RespostaResponse> respostas = form.getRespostas().stream()
+          .map(resposta -> RespostaResponse.builder()
+              .questao(resposta.getQuestao().getId())
+              .resposta(resposta.getResposta())
+              .obs(resposta.getObservacao())
+              .build())
+          .collect(Collectors.toList());
+      
+      Unidade unidadeForm = form.getUnidade();
+      UnidadeResponse unidadeResp = UnidadeResponse.builder()
+          .endereco(unidadeForm.getEndereco())
+          .id(unidadeForm.getId())
+          .nome(unidadeForm.getNome())
+          .tipo(unidadeForm.getTipo())
+          .build();
+      
+      Usuario usuarioForm = form.getUsuarioCriacao();
+      UsuarioFormResponse usuarioResp = UsuarioFormResponse.builder()
+          .nome(usuarioForm.getNome())
+          .build();
+      
+      formulariosResponse.add(FormularioResponse.builder()
+          .dataCriacao(form.getDataCriacao())
+          .id(form.getId())
+          .imagens(imagens)
+          .observacao(form.getObservacao())
+          .respostas(respostas)
+          .unidade(unidadeResp)
+          .usuario(usuarioResp)
+          .build());
     }
-    return responsesFormulario;
+    FormularioListResponse response = FormularioListResponse.builder()
+        .data(formulariosResponse)
+        .build();
+    return response;
   }
 
-  public Response verFormulario(HttpServletRequest request, int pedido) {
+  public FormularioBuscaResponse listaTodosFormulariosResumidos(
+    HttpServletRequest request,
+    int pagina,
+    int quantidade
+  ) {
+	      
+    List<FormularioResumoResponse> responsesFormulario = new ArrayList<>();
+    FormularioBuscaResponse response = new FormularioBuscaResponse();
+    
+    Page<Formulario> formularios = FORMULARIO_REPOSITORIO.findAll(PageRequest.of(pagina, quantidade));
+    
+    response.setPagina(pagina);
+    response.setPaginaMax(Math.max(0, formularios.getTotalPages()-1));
+    response.setFormularios(
+        formularios.stream()
+            .map(form -> new FormularioResumoResponse(
+                            form.getId(),
+                            form.getUnidade().getNome(),
+                            form.getDataCriacao(),
+                            form.getUsuarioCriacao().getNome()
+                         )
+             )
+            .collect(Collectors.toList())
+      );
+    return response;
+  }
+
+  public Response verFormulario(HttpServletRequest request, UUID pedido) {
+	  
     Usuario usuario = extrairUsuarioEmailHeader(request);
+    
     if (usuario == null) {
       return ErroResponse
         .builder()
@@ -310,6 +361,7 @@ public class FormularioService {
         .erro("Usuário não existe")
         .build();
     }
+    
     Formulario formulario = FORMULARIO_REPOSITORIO
       .findById(pedido)
       .orElse(null);
@@ -321,101 +373,88 @@ public class FormularioService {
         .erro("Formulário não existe")
         .build();
     }
-    if (usuario.getId() != formulario.getUsuario().getId()) {
+    
+    if (usuario.getId() != formulario.getUsuarioCriacao().getId()) {
       return ErroResponse
         .builder()
         .status(403)
         .erro("Você não tem permissão para acessar formulários de outros")
         .build();
     }
+    
     usuarioResponse =
       UsuarioFormResponse
         .builder()
-        .nome(formulario.getUsuario().getNome())
+        .nome(formulario.getUsuarioCriacao().getNome())
         .build();
+    
     List<RespostaResponse> responsesResposta = new ArrayList<>();
     List<QuestaoResponse> responsesQuestao = new ArrayList<>();
     List<ImagemResponse> imagemResponses = new ArrayList<>();
+    
     imagens = IMAGEM_REPOSITORIO.findByFormulario(formulario);
+    
     for (Imagem imagem : imagens) {
-      if (imagem.getQuestao() == null) {
-        imagemResponse =
-          ImagemResponse
-            .builder()
-            .id(imagem.getId())
-            .formulario(imagem.getFormulario().getId())
-            .imagem(imagem.getImagem())
-            .questao(0)
-            .build();
-        imagemResponses.add(imagemResponse);
-      } else {
-        imagemResponse =
-          ImagemResponse
-            .builder()
-            .id(imagem.getId())
-            .formulario(imagem.getFormulario().getId())
-            .questao(imagem.getQuestao().getId())
-            .imagem(imagem.getImagem())
-            .build();
-        imagemResponses.add(imagemResponse);
-      }
+      imagemResponse =
+        ImagemResponse
+          .builder()
+          .id(imagem.getId())
+          .formulario(imagem.getFormulario().getId())
+          .imagem(imagem.getImagem())
+          .build();
+      imagemResponses.add(imagemResponse);
     }
-
-    Modelo modelo = MODELO_REPOSITORIO
-      .findById(formulario.getModelo().getId())
-      .get();
 
     unidadeResponse =
       UnidadeResponse
         .builder()
         .id(formulario.getUnidade().getId())
         .endereco(formulario.getUnidade().getEndereco())
-        .idUnidade(formulario.getUnidade().getIdUnidade())
+        .nome(formulario.getUnidade().getNome())
         .build();
-    for (Questao questao : modelo.getPerguntas()) {
-      List<TipoRespostaResponse> responsetipoRespostas = new ArrayList<>();
+    
+    for (QuestaoFormulario questaoFormulario : formulario.getQuestoes()) {
+    
+      Questao questao = questaoFormulario.getQuestao();
+    	
+      List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
 
-      List<TipoResposta> tipoRespostas = questao.getRespostas();
+      List<AlternativaResposta> alternativaRespostas = questao.getAlternativasResposta();
 
-      for (TipoResposta tipoRes : tipoRespostas) {
-        TipoRespostaResponse responseTipo = TipoRespostaResponse
+      for (AlternativaResposta alternativa : alternativaRespostas) {
+    	  
+        AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
           .builder()
-          .id(tipoRes.getId())
-          .resposta(tipoRes.getResposta())
-          .idQuestao(tipoRes.getQuestao().getId())
+          .id(alternativa.getId())
+          .descricao(alternativa.getDescricao())
+          .idQuestao(questao.getId())
           .build();
 
-        responsetipoRespostas.add(responseTipo);
+        responseAlternativaRespostas.add(responseTipo);
       }
       questaoResponse =
         QuestaoResponse
           .builder()
           .id(questao.getId())
           .pergunta(questao.getPergunta())
-          .idModelo(questao.getModelo().getId())
           .portaria(questao.getPortaria())
           .objetiva(questao.isObjetiva())
-          .respostas(responsetipoRespostas)
+          .respostas(responseAlternativaRespostas)
           .build();
       responsesQuestao.add(questaoResponse);
     }
-
-    modeloResponse =
-      ModeloFormResponse
-        .builder()
-        .nome(formulario.getModelo().getModeloNome())
-        .questoes(responsesQuestao)
-        .build();
+    
     List<Resposta> respostas = RESPOSTA_REPOSITORIO.findByFormulario(
       formulario
     );
+    
     for (Resposta resposta : respostas) {
       respostaResponse =
         RespostaResponse
           .builder()
           .questao(resposta.getQuestao().getId())
           .resposta(resposta.getResposta())
-          .obs(resposta.getObs())
+          .obs(resposta.getObservacao())
           .build();
       responsesResposta.add(respostaResponse);
     }
@@ -423,9 +462,9 @@ public class FormularioService {
       FormularioResponse
         .builder()
         .id(formulario.getId())
-        .usuario(usuarioResponse)
+        .dataCriacao(formulario.getDataCriacao())
+    	.usuario(usuarioResponse)
         .unidade(unidadeResponse)
-        .modelo(modeloResponse)
         .respostas(responsesResposta)
         .imagens(imagemResponses)
         .observacao(formulario.getObservacao())
@@ -433,7 +472,7 @@ public class FormularioService {
     return formularioResponse;
   }
 
-  public Response deletaFormulario(HttpServletRequest request, int pedido) {
+  public Response deletaFormulario(HttpServletRequest request, UUID pedido) {
     Usuario usuario = extrairUsuarioEmailHeader(request);
     if (usuario == null) {
       return ErroResponse
@@ -452,101 +491,77 @@ public class FormularioService {
         .erro("Formulário não existe")
         .build();
     }
-    if (usuario.getId() != formulario.getUsuario().getId()) {
+    if (usuario.getId() != formulario.getUsuarioCriacao().getId()) {
       return ErroResponse
         .builder()
         .status(403)
-        .erro("Você não tem permissão para acessar formulários de outros")
+        .erro("Você não tem permissão para acessar formulários de outros usuários")
         .build();
     }
+    
     List<RespostaResponse> respostasResponses = new ArrayList<>();
     List<QuestaoResponse> responsesQuestao = new ArrayList<>();
     List<ImagemResponse> imagemResponses = new ArrayList<>();
     imagens = IMAGEM_REPOSITORIO.findByFormulario(formulario);
+    
     for (Imagem imagem : imagens) {
-      if (imagem.getQuestao() == null) {
-        imagemResponse =
-          ImagemResponse
-            .builder()
-            .id(imagem.getId())
-            .formulario(imagem.getFormulario().getId())
-            .imagem(imagem.getImagem())
-            .questao(0)
-            .build();
-        imagemResponses.add(imagemResponse);
-      } else {
-        imagemResponse =
-          ImagemResponse
-            .builder()
-            .id(imagem.getId())
-            .formulario(imagem.getFormulario().getId())
-            .questao(imagem.getQuestao().getId())
-            .imagem(imagem.getImagem())
-            .build();
-        imagemResponses.add(imagemResponse);
-      }
+      imagemResponse =
+        ImagemResponse
+          .builder()
+          .id(imagem.getId())
+          .formulario(imagem.getFormulario().getId())
+          .imagem(imagem.getImagem())
+          .build();
+      imagemResponses.add(imagemResponse);
     }
-    Modelo modelo = MODELO_REPOSITORIO
-      .findById(formulario.getModelo().getId())
-      .get();
-    usuarioResponse =
-      UsuarioFormResponse
-        .builder()
-        .nome(formulario.getUsuario().getNome())
-        .build();
 
     unidadeResponse =
       UnidadeResponse
         .builder()
         .id(formulario.getUnidade().getId())
         .endereco(formulario.getUnidade().getEndereco())
-        .idUnidade(formulario.getUnidade().getIdUnidade())
+        .id(formulario.getUnidade().getId())
         .build();
 
-    for (Questao questao : modelo.getPerguntas()) {
-      List<TipoRespostaResponse> responsetipoRespostas = new ArrayList<>();
+    for (QuestaoFormulario questaoFormulario : formulario.getQuestoes()) {
+    	
+      Questao questao = questaoFormulario.getQuestao();
+      
+      List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
 
-      List<TipoResposta> tipoRespostas = questao.getRespostas();
+      List<AlternativaResposta> alternativasResposta = questao.getAlternativasResposta();
 
-      for (TipoResposta tipoRes : tipoRespostas) {
-        TipoRespostaResponse responseTipo = TipoRespostaResponse
+      for (AlternativaResposta alternativa : alternativasResposta) {
+        AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
           .builder()
-          .id(tipoRes.getId())
-          .resposta(tipoRes.getResposta())
-          .idQuestao(tipoRes.getQuestao().getId())
+          .id(alternativa.getId())
+          .descricao(alternativa.getDescricao())
+          .idQuestao(alternativa.getQuestao().getId())
           .build();
 
-        responsetipoRespostas.add(responseTipo);
+        responseAlternativaRespostas.add(responseTipo);
       }
       questaoResponse =
         QuestaoResponse
           .builder()
           .id(questao.getId())
           .pergunta(questao.getPergunta())
-          .idModelo(questao.getModelo().getId())
           .portaria(questao.getPortaria())
           .objetiva(questao.isObjetiva())
-          .respostas(responsetipoRespostas)
+          .respostas(responseAlternativaRespostas)
           .build();
       responsesQuestao.add(questaoResponse);
     }
-
-    modeloResponse =
-      ModeloFormResponse
-        .builder()
-        .nome(formulario.getModelo().getModeloNome())
-        .questoes(responsesQuestao)
-        .build();
-    List<Resposta> respostas = RESPOSTA_REPOSITORIO.findByFormulario(
-      formulario
-    );
+    
+    List<Resposta> respostas = RESPOSTA_REPOSITORIO.findByFormulario(formulario);
+    
     for (Resposta resposta : respostas) {
       respostaResponse =
         RespostaResponse
           .builder()
           .questao(resposta.getQuestao().getId())
           .resposta(resposta.getResposta())
-          .obs(resposta.getObs())
+          .obs(resposta.getObservacao())
           .build();
       respostasResponses.add(respostaResponse);
     }
@@ -556,18 +571,23 @@ public class FormularioService {
         .id(formulario.getId())
         .usuario(usuarioResponse)
         .unidade(unidadeResponse)
-        .modelo(modeloResponse)
         .imagens(imagemResponses)
         .respostas(respostasResponses)
         .build();
-
-    for (Imagem imagem : imagens) {
-      IMAGEM_REPOSITORIO.delete(imagem);
-    }
-    for (Resposta resposta : respostas) {
-      RESPOSTA_REPOSITORIO.delete(resposta);
-    }
+    
+    List<Questao> questoes = formulario.getQuestoes().stream()
+        .map(QuestaoFormulario::getQuestao)
+        .collect(Collectors.toList());
+    
     FORMULARIO_REPOSITORIO.delete(formulario);
+
+    for(Questao questao : questoes) {
+      List<QuestaoModelo> questaoModeloList = QUESTAO_MODELO_REPOSITORIO.findByQuestao(questao);
+      List<QuestaoFormulario> questaoFormularioList = QUESTAO_FORMULARIO_REPOSITORIO.findByQuestao(questao);
+      if(questaoModeloList.size() == 0 && questaoFormularioList.size() == 0)
+        QUESTAO_REPOSITORIO.delete(questao);
+    }
+    
     return FormularioAcaoResponse
       .builder()
       .acao("Formulário deletado")
@@ -577,7 +597,7 @@ public class FormularioService {
 
   public Response editaFormulario(
     HttpServletRequest request,
-    int idFormulario,
+    UUID idFormulario,
     FormularioRequest pedido
   ) {
     Usuario usuario = extrairUsuarioEmailHeader(request);
@@ -599,7 +619,7 @@ public class FormularioService {
       .findById(pedido.getId())
       .orElse(null);
     if (formulario != null) {
-      if (usuario.getId() != formulario.getUsuario().getId()) {
+      if (usuario.getId() != formulario.getUsuarioCriacao().getId()) {
         return ErroResponse
           .builder()
           .status(403)
@@ -612,7 +632,7 @@ public class FormularioService {
       imagens = IMAGEM_REPOSITORIO.findByFormulario(formulario);
       if (pedido.getImagens().size() != 0) {
         for (int index = 0; index < pedido.getImagens().size(); index++) {
-          int id = pedido.getImagens().get(index).getId();
+          UUID id = pedido.getImagens().get(index).getId();
           if (
             pedido.getImagens().get(index).getAcao().equalsIgnoreCase("delete")
           ) {
@@ -638,90 +658,66 @@ public class FormularioService {
         }
       }
       for (Imagem imagem : imagens) {
-        if (imagem.getQuestao() == null) {
-          imagemResponse =
-            ImagemResponse
-              .builder()
-              .id(imagem.getId())
-              .formulario(imagem.getFormulario().getId())
-              .imagem(imagem.getImagem())
-              .questao(0)
-              .build();
-          imagemResponses.add(imagemResponse);
-        } else {
-          imagemResponse =
-            ImagemResponse
-              .builder()
-              .id(imagem.getId())
-              .formulario(imagem.getFormulario().getId())
-              .questao(imagem.getQuestao().getId())
-              .imagem(imagem.getImagem())
-              .build();
-          imagemResponses.add(imagemResponse);
-        }
+        imagemResponse =
+          ImagemResponse
+            .builder()
+            .id(imagem.getId())
+            .formulario(imagem.getFormulario().getId())
+            .imagem(imagem.getImagem())
+            .build();
+        imagemResponses.add(imagemResponse);
       }
-
-      Modelo modelo = MODELO_REPOSITORIO
-        .findById(formulario.getModelo().getId())
-        .get();
-      usuarioResponse =
-        UsuarioFormResponse
-          .builder()
-          .nome(formulario.getUsuario().getNome())
-          .build();
 
       unidadeResponse =
         UnidadeResponse
           .builder()
           .id(formulario.getUnidade().getId())
           .endereco(formulario.getUnidade().getEndereco())
-          .idUnidade(formulario.getUnidade().getIdUnidade())
+          .id(formulario.getUnidade().getId())
           .build();
-      for (Questao questao : modelo.getPerguntas()) {
-        List<TipoRespostaResponse> responsetipoRespostas = new ArrayList<>();
+      for (QuestaoFormulario questaoFomulario : formulario.getQuestoes()) {
+    	  
+    	Questao questao = questaoFomulario.getQuestao();
+    	
+        List<AlternativaRespostaResponse> responseAlternativaRespostas = new ArrayList<>();
 
-        List<TipoResposta> tipoRespostas = questao.getRespostas();
+        List<AlternativaResposta> alternativasResposta = questao.getAlternativasResposta();
 
-        for (TipoResposta tipoRes : tipoRespostas) {
-          TipoRespostaResponse responseTipo = TipoRespostaResponse
+        for (AlternativaResposta alternativa : alternativasResposta) {
+          AlternativaRespostaResponse responseTipo = AlternativaRespostaResponse
             .builder()
-            .id(tipoRes.getId())
-            .resposta(tipoRes.getResposta())
-            .idQuestao(tipoRes.getQuestao().getId())
+            .id(alternativa.getId())
+            .descricao(alternativa.getDescricao())
+            .idQuestao(alternativa.getQuestao().getId())
             .build();
 
-          responsetipoRespostas.add(responseTipo);
+          responseAlternativaRespostas.add(responseTipo);
         }
         questaoResponse =
           QuestaoResponse
             .builder()
             .id(questao.getId())
             .pergunta(questao.getPergunta())
-            .idModelo(questao.getModelo().getId())
             .portaria(questao.getPortaria())
             .objetiva(questao.isObjetiva())
-            .respostas(responsetipoRespostas)
+            .respostas(responseAlternativaRespostas)
             .build();
         responsesQuestao.add(questaoResponse);
       }
-      modeloResponse =
-        ModeloFormResponse
-          .builder()
-          .nome(formulario.getModelo().getModeloNome())
-          .questoes(responsesQuestao)
-          .build();
-      List<Resposta> respostas = RESPOSTA_REPOSITORIO.findByFormulario(
-        formulario
-      );
+      
+      List<Resposta> respostas = RESPOSTA_REPOSITORIO.findByFormulario(formulario);
+      
       if (pedido.getRespostas().size() != 0) {
         for (int index = 0; index < pedido.getRespostas().size(); index++) {
-          int id = pedido.getRespostas().get(index).getQuestao();
+          
+          UUID id = pedido.getRespostas().get(index).getQuestao();
           String textoResposta = pedido.getRespostas().get(index).getResposta();
-          String obs = pedido.getRespostas().get(index).getObs();
+          String observacao = pedido.getRespostas().get(index).getObservacao();
+          
           for (Resposta resposta : respostas) {
             if (resposta.getQuestao().getId() == id) {
               resposta.setResposta(textoResposta);
-              resposta.setObs(obs);
+              resposta.setObservacao(observacao);
               RESPOSTA_REPOSITORIO.save(resposta);
             } 
           }
@@ -733,7 +729,7 @@ public class FormularioService {
             .builder()
             .questao(resposta.getQuestao().getId())
             .resposta(resposta.getResposta())
-            .obs(resposta.getObs())
+            .obs(resposta.getObservacao())
             .build();
         respostasResponses.add(respostaResponse);
       }
@@ -747,7 +743,6 @@ public class FormularioService {
           .id(formulario.getId())
           .usuario(usuarioResponse)
           .unidade(unidadeResponse)
-          .modelo(modeloResponse)
           .imagens(imagemResponses)
           .respostas(respostasResponses)
           .observacao(formulario.getObservacao())

@@ -1,7 +1,9 @@
 package fiscalizacao.dsbrs.agems.apis.requests;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import java.util.UUID;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +18,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestaoRegisterRequest {
-
+  
+  
+  @Schema(
+    title = "UUID gerado no app",
+    description = "Código UUID gerado no banco local do aplicativo",
+    required = false,
+    format = "string",
+    type = "UUID"
+  )
+  private UUID uuidLocal;
+  
   @Schema(title = "Pergunta", description = "Pergunta", required = true)
   private String pergunta;
 
@@ -42,5 +54,5 @@ public class QuestaoRegisterRequest {
     required = true,
     type = "array"
   )
-  private List<TipoRespostaRegisterRequest> tipoRespostas;
+  private List<AlternativaRespostaRegisterRequest> alternativaRespostas;
 }
